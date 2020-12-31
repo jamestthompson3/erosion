@@ -7,7 +7,7 @@ pub fn get_user() -> String {
     match from_settings {
         Ok(settings_str) => {
             let settings: Settings = serde_json::from_str(&settings_str).unwrap();
-            return settings["user"].to_string();
+            return settings.user;
         }
         Err(_) => match var("NAME") {
             Ok(user) => return user,

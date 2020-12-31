@@ -1,4 +1,5 @@
 use directories::ProjectDirs;
+use std::env::var;
 use std::fs::{self};
 use structopt::StructOpt;
 
@@ -14,14 +15,14 @@ struct StartCommand {
 /// Windows: C:\Users\Alice\AppData\Roaming\erosion app\erosion\data
 /// macOS:   /Users/Alice/Library/Application Support/erosion app
 pub fn get_data_dir() -> std::path::PathBuf {
-    let cli_args = StartCommand::from_args();
-    let env = cli_args.env;
+    // let cli_args = StartCommand::from_args();
+    let env = var("EROSION_ENV").unwrap();
     let project_dirs = ProjectDirs::from("com", "erosion app", "erosion").unwrap();
     let data_dir = project_dirs.data_dir();
     data_dir.join(env)
 }
 
-fn prep_data_file(name: &str) -> std::path::PathBuf {
+pub fn prep_data_file(name: &str) -> std::path::PathBuf {
     let mut data_dir = get_data_dir();
     data_dir.push(format!("{}.json", name));
     data_dir
@@ -42,3 +43,32 @@ pub fn read_data_file(name: &str) -> Result<String, std::io::Error> {
 //     let file_path = format!("{}/{}", path_string, path);
 //     File::open(file_path)
 // }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::bootstrap::bootstrap;
+    #[test]
+    fn preps_data() {
+        bootstrap();
+        let name = "test";
+        let prepped = prep_data_file(name);
+        let project_dir = ProjectDirs::from("com", "erosion app", "erosion").unwrap();
+        let data_dir = project_dir.data_dir();
+        let mut dir = data_dir.join("test");
+        dir.push("test.json");
+        assert_eq!(prepped, dir);
+    }
+    #[test]
+    fn writes_data() {
+        write_data_file("test", r#"{{"test": 123 }}"#);
+        let mut data_dir = get_data_dir();
+        assert_eq!(data_dir.exists(), true);
+        data_dir.push(prep_data_file("test"));
+        assert_eq!(data_dir.exists(), true);
+    }
+    #[test]
+    fn reads_data() {
+        let data_str = read_data_file("test").unwrap();
+        assert_eq!(r#"{{"test": 123 }}"#, data_str);
+    }
+}

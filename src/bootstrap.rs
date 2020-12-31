@@ -31,12 +31,12 @@ pub fn create_initial_files() {
     let initial_config = format!(
         r#"{{
       "id": "settings",
-      "created:" "{}",
-      "modified:" "{}",
-      "user:" "{}",
-      "modifier:" "System",
-      "title:" "settings",
-      "viewTemplate:" "configuration",
+      "created": "{}",
+      "modified": "{}",
+      "user": "{}",
+      "modifier": "System",
+      "title": "settings",
+      "viewTemplate": "configuration"
     }}"#,
         now,
         now,

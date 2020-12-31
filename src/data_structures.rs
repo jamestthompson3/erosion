@@ -3,14 +3,14 @@ use std::ops::Index;
 
 macro_rules! extends_base {
     (struct $name:ident { $( $field:ident: $ty:ty ),* $(,)* }) => {
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
   pub struct $name {
-    id: String,
-    created: String,
-    title: String,
-    modified: String,
-    modifier: String,
-            $( $field: $ty ),*
+    pub id: String,
+    pub created: String,
+    pub title: String,
+    pub modified: String,
+    pub modifier: String,
+            pub $( $field: $ty ),*
         }
 
 impl Index<&'_ str> for $name {
@@ -29,9 +29,20 @@ impl Index<&'_ str> for $name {
  };
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub enum CardStatus {
+    Done,
+    InProgress,
+    Todo,
+}
+
 extends_base!(
     struct Card {
-        scheduled: String,
+        scheduled: Option<String>,
+        status: CardStatus,
+        tag: Option<Vec<String>>,
+        text: Option<String>,
+        time_allotted: u16,
     }
 );
 
