@@ -10,7 +10,7 @@ macro_rules! extends_base {
     pub title: String,
     pub modified: String,
     pub modifier: String,
-            pub $( $field: $ty ),*
+            $( pub $field: $ty ),*
         }
 
 impl Index<&'_ str> for $name {
@@ -29,7 +29,7 @@ impl Index<&'_ str> for $name {
  };
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum CardStatus {
     Done,
     InProgress,
@@ -51,6 +51,12 @@ extends_base!(
         user: String,
     }
 );
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum CardBase {
+    Settings(Settings),
+    Card(Card),
+}
 
 // impl Index<&'_ str> for Settings {
 //     type Output = str;

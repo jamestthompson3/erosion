@@ -1,4 +1,4 @@
-use crate::data_structures::{Card, CardStatus};
+use crate::data_structures::{Card, CardBase, CardStatus};
 use crate::envrionment::get_user;
 use crate::filesystem::write_data_file;
 use chrono::prelude::*;
@@ -37,12 +37,25 @@ pub fn create_card(data: CardFragment) -> Card {
     c
 }
 
+pub fn update_card(data: CardBase) -> String {
+    match data {
+        CardBase::Settings(settings) => {
+            write_data_file("settings", &serde_json::to_string(&settings).unwrap());
+            return settings.id;
+        }
+        CardBase::Card(card) => {
+            write_data_file(&card.id, &serde_json::to_string(&card).unwrap());
+            return card.id;
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::bootstrap::bootstrap;
     use crate::envrionment::get_user;
-    use crate::filesystem::{get_data_dir, prep_data_file};
+    use crate::filesystem::{get_data_dir, prep_data_file, read_data_file, write_data_file};
     #[test]
     fn creates_card() {
         bootstrap();
@@ -60,5 +73,44 @@ mod tests {
         assert_eq!(data_dir.exists(), true);
         data_dir.push(prep_data_file(&card.id));
         assert_eq!(data_dir.exists(), true);
+    }
+    #[test]
+    fn updates_card() {
+        let initial_card = Card {
+            id: "123".to_string(),
+            scheduled: Some("2020-12-31T18:08:18.162530941+02:00".to_string()),
+            modified: "2020-12-31T15:08:18.162530941+02:00".to_string(),
+            created: "2020-12-31T14:08:18.162530941+02:00".to_string(),
+            modifier: "taylor".to_string(),
+            status: CardStatus::Todo,
+            tag: None,
+            text: None,
+            title: String::from("start unit tests"),
+            time_allotted: 0,
+        };
+        write_data_file("123", &serde_json::to_string(&initial_card).unwrap());
+
+        let test_data = Card {
+            id: "123".to_string(),
+            scheduled: Some("2020-12-31T14:08:18.162530941+02:00".to_string()),
+            modified: "2020-12-31T14:08:18.162530941+02:00".to_string(),
+            created: "2020-12-31T14:08:18.162530941+02:00".to_string(),
+            modifier: "taylor".to_string(),
+            status: CardStatus::InProgress,
+            tag: None,
+            text: None,
+            title: String::from("start unit tests"),
+            time_allotted: 0,
+        };
+        let updated_id = update_card(CardBase::Card(test_data));
+        assert_eq!(updated_id, "123".to_string());
+        let updated_data = read_data_file("123").unwrap();
+        let card: Card = serde_json::from_str(&updated_data).unwrap();
+        assert_eq!(card.status, CardStatus::InProgress);
+        assert_eq!(card.modifier, "taylor".to_string());
+        assert_eq!(
+            card.modified,
+            "2020-12-31T14:08:18.162530941+02:00".to_string()
+        );
     }
 }
