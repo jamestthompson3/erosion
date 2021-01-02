@@ -5,6 +5,7 @@ use std::fs::DirBuilder;
 
 pub fn bootstrap() {
     let data_dir = get_data_dir();
+    println!("{:?}", data_dir);
     if !data_dir.exists() {
         create_initial_files();
     } else {
@@ -42,6 +43,6 @@ pub fn create_initial_files() {
         now,
         get_user()
     );
-    write_data_file("state", &state_data.to_string());
-    write_data_file("settings", &initial_config.to_string());
+    write_data_file("state", &state_data.to_string()).unwrap();
+    write_data_file("settings", &initial_config.to_string()).unwrap();
 }

@@ -1,6 +1,6 @@
 use crate::data_structures::{Card, CardBase, CardStatus};
 use crate::envrionment::get_user;
-use crate::filesystem::write_data_file;
+use crate::filesystem::{delete_data_file, write_data_file};
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -32,7 +32,7 @@ pub fn create_card(data: CardFragment) -> Card {
         "scheduled": data.scheduled,
         "time_allotted": data.time_allotted
     });
-    write_data_file(&uuid.to_string(), &card.to_string());
+    write_data_file(&uuid.to_string(), &card.to_string()).unwrap();
     let c: Card = serde_json::from_value(card).unwrap();
     c
 }
@@ -40,14 +40,18 @@ pub fn create_card(data: CardFragment) -> Card {
 pub fn update_card(data: CardBase) -> String {
     match data {
         CardBase::Settings(settings) => {
-            write_data_file("settings", &serde_json::to_string(&settings).unwrap());
+            write_data_file("settings", &serde_json::to_string(&settings).unwrap()).unwrap();
             return settings.id;
         }
         CardBase::Card(card) => {
-            write_data_file(&card.id, &serde_json::to_string(&card).unwrap());
+            write_data_file(&card.id, &serde_json::to_string(&card).unwrap()).unwrap();
             return card.id;
         }
     }
+}
+
+pub fn delete_card(id: &str) {
+    delete_data_file(id).unwrap();
 }
 
 #[cfg(test)]
@@ -88,7 +92,7 @@ mod tests {
             title: String::from("start unit tests"),
             time_allotted: 0,
         };
-        write_data_file("123", &serde_json::to_string(&initial_card).unwrap());
+        write_data_file("123", &serde_json::to_string(&initial_card).unwrap()).unwrap();
 
         let test_data = Card {
             id: "123".to_string(),
