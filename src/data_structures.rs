@@ -57,14 +57,3 @@ pub enum CardBase {
     Settings(Settings),
     Card(Card),
 }
-
-// impl Index<&'_ str> for Settings {
-//     type Output = str;
-//     fn index(&self, s: &str) -> &str {
-//         match s {
-//             "title" => &self.title,
-//             "user" => &self.user,
-//             _ => panic!("unknown field: {}", s),
-//         }
-//     }
-// }
