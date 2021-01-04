@@ -1,0 +1,10 @@
+{
+  "name": "erosion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Taylor Thompson <jamestthompson3@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "tauri": "^0.13.0"
+  }
+}

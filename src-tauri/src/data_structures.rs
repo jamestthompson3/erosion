@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use crate::projects::Project;
 use std::ops::Index;
 
 macro_rules! extends_base {
@@ -57,3 +58,11 @@ pub enum CardBase {
     Settings(Settings),
     Card(Card),
 }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct State {
+    pub user:  String,
+    pub id: String,
+    pub version: String,
+    pub projects: Vec<Project>,
+}
+

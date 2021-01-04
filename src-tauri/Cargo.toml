@@ -1,0 +1,30 @@
+[package]
+name = "erosion"
+version = "0.1.0"
+description = "A Tauri App"
+authors = [ "Taylor Thompson <taylor@teukka.tech>" ]
+license = ""
+repository = ""
+default-run = "erosion"
+edition = "2018"
+build = "src/build.rs"
+
+[dependencies]
+tauri = { version = "0.10", features = [ "all-api" ] }
+structopt = "0.3.21"
+directories = "3.0.1"
+serde_json = "1.0.61"
+chrono = "0.4.19"
+uuid = { version = "0.8.1", features = [ "v4", "serde" ] }
+serde = { version = "1.0.118", features = [ "derive" ] }
+
+[target."cfg(windows)".build-dependencies]
+winres = "0.1"
+
+[features]
+embedded-server = [ "tauri/embedded-server" ]
+no-server = [ "tauri/no-server" ]
+
+[[bin]]
+name = "erosion"
+path = "src/main.rs"
