@@ -8,12 +8,12 @@ use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CardFragment {
-    scheduled: Option<String>,
-    status: CardStatus,
-    tag: Option<Vec<String>>,
-    text: Option<String>,
-    title: String,
-    time_allotted: u16,
+    pub scheduled: Option<String>,
+    pub status: CardStatus,
+    pub tag: Option<Vec<String>>,
+    pub text: Option<String>,
+    pub title: String,
+    pub time_allotted: u16,
 }
 
 pub fn create_card(data: CardFragment) -> Card {

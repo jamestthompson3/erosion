@@ -4,7 +4,7 @@ use std::ops::Index;
 
 macro_rules! extends_base {
     (struct $name:ident { $( $field:ident: $ty:ty ),* $(,)* }) => {
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
   pub struct $name {
     pub id: String,
     pub created: String,
@@ -30,7 +30,7 @@ impl Index<&'_ str> for $name {
  };
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum CardStatus {
     Done,
     InProgress,
@@ -65,4 +65,3 @@ pub struct State {
     pub version: String,
     pub projects: Vec<Project>,
 }
-

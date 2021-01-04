@@ -16,9 +16,8 @@ mod events;
 fn main() {
   bootstrap::bootstrap();
   tauri::AppBuilder::new()
-    .invoke_handler(|webview, _| {
+    .setup(|webview, _| {
         events::register_listeners(webview.as_mut());
-        Ok(())
     })
     .build()
     .run();
