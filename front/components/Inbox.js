@@ -1,9 +1,12 @@
+import Card from "./Card.js";
+
 class Inbox {
   constructor(inbox, parent) {
     this.inbox = inbox;
     this.parent = parent;
     this.createContainer();
     this.createTitle();
+    this.createCards();
   }
   createContainer() {
     const container = document.createElement("div");
@@ -16,6 +19,12 @@ class Inbox {
     title.classList.add("inbox", "title");
     title.innerText = this.inbox.name;
     this.container.appendChild(title);
+  }
+  createCards() {
+    const cards = this.inbox.cards;
+    cards.forEach(card => {
+      new Card(card, this.container);
+    });
   }
 }
 

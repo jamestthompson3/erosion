@@ -4,7 +4,7 @@ class Project {
   constructor(project) {
     this.project = project;
     this.createContainer();
-    this.addTitle();
+    this.createTitle();
     this.createInboxes();
   }
   createContainer() {
@@ -13,7 +13,7 @@ class Project {
     container.classList.add("project", "container");
     document.body.appendChild(container);
   }
-  addTitle() {
+  createTitle() {
     const title = document.createElement("h1");
     title.innerText = this.project.name;
     title.classList.add("project", "title");

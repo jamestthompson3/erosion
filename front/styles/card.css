@@ -1,0 +1,14 @@
+.card.container {
+  padding: calc(var(--padding) / 2);
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--light1);
+}
+.card.status {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 1rem;
+}
+[data-status="Done"] {
+  text-decoration: line-through;
+}
