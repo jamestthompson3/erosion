@@ -58,7 +58,7 @@ pub enum CardBase {
     Settings(Settings),
     Card(Card),
 }
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct State {
     pub user:  String,
     pub id: String,

@@ -1,3 +1,5 @@
+import { global, messages } from "../m.js";
+
 class Card {
   constructor(card, parent) {
     console.log(card);
@@ -45,6 +47,29 @@ class Card {
     const cardStatus = document.createElement("input");
     cardStatus.type = "checkbox";
     cardStatus.classList.add("card", "status");
+    cardStatus.addEventListener("change", () => {
+      switch (this.card.status) {
+        case "Done":
+          cardStatus.checked = false;
+          global.emit(messages.UpdateCard, { ...this.card, status: "Todo" });
+          break;
+        case "Todo":
+          cardStatus.checked = false;
+          cardStatus.indeterminate = true;
+          global.emit(messages.UpdateCard, {
+            ...this.card,
+            status: "InProgress"
+          });
+          break;
+        case "InProgress":
+          cardStatus.indeterminate = false;
+          cardStatus.checked = true;
+          global.emit(messages.UpdateCard, { ...this.card, status: "Done" });
+          break;
+        default:
+          break;
+      }
+    });
     switch (this.card.status) {
       case "Done":
         cardStatus.checked = true;

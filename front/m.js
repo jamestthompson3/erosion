@@ -30,7 +30,8 @@ export function emitter() {
 }
 
 export const messages = {
-  WorkspaceInit: "WorkspaceInit"
+  WorkspaceInit: "WorkspaceInit",
+  UpdateCard: "UpdateCard"
 };
 
 // TODO later maybe refactor out tauri vs REST API
@@ -44,7 +45,9 @@ export function globalEmitter() {
       });
     },
     emit(e, ...args) {
-      event.emit(e, ...args);
+      event.emit(e, JSON.stringify(...args));
     }
   };
 }
+
+export const global = globalEmitter();

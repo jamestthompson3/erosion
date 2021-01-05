@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::filesystem::write_data_file;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Project {
     pub id: String,
     pub name: String,
