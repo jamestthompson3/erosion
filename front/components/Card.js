@@ -1,8 +1,7 @@
-import { global, messages } from "../m.js";
+import { global, messages, appContext } from "../messages.js";
 
 class Card {
   constructor(card, parent) {
-    console.log(card);
     this.card = card;
     this.parent = parent;
     this.createContainer();
@@ -43,6 +42,15 @@ class Card {
     descriptionContainer.appendChild(text);
     this.container.appendChild(descriptionContainer);
   }
+  updateField(updatedData) {
+    const keyedCard = appContext.get("keyed")[this.card.id];
+    const { inbox, project } = keyedCard;
+    global.emit(messages.UpdateCard, {
+      inbox,
+      project,
+      card: Object.assign(this.card, updatedData)
+    });
+  }
   createStatus() {
     const cardStatus = document.createElement("input");
     cardStatus.type = "checkbox";
@@ -51,20 +59,17 @@ class Card {
       switch (this.card.status) {
         case "Done":
           cardStatus.checked = false;
-          global.emit(messages.UpdateCard, { ...this.card, status: "Todo" });
+          this.updateField({ status: "Todo" });
           break;
         case "Todo":
           cardStatus.checked = false;
           cardStatus.indeterminate = true;
-          global.emit(messages.UpdateCard, {
-            ...this.card,
-            status: "InProgress"
-          });
+          this.updateField({ status: "InProgress" });
           break;
         case "InProgress":
           cardStatus.indeterminate = false;
           cardStatus.checked = true;
-          global.emit(messages.UpdateCard, { ...this.card, status: "Done" });
+          this.updateField({ status: "Done" });
           break;
         default:
           break;
