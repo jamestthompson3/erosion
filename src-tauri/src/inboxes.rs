@@ -1,14 +1,20 @@
-use crate::cards::{create_card, delete_card, update_card, CardFragment};
+use crate::{cards::{create_card, delete_card, update_card, CardFragment}, data_structures::Id};
 use crate::data_structures::{Card, CardBase};
 use crate::filesystem::{read_data_file};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Inbox {
     pub id: String,
     pub name: String,
     pub cards: Vec<Card>,
+}
+
+impl Id for Inbox {
+    fn id(&self) -> String {
+        self.id.clone()
+    }
 }
 
 impl Inbox {

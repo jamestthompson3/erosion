@@ -1,13 +1,19 @@
-use crate::inboxes::Inbox;
+use crate::{data_structures::Id, inboxes::Inbox};
 use serde::{Deserialize, Serialize};
 use crate::filesystem::write_data_file;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Project {
     pub id: String,
     pub name: String,
     pub inboxes: Vec<Inbox>,
+}
+
+impl Id for Project {
+    fn id(&self) -> String {
+        self.id.clone()
+    }
 }
 
 impl Project {

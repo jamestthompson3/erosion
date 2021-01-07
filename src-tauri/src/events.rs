@@ -1,24 +1,32 @@
 use std::fmt;
 use serde::{Deserialize, Serialize};
+use crate::data_structures::{Card};
 
 use crate::{data_structures::State, filesystem::{get_data_dir, read_data_file}};
 
 pub fn register_listeners(mut handle: tauri::WebviewMut) {
-    let controller = MessageController::init(handle);
-    controller.register(&card_updater);
+    let mut controller = MessageController::init(handle);
+    let updated_state = controller.register(&card_updater);
     tauri::event::listen(Events::CreateCard.to_string(), move |data| {});
 }
 
-fn card_updater(s: State) {
+fn card_updater(s: &State) -> State {
     tauri::event::listen(Events::UpdateCard.to_string(), move |data| {
         match data {
             Some(data) => {
-                println!("{}",data);
-                println!("{:?}", s.projects);
+                let updated_card: CardEvent = serde_json::from_str(&data).unwrap();
             },
             None => {}
         }
-    })
+    });
+    s.to_owned()
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct CardEvent {
+    card: Card,
+    inbox: String,
+    project: String
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -44,8 +52,9 @@ pub struct MessageController {
 }
 
 impl MessageController {
-    pub fn register(&self, listener: &dyn Fn(State) -> ()) {
-        listener(self.state.clone());
+    pub fn register(&mut self, listener: &dyn Fn(&State) -> State) {
+        let updated_state = listener(&self.state);
+        self.state = updated_state;
     }
     pub fn init(mut handle: tauri::WebviewMut) -> MessageController {
         let mut data_dir = get_data_dir();

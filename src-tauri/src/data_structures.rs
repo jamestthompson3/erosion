@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
-use crate::projects::Project;
+use crate::{filesystem::write_data_file, projects::Project};
 use std::ops::Index;
 
 macro_rules! extends_base {
     (struct $name:ident { $( $field:ident: $ty:ty ),* $(,)* }) => {
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
   pub struct $name {
     pub id: String,
     pub created: String,
@@ -14,20 +14,29 @@ macro_rules! extends_base {
             $( pub $field: $ty ),*
         }
 
-impl Index<&'_ str> for $name {
-    type Output = str;
-    fn index(&self, s: &str) -> &str {
-      let field = || -> Result<&str, ()> {
-        Ok(&self[s])
-      };
-      if let Err(_err) = field() {
-        panic!("unknown field {}", s);
-      } else {
-        return field().unwrap()
+  impl Index<&'_ str> for $name {
+      type Output = str;
+      fn index(&self, s: &str) -> &str {
+        let field = || -> Result<&str, ()> {
+          Ok(&self[s])
+        };
+        if let Err(_err) = field() {
+          panic!("unknown field {}", s);
+        } else {
+          return field().unwrap()
+        }
       }
     }
+  impl Id for $name {
+      fn id(&self) -> String {
+          self.id.clone()
+      }
   }
  };
+}
+
+pub trait Id {
+    fn id(&self) -> String;
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -58,10 +67,18 @@ pub enum CardBase {
     Settings(Settings),
     Card(Card),
 }
+// TODO Write data to disk from here??
+// how to update deeply nested data
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct State {
     pub user:  String,
     pub id: String,
     pub version: String,
     pub projects: Vec<Project>,
+}
+
+impl State {
+    pub fn write(&self) {
+        write_data_file(&self.id, &serde_json::to_string(&self).unwrap()).unwrap();
+    }
 }

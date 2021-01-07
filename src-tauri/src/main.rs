@@ -2,6 +2,7 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
+#![allow(dead_code)]
 
 mod bootstrap;
 mod cards;
@@ -12,6 +13,7 @@ mod filesystem;
 mod inboxes;
 mod projects;
 mod events;
+mod lenses;
 
 fn main() {
   bootstrap::bootstrap();

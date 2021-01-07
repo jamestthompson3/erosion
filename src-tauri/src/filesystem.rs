@@ -70,6 +70,7 @@ mod tests {
     // }
     #[test]
     fn writes_data() {
+        bootstrap();
         write_data_file("test", r#"{{"test": 123 }}"#).unwrap();
         let mut data_dir = get_data_dir();
         assert_eq!(data_dir.exists(), true);
