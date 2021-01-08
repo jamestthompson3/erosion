@@ -1,3 +1,5 @@
+use std::env::var;
+
 use crate::{
     cards::CardFragment,
     data_structures::{Card, Id, State},
@@ -7,12 +9,11 @@ use crate::{
 };
 
 ///FP helpers
-///
-fn find_in<T: Id + Clone>(collection: &Vec<T>, predicate: String) -> T {
+fn find_in<T: Id + Clone>(collection: &Vec<T>, predicate: String) -> Option<T> {
     let searched = collection.iter().find(|item| item.id() == predicate);
     match searched {
-        Some(result) => result.clone(),
-        None => panic!(format!("Cannot find result with predicate: {}", predicate)),
+        Some(result) => Some(result.clone()),
+        None => None,
     }
 }
 
@@ -31,20 +32,47 @@ fn map_replace<T: Clone + Id>(collection: &Vec<T>, updated: &T) -> Vec<T> {
 
 fn find_project(state: &State, project: String) -> Option<Project> {
     ProjectLens::fold(state, &|projects| {
-        Some(find_in(projects.unwrap(), project.to_owned()))
+        find_in(projects.unwrap(), project.to_owned())
     })
 }
 
 fn find_inbox(project: &Project, inbox: String) -> Option<Inbox> {
-    InboxLens::fold(&project, &|ibox| {
-        Some(find_in(ibox.unwrap(), inbox.to_owned()))
-    })
+    InboxLens::fold(&project, &|ibox| find_in(ibox.unwrap(), inbox.to_owned()))
 }
 
-fn find_card(inbox: &Inbox, card: Card) -> Option<Card> {
-    CardLens::fold(&inbox, &|cards| {
-        Some(find_in(cards.unwrap(), card.id.clone()))
-    })
+fn find_card(inbox: &Inbox, card: String) -> Option<Card> {
+    CardLens::fold(&inbox, &|cards| find_in(cards.unwrap(), card.to_owned()))
+}
+
+fn update_state_projects(state: &State, project: &Project) -> State {
+    ProjectLens::set(
+        map_replace(ProjectLens::get(state).unwrap(), project),
+        state,
+    )
+}
+
+fn update_project_inboxes(project: &Project, inbox: &Inbox) -> Project {
+    InboxLens::set(
+        map_replace(InboxLens::get(project).unwrap(), inbox),
+        project,
+    )
+}
+
+fn update_inbox_cards(inbox: &Inbox, card: &Card) -> Inbox {
+    CardLens::set(map_replace(CardLens::get(inbox).unwrap(), card), inbox)
+}
+
+fn save_state_to_disk(updated: &State) {
+    // to prevent flaky tests
+    match var("EROSION_ENV") {
+        Ok(env) => {
+            if env == "test" {
+                return;
+            }
+        }
+        Err(_) => {}
+    }
+    write_data_file("state", &serde_json::to_string(updated).unwrap()).unwrap();
 }
 
 #[macro_export]
@@ -150,22 +178,12 @@ impl Lens<Inbox, Vec<Card>> for CardLens {
 pub fn update_card(state: &State, project: String, inbox: String, card: Card) -> State {
     let found_project = find_project(state, project).unwrap();
     let found_inbox = find_inbox(&found_project, inbox).unwrap();
-    let found_card = find_card(&found_inbox, card).unwrap();
 
     // Now we use the lenses to rebuild the updated state
-    let updated_inbox = CardLens::set(
-        map_replace(CardLens::get(&found_inbox).unwrap(), &found_card),
-        &found_inbox,
-    );
-    let updated_project = InboxLens::set(
-        map_replace(InboxLens::get(&found_project).unwrap(), &updated_inbox),
-        &found_project,
-    );
-    let updated_state = ProjectLens::set(
-        map_replace(ProjectLens::get(&state).unwrap(), &updated_project),
-        state,
-    );
-    write_data_file("state", &serde_json::to_string(&updated_state).unwrap()).unwrap();
+    let updated_inbox = update_inbox_cards(&found_inbox, &card);
+    let updated_project = update_project_inboxes(&found_project, &updated_inbox);
+    let updated_state = update_state_projects(&state, &updated_project);
+    save_state_to_disk(&updated_state);
     updated_state
 }
 
@@ -185,15 +203,24 @@ pub fn create_card(state: &State, project: String, inbox: String, data: CardFrag
             }
         }
     });
-    let updated_project = InboxLens::set(
-        map_replace(InboxLens::get(&found_project).unwrap(), &updated_inbox),
-        &found_project,
-    );
-    let updated_state = ProjectLens::set(
-        map_replace(ProjectLens::get(state).unwrap(), &updated_project),
-        state,
-    );
-    write_data_file("state", &serde_json::to_string(&updated_state).unwrap()).unwrap();
+    let updated_project = update_project_inboxes(&found_project, &updated_inbox);
+    let updated_state = update_state_projects(state, &updated_project);
+    save_state_to_disk(&updated_state);
+    updated_state
+}
+
+pub fn delete_card(state: &State, project: String, inbox: String, card_id: String) -> State {
+    let found_project = find_project(state, project).unwrap();
+    let mut found_inbox = find_inbox(&found_project, inbox).unwrap();
+    found_inbox.cards = found_inbox
+        .cards
+        .iter()
+        .filter(|c| c.id != card_id)
+        .map(|x| x.clone())
+        .collect();
+    let updated_project = update_project_inboxes(&found_project, &found_inbox);
+    let updated_state = update_state_projects(state, &updated_project);
+    save_state_to_disk(&updated_state);
     updated_state
 }
 
@@ -202,26 +229,68 @@ pub fn create_inbox(state: &State, project: String, name: &str) -> State {
     let mut found_project = find_project(state, project).unwrap();
     let new_inbox = Inbox::create(name);
     found_project.inboxes.push(new_inbox);
-    let updated_state = ProjectLens::set(
-        map_replace(ProjectLens::get(state).unwrap(), &found_project),
-        state,
-    );
-    write_data_file("state", &serde_json::to_string(&updated_state).unwrap()).unwrap();
+    let updated_state = update_state_projects(state, &found_project);
+    save_state_to_disk(&updated_state);
     updated_state
+}
+
+pub fn update_inbox(state: &State, project: String, inbox: Inbox) -> State {
+    let found_project = find_project(state, project).unwrap();
+    let updated_project = update_project_inboxes(&found_project, &inbox);
+    let updated_state = update_state_projects(state, &updated_project);
+    save_state_to_disk(&updated_state);
+    updated_state
+}
+
+pub fn delete_inbox(state: &State, project: String, inbox_id: String) -> State {
+    let mut found_project = find_project(state, project).unwrap();
+    found_project.inboxes = found_project
+        .inboxes
+        .iter()
+        .filter(|ibox| ibox.id != inbox_id)
+        .map(|x| x.clone())
+        .collect();
+    let updated_state = update_state_projects(state, &found_project);
+    save_state_to_disk(&updated_state);
+    updated_state
+}
+
+// Projects
+pub fn create_project(state: &State, project_name: &str) -> State {
+    let mut new_state = state.clone();
+    new_state.projects.push(Project::create(project_name));
+    save_state_to_disk(&new_state);
+    new_state
+}
+
+pub fn update_project(state: &State, project: Project) -> State {
+    let updated_state = update_state_projects(state, &project);
+    save_state_to_disk(&updated_state);
+    updated_state
+}
+
+pub fn delete_project(state: &State, project_id: String) -> State {
+    let mut new_state = state.clone();
+    new_state.projects = new_state
+        .projects
+        .iter()
+        .filter(|x| x.id != project_id)
+        .map(|x| x.to_owned())
+        .collect();
+    save_state_to_disk(&new_state);
+    new_state
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        bootstrap::bootstrap, cards::CardFragment, data_structures::CardStatus,
-        filesystem::read_data_file,
-    };
+    use crate::{bootstrap::bootstrap_tests, cards::CardFragment, data_structures::CardStatus};
 
     use super::*;
     #[test]
     fn lenses_get() {
         let mut test_proj = Project::create("test");
-        let mut testbx = test_proj.create_inbox("test1");
+        let mut testbx = Inbox::create("test1");
+        test_proj.inboxes.push(testbx.clone());
         let boxes = InboxLens::get(&test_proj);
         assert_eq!(boxes, Some(&vec!(testbx.clone())));
         let card = Card::create(CardFragment {
@@ -239,7 +308,7 @@ mod tests {
     #[test]
     fn lenses_over() {
         let mut test_proj = Project::create("test");
-        let _testbx = test_proj.create_inbox("test1");
+        test_proj.inboxes.push(Inbox::create("testing again"));
         let cap_name = InboxLens::over(&test_proj, &|b: Option<&Vec<Inbox>>| match b {
             Some(boxes) => {
                 return boxes
@@ -257,8 +326,7 @@ mod tests {
     }
     #[test]
     fn lenses_fold() {
-        let mut test_proj = Project::create("test");
-        let mut testbx = test_proj.create_inbox("test1");
+        let mut testbx = Inbox::create("test1");
 
         let card = Card::create(CardFragment {
             scheduled: None,
@@ -276,9 +344,8 @@ mod tests {
         assert_eq!(folded_card, Some(card));
     }
     #[test]
-    fn updaters() {
-        bootstrap();
-        let state: State = serde_json::from_str(&read_data_file("state").unwrap()).unwrap();
+    fn lenses_create_card() {
+        let state = bootstrap_tests().unwrap();
         let test_proj = ProjectLens::get(&state).unwrap().first().unwrap();
         let test_inbox = InboxLens::get(test_proj).unwrap().first().unwrap();
         let card_frag = CardFragment {
@@ -296,7 +363,7 @@ mod tests {
             card_frag,
         );
         assert_ne!(state, updated_state);
-        let new_cards = InboxLens::get(ProjectLens::get(&state).unwrap().first().unwrap())
+        let new_cards = InboxLens::get(ProjectLens::get(&updated_state).unwrap().first().unwrap())
             .unwrap()
             .first()
             .unwrap();
@@ -307,5 +374,109 @@ mod tests {
             .unwrap();
         assert_eq!(found_card.text, Some(String::from("cool test text")));
         assert_eq!(found_card.title, String::from("Title card"));
+    }
+    #[test]
+    fn lenses_update_card() {
+        let state = bootstrap_tests().unwrap();
+        let test_proj = ProjectLens::get(&state).unwrap().first().unwrap();
+        let test_inbox = InboxLens::get(test_proj).unwrap().first().unwrap();
+        let mut found_card = test_inbox.cards.first().unwrap().to_owned();
+        found_card.title = String::from("mutated title");
+        let updated_state = update_card(
+            &state,
+            test_proj.id.to_owned(),
+            test_inbox.id.to_owned(),
+            found_card.clone(),
+        );
+        let updated_card = find_card(
+            &find_inbox(
+                &find_project(&updated_state, test_proj.id.to_owned()).unwrap(),
+                test_inbox.id.to_owned(),
+            )
+            .unwrap(),
+            found_card.id.to_owned(),
+        )
+        .unwrap();
+        assert_eq!(updated_card.title, String::from("mutated title"));
+        assert_ne!(updated_card, test_inbox.cards.first().unwrap().clone());
+    }
+    #[test]
+    fn lenses_delete_card() {
+        let state = bootstrap_tests().unwrap();
+        let project = state.projects.first().unwrap();
+        let inbox = project.inboxes.first().unwrap();
+        let card = inbox.cards.first().unwrap();
+        let updated_state = delete_card(
+            &state,
+            project.id.clone(),
+            inbox.id.clone(),
+            card.id.clone(),
+        );
+        let new_card = find_card(
+            &find_inbox(
+                &find_project(&updated_state, project.id.to_owned()).unwrap(),
+                inbox.id.to_owned(),
+            )
+            .unwrap(),
+            card.id.to_owned(),
+        );
+        assert_eq!(new_card, None);
+    }
+    #[test]
+    fn lenses_create_inbox() {
+        let state = bootstrap_tests().unwrap();
+        let test_proj = ProjectLens::get(&state).unwrap().first().unwrap();
+        let updated_state = create_inbox(&state, test_proj.id.to_owned(), "cool");
+        let updated_proj = find_project(&updated_state, test_proj.id.to_owned()).unwrap();
+        assert_ne!(updated_state, state);
+        assert_eq!(updated_proj.inboxes.len(), 2);
+    }
+    #[test]
+    fn lenses_update_inbox() {
+        let state = bootstrap_tests().unwrap();
+        let test_proj = ProjectLens::get(&state).unwrap().first().unwrap();
+        let mut test_inbox = test_proj.inboxes.first().unwrap().to_owned();
+        test_inbox.name = String::from("changed");
+        let updated_state = update_inbox(&state, test_proj.id.to_owned(), test_inbox);
+        let updated_proj = find_project(&updated_state, test_proj.id.to_owned()).unwrap();
+        assert_ne!(updated_state, state);
+        assert_eq!(
+            updated_proj.inboxes.first().unwrap().name,
+            String::from("changed")
+        );
+    }
+    #[test]
+    fn lenses_delete_inbox() {
+        let state = bootstrap_tests().unwrap();
+        let proj = ProjectLens::get(&state).unwrap().first().unwrap();
+        let inbox = proj.inboxes.first().unwrap();
+        let updated_state = delete_inbox(&state, proj.id.clone(), inbox.id.clone());
+        assert_ne!(updated_state, state);
+        let updated_proj = find_project(&updated_state, proj.id.to_owned()).unwrap();
+        assert_eq!(updated_proj.inboxes.len(), 0);
+    }
+    #[test]
+    fn lenses_create_project() {
+        let state = bootstrap_tests().unwrap();
+        let updated_state = create_project(&state, "test_proj");
+        assert_ne!(updated_state, state);
+        assert_eq!(updated_state.projects.len(), 2);
+    }
+    #[test]
+    fn lenses_update_project() {
+        let state = bootstrap_tests().unwrap();
+        let mut proj = state.projects.first().unwrap().to_owned();
+        proj.name = String::from("updated");
+        let updated_state = update_project(&state, proj.clone());
+        assert_ne!(updated_state, state);
+        assert_eq!(updated_state.projects.first().unwrap().to_owned(), proj);
+    }
+    #[test]
+    fn lenses_delete_project() {
+        let state = bootstrap_tests().unwrap();
+        let proj = state.projects.first().unwrap().to_owned();
+        let updated_state = delete_project(&state, proj.id);
+        assert_ne!(updated_state, state);
+        assert_eq!(updated_state.projects.len(), 0);
     }
 }

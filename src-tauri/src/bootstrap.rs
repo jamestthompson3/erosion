@@ -1,6 +1,6 @@
 use crate::{
     cards::CardFragment,
-    data_structures::{Card, CardStatus},
+    data_structures::{Card, CardStatus, State},
     envrionment::{get_user, get_version},
     filesystem::{get_data_dir, write_data_file},
     inboxes::Inbox,
@@ -28,6 +28,20 @@ pub fn create_initial_files() -> Result<(), std::io::Error> {
     create_initial_state()?;
     create_initial_settings()?;
     Ok(())
+}
+
+pub fn bootstrap_tests() -> Result<State, std::io::Error> {
+    create_initial_files()?;
+    let default_project = create_initial_project();
+    let state_data = json!({
+           "user": get_user(),
+           "id": "state",
+           "version": get_version(),
+           "projects": [default_project]
+    });
+
+    let state: State = serde_json::from_value(state_data).unwrap();
+    Ok(state)
 }
 
 fn create_initial_state() -> Result<(), std::io::Error> {
@@ -72,6 +86,6 @@ fn create_initial_project() -> Project {
         time_allotted: 5,
     });
     inbox.cards.push(initial_card);
-    project.add_inbox(inbox);
+    project.inboxes.push(inbox);
     project
 }

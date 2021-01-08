@@ -3,6 +3,10 @@ use crate::filesystem::read_data_file;
 use std::env::var;
 
 pub fn get_user() -> String {
+    // makes running tests a bit nicer
+    if var("EROSION_ENV") == Ok(String::from("test")) {
+        return String::from("test");
+    }
     let from_settings = read_data_file(&"settings");
     match from_settings {
         Ok(settings_str) => {

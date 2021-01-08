@@ -1,7 +1,9 @@
 use directories::ProjectDirs;
 use std::env::var;
-use std::fs::{self};
+use std::fs;
 use structopt::StructOpt;
+
+use crate::data_structures::State;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "erosion", about = "task management engine")]
@@ -42,6 +44,12 @@ pub fn read_data_file(name: &str) -> Result<String, std::io::Error> {
     fs::read_to_string(path)
 }
 
+pub fn read_state_file() -> State {
+    let state = read_data_file("state").unwrap();
+    let deser_state: State = serde_json::from_str(&state).unwrap();
+    deser_state
+}
+
 pub fn delete_data_file(name: &str) -> Result<(), std::io::Error> {
     let path = prep_data_file(name);
     fs::remove_file(path)
@@ -56,18 +64,18 @@ pub fn delete_data_file(name: &str) -> Result<(), std::io::Error> {
 mod tests {
     use super::*;
     use crate::bootstrap::bootstrap;
-    // TODO make this less flaky
-    // #[test]
-    // fn preps_data() {
-    //     bootstrap();
-    //     let name = "test";
-    //     let prepped = prep_data_file(name);
-    //     let project_dir = ProjectDirs::from("com", "erosion app", "erosion").unwrap();
-    //     let data_dir = project_dir.data_dir();
-    //     let mut dir = data_dir.join("test");
-    //     dir.push("test.json");
-    //     assert_eq!(prepped, dir);
-    // }
+    #[test]
+    #[ignore = "make less flaky"]
+    fn preps_data() {
+        bootstrap();
+        let name = "test";
+        let prepped = prep_data_file(name);
+        let project_dir = ProjectDirs::from("com", "erosion app", "erosion").unwrap();
+        let data_dir = project_dir.data_dir();
+        let mut dir = data_dir.join("test");
+        dir.push("test.json");
+        assert_eq!(prepped, dir);
+    }
     #[test]
     fn writes_data() {
         bootstrap();
@@ -80,6 +88,7 @@ mod tests {
     #[test]
     fn reads_data() {
         bootstrap();
+        write_data_file("test", r#"{{"test": 123 }}"#).unwrap();
         let data_str = read_data_file("test").unwrap();
         assert_eq!(r#"{{"test": 123 }}"#, data_str);
     }
