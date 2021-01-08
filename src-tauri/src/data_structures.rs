@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::{filesystem::write_data_file, projects::Project};
+use serde::{Deserialize, Serialize};
 use std::ops::Index;
 
 macro_rules! extends_base {
@@ -69,9 +69,9 @@ pub enum CardBase {
 }
 // TODO Write data to disk from here??
 // how to update deeply nested data
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct State {
-    pub user:  String,
+    pub user: String,
     pub id: String,
     pub version: String,
     pub projects: Vec<Project>,
