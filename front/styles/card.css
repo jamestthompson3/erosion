@@ -3,12 +3,77 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--light1);
+  --color: transparent;
+  box-shadow: 4px 4px 0 var(--color);
 }
 .card.status {
   width: 1.25rem;
   height: 1.25rem;
   margin: 1rem;
+  position: relative;
+  display: block;
 }
 [data-status="Done"] {
   text-decoration: line-through;
+}
+.card.status label {
+  position: relative;
+  min-height: 34px;
+  display: block;
+  padding-left: 40px;
+  margin-bottom: 0;
+  font-weight: normal;
+  cursor: pointer;
+}
+.card.status label span {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.card.status label:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 4px;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.28s ease;
+  border-radius: 3px;
+  border: 2px solid var(--color);
+}
+.card.status label:after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 5px;
+  border-bottom: 2px solid var(--color);
+  border-left: 2px solid var(--color);
+  transform: rotate(-45deg) scale(0);
+  transition: transform ease 0.25s;
+  position: absolute;
+  top: 12px;
+  left: 10px;
+}
+.card.status input[type=checkbox] {
+  width: auto;
+  opacity: 1e-8;
+  position: absolute;
+  left: 0;
+  margin-left: -20px;
+}
+.card.status input[type=checkbox]:checked ~ label:before {
+  border: 2px solid var(--color);
+}
+.card.status input[type=checkbox]:checked ~ label:after {
+  transform: rotate(-45deg) scale(1);
+}
+.card.status input[type=checkbox]:indeterminate ~ label:after {
+  transform: rotate(0) scale(0.75);
+  border-left: none;
+  width: 15px;
+  border-bottom: 4px solid var(--color);
+}
+.card.status input[type=checkbox]:focus + label::before {
+  outline: 0;
 }

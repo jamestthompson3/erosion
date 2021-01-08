@@ -4,9 +4,9 @@ class Card {
   constructor(card, parent) {
     this.card = card;
     this.parent = parent;
-    this.createContainer();
-    this.createStatus();
-    this.createDescription();
+    this.color = this.createCardColor();
+    this.mount();
+    this.setDynamicProperties();
   }
   createCardColor() {
     const colors = [
@@ -20,41 +20,22 @@ class Card {
     const rand = () => ~~(Math.random() * 5) + 1;
     return colors[rand()];
   }
-  createContainer() {
+  mount() {
     const container = document.createElement("div");
-    this.container = container;
     container.classList.add("card", "container");
-    container.style.boxShadow = `4px 4px 0 ${this.createCardColor()}`;
+    container.dataset.key = this.card.id;
+    container.innerHTML = [
+      `  <div class="card status">`,
+      `   <input type="checkbox" id=${this.card.id} />`,
+      `   <label for=${this.card.id}></label>`,
+      "  </div>",
+      `  <div class="card description" data-status=${this.card.status}>`,
+      `   <h3 class="card title">${this.card.title}</h3>`,
+      `   <p class="card text">${this.card.text}</p>`,
+      "  </div>"
+    ].join("\n");
     this.parent.appendChild(container);
-  }
-  createDescription() {
-    const descriptionContainer = document.createElement("div");
-    this.descriptionContainer = descriptionContainer;
-    descriptionContainer.classList.add("card", "description");
-    descriptionContainer.dataset.status = this.card.status;
-    const title = document.createElement("h3");
-    title.innerText = this.card.title;
-    const text = document.createElement("p");
-    text.innerText = this.card.text;
-    text.classList.add("card", "text");
-    title.classList.add("card", "title");
-    descriptionContainer.appendChild(title);
-    descriptionContainer.appendChild(text);
-    this.container.appendChild(descriptionContainer);
-  }
-  updateField(updatedData) {
-    const keyedCard = appContext.get("keyed")[this.card.id];
-    const { inbox, project } = keyedCard;
-    global.emit(messages.UpdateCard, {
-      inbox,
-      project,
-      card: Object.assign(this.card, updatedData)
-    });
-  }
-  createStatus() {
-    const cardStatus = document.createElement("input");
-    cardStatus.type = "checkbox";
-    cardStatus.classList.add("card", "status");
+    const cardStatus = container.querySelector("input");
     cardStatus.addEventListener("change", () => {
       switch (this.card.status) {
         case "Done":
@@ -75,6 +56,13 @@ class Card {
           break;
       }
     });
+  }
+  setDynamicProperties() {
+    const container = this.parent.querySelector(`[data-key=${this.card.id}]`);
+    const cardStatus = container.querySelector("input");
+    const cardDescription = container.querySelector(".card.description");
+    container.style.setProperty("--color", this.color);
+    cardDescription.dataset.status = this.card.status;
     switch (this.card.status) {
       case "Done":
         cardStatus.checked = true;
@@ -88,8 +76,17 @@ class Card {
       default:
         break;
     }
-    this.container.appendChild(cardStatus);
+  }
+  updateField(updatedData) {
+    const keyedCard = appContext.get("keyed")[this.card.id];
+    const { inbox, project } = keyedCard;
+    this.card = Object.assign(this.card, updatedData);
+    global.emit(messages.UpdateCard, {
+      inbox,
+      project,
+      card: this.card
+    });
+    this.setDynamicProperties();
   }
 }
-
 export default Card;
