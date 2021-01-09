@@ -3,5 +3,40 @@
   border: 1px solid var(--light1);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.inbox.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.inbox.add-card {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
+/*****/
+
+.inbox.card-form {
+  border: 1px solid var(--light1);
+  padding: 1rem;
+}
+
+.inbox.card-form label {
+  display: none;
+}
+.inbox.card-form > .as-p {
+  min-height: 30px;
+  border: 1px solid var(--light0);
+  padding: 0.25rem;
+}
+.inbox.card-form > .as-h3 {
+  border: 1px solid var(--light0);
+  padding: 0.25rem;
+}

@@ -5,6 +5,7 @@
   border: 1px solid var(--light1);
   --color: transparent;
   box-shadow: 4px 4px 0 var(--color);
+  margin: 0.5rem 0rem;
 }
 .card.status {
   width: 1.25rem;

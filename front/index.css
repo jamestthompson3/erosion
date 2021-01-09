@@ -14,3 +14,86 @@
   margin: 0px;
   padding: 0px;
 }
+
+/*
+ * Global utility classes
+ */
+.as-h3 {
+  display: block;
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+  background: transparent;
+}
+
+.as-p {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  resize: none;
+  font-family: inherit;
+}
+
+/*
+ * Day picker styles
+ */
+.day-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.day-container > .month {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+}
+
+.month > span {
+  font-weight: bold;
+}
+
+.day-container * >  .increment-decrement {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--dark0);
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.day-modifier > .day-input {
+  width: 20%;
+  border: 1px solid var(--light1);
+  border-radius: var(--radius);
+}
+
+.day > .time-input {
+  border: 1px solid var(--light1);
+  border-radius: var(--radius);
+}
+
+.day > .day-modifier {
+  display: flex;
+  width: 40%;
+  justify-content: space-between;
+}
+
+
+.day-container > .day {
+  display: flex;
+  justify-content: space-between;
+}

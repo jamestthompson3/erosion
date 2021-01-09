@@ -24,16 +24,16 @@ class Card {
     const container = document.createElement("div");
     container.classList.add("card", "container");
     container.dataset.key = this.card.id;
-    container.innerHTML = [
-      `  <div class="card status">`,
-      `   <input type="checkbox" id=${this.card.id} />`,
-      `   <label for=${this.card.id}></label>`,
-      "  </div>",
-      `  <div class="card description" data-status=${this.card.status}>`,
-      `   <h3 class="card title">${this.card.title}</h3>`,
-      `   <p class="card text">${this.card.text}</p>`,
-      "  </div>"
-    ].join("\n");
+    container.innerHTML = `
+        <div class="card status">
+         <input type="checkbox" id=${this.card.id} />
+         <label for=${this.card.id}></label>
+        </div>
+        <div class="card description" data-status=${this.card.status}>
+         <h3 class="card title">${this.card.title}</h3>
+         <p class="card text">${this.card.text}</p>
+        </div>
+    `;
     this.parent.appendChild(container);
     const cardStatus = container.querySelector("input");
     cardStatus.addEventListener("change", () => {
@@ -80,12 +80,17 @@ class Card {
   updateField(updatedData) {
     const keyedCard = appContext.get("keyed")[this.card.id];
     const { inbox, project } = keyedCard;
-    this.card = Object.assign(this.card, updatedData);
+    const card = Object.assign({}, this.card, updatedData);
     global.emit(messages.UpdateCard, {
       inbox,
       project,
-      card: this.card
+      card
     });
+    this.update(card);
+  }
+  update(next) {
+    // merge new state onto existing one
+    Object.assign(this.card, next);
     this.setDynamicProperties();
   }
 }
