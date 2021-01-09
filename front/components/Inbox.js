@@ -34,7 +34,11 @@ class Inbox {
     // create cards
     const cards = inbox.cards;
     cards.forEach(card => {
-      new Card(card, container);
+      const cardContainer = document.createElement("div");
+      cardContainer.classList.add("card", "container");
+      cardContainer.dataset.key = card.id;
+      container.appendChild(cardContainer);
+      new Card(cardContainer, { card });
     });
   }
   addCard() {

@@ -1,12 +1,14 @@
 import { global, messages, appContext } from "../messages.js";
+import Component from "./Component.js";
 
-class Card {
-  constructor(card, parent) {
-    this.card = card;
-    this.parent = parent;
-    this.color = this.createCardColor();
-    this.mount();
-    this.setDynamicProperties();
+class Card extends Component {
+  constructor(parent, props) {
+    super(parent, props);
+    this.state = {
+      color: this.createCardColor(),
+      card: props.card
+    };
+    this.render();
   }
   createCardColor() {
     const colors = [
@@ -20,78 +22,57 @@ class Card {
     const rand = () => ~~(Math.random() * 5) + 1;
     return colors[rand()];
   }
-  mount() {
-    const container = document.createElement("div");
-    container.classList.add("card", "container");
-    container.dataset.key = this.card.id;
-    container.innerHTML = `
+  render() {
+    const { card, color } = this.state;
+    this.parent.innerHTML = `
         <div class="card status">
-         <input type="checkbox" id=${this.card.id} />
-         <label for=${this.card.id}></label>
+         <input type="checkbox" id=${card.id} ${
+      card.status === "Done" ? "checked" : ""
+    }/>
+         <label for=${card.id}></label>
         </div>
-        <div class="card description" data-status=${this.card.status}>
-         <h3 class="card title">${this.card.title}</h3>
-         <p class="card text">${this.card.text}</p>
+        <div class="card description" data-status=${card.status}>
+         <h3 class="card title">${card.title}</h3>
+         <p class="card text">${card.text}</p>
         </div>
     `;
-    this.parent.appendChild(container);
-    const cardStatus = container.querySelector("input");
-    cardStatus.addEventListener("change", () => {
-      switch (this.card.status) {
-        case "Done":
-          cardStatus.checked = false;
-          this.updateField({ status: "Todo" });
-          break;
-        case "Todo":
-          cardStatus.checked = false;
-          cardStatus.indeterminate = true;
-          this.updateField({ status: "InProgress" });
-          break;
-        case "InProgress":
-          cardStatus.indeterminate = false;
-          cardStatus.checked = true;
-          this.updateField({ status: "Done" });
-          break;
-        default:
-          break;
-      }
-    });
+    const cardStatus = this.parent.querySelector("input");
+    cardStatus.indeterminate = card.status === "InProgress";
+    this.parent.style.setProperty("--color", color);
+    cardStatus.addEventListener("change", this.updateStatus);
   }
-  setDynamicProperties() {
-    const container = this.parent.querySelector(`[data-key=${this.card.id}]`);
-    const cardStatus = container.querySelector("input");
-    const cardDescription = container.querySelector(".card.description");
-    container.style.setProperty("--color", this.color);
-    cardDescription.dataset.status = this.card.status;
-    switch (this.card.status) {
+  updateStatus = () => {
+    const {
+      card: { status }
+    } = this.state;
+    switch (status) {
       case "Done":
-        cardStatus.checked = true;
+        this.updateField({ status: "Todo" });
         break;
       case "Todo":
-        cardStatus.checked = false;
+        this.updateField({ status: "InProgress" });
         break;
       case "InProgress":
-        cardStatus.indeterminate = true;
+        this.updateField({ status: "Done" });
         break;
       default:
         break;
     }
-  }
+  };
   updateField(updatedData) {
-    const keyedCard = appContext.get("keyed")[this.card.id];
+    const { card } = this.state;
+    const keyedCard = appContext.get("keyed")[card.id];
     const { inbox, project } = keyedCard;
-    const card = Object.assign({}, this.card, updatedData);
+    const updated = Object.assign({}, card, updatedData);
     global.emit(messages.UpdateCard, {
       inbox,
       project,
-      card
+      card: updated
     });
-    this.update(card);
+    this.setState({ card: updated });
   }
-  update(next) {
-    // merge new state onto existing one
-    Object.assign(this.card, next);
-    this.setDynamicProperties();
+  update() {
+    this.render();
   }
 }
 export default Card;

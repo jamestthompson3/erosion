@@ -25,6 +25,8 @@
   margin-bottom: 0;
   font-weight: normal;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .card.status label span {
   position: absolute;
@@ -60,6 +62,8 @@
   width: auto;
   opacity: 1e-8;
   position: absolute;
+  user-select: none;
+  -webkit-user-select: none;
   left: 0;
   margin-left: -20px;
 }
