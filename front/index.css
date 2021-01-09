@@ -4,7 +4,9 @@
   --light1: hsl(0, 0%, 76%);
   --dark1: hsl(0, 0%, 39%);
   --dark0: hsl(0, 0%, 0%);
-  --accent: #00adff;
+  --accent: hsl(199, 100%, 50%);
+  --accent-hover: hsl(199, 100%, 47%);
+  --accent-darken: hsl(199, 100%, 40%);
   --bg-gradient: linear-gradient(hsl(0, 0%, 100%), hsl(0, 0%, 96%));
   --shadow: 4px 7px 0 1px hsla(0, 0%, 0%, 0.95);
   --shadow-button: 0px -1px 20px 0px hsla(0, 0%, 0%, 0.18);
@@ -91,7 +93,6 @@
   width: 40%;
   justify-content: space-between;
 }
-
 
 .day-container > .day {
   display: flex;

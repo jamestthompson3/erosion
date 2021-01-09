@@ -33,7 +33,7 @@ class Card extends Component {
         </div>
         <div class="card description" data-status=${card.status}>
          <h3 class="card title">${card.title}</h3>
-         <p class="card text">${card.text}</p>
+         <p class="card text">${card.text || ""}</p>
         </div>
     `;
     const cardStatus = this.parent.querySelector("input");
@@ -61,7 +61,7 @@ class Card extends Component {
   };
   updateField(updatedData) {
     const { card } = this.state;
-    const keyedCard = appContext.get("keyed")[card.id];
+    const keyedCard = appContext.get("cardKeyed")[card.id];
     const { inbox, project } = keyedCard;
     const updated = Object.assign({}, card, updatedData);
     global.emit(messages.UpdateCard, {
@@ -71,6 +71,7 @@ class Card extends Component {
     });
     this.setState({ card: updated });
   }
+  // think about this more...
   update() {
     this.render();
   }

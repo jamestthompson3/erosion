@@ -5,13 +5,10 @@ class DayPicker extends Component {
   constructor(parent, props) {
     super(parent, props);
     parent.update = this.update;
-    this.state = {
-      day: props.day
-    };
     this.render();
   }
   render() {
-    const { day } = this.state;
+    const { day } = this.props;
     this.parent.innerHTML = `
       <div class="month">
         <button class="increment-decrement" id="month-decrement">
@@ -64,37 +61,37 @@ class DayPicker extends Component {
   }
   // bleh... can be better
   update = next => {
-    Object.assign(this.state, next);
+    Object.assign(this.props, next);
     this.render();
   };
   decrementMonth = () => {
-    const { day } = this.state;
+    const { day } = this.props;
     const { updateDay } = this.props;
     updateDay(addMonths(day, -1));
   };
   incrementMonth = () => {
-    const { day } = this.state;
+    const { day } = this.props;
     const { updateDay } = this.props;
     updateDay(addMonths(day, 1));
   };
   decrementDay = () => {
-    const { day } = this.state;
+    const { day } = this.props;
     const { updateDay } = this.props;
     updateDay(addDays(day, -1));
   };
   incrementDay = () => {
-    const { day } = this.state;
+    const { day } = this.props;
     const { updateDay } = this.props;
     updateDay(addDays(day, 1));
   };
   updateDay = e => {
-    const { day } = this.state;
+    const { day } = this.props;
     const value = e.target.value;
     const { updateDay } = this.props;
     updateDay(new Date(day.setDate(value)));
   };
   setTime = e => {
-    const { day } = this.state;
+    const { day } = this.props;
     const time = e.target.value.split(":");
     const { updateDay } = this.props;
     updateDay(new Date(day.setHours(...time)));

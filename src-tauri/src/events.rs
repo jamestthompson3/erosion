@@ -18,24 +18,25 @@ pub fn register_listeners(mut handle: tauri::WebviewMut) {
     .unwrap();
     tauri::event::listen(Events::UpdateCard.to_string(), move |data| match data {
         Some(data) => {
-            let updated_card: CardUpdateEvent = serde_json::from_str(&data).unwrap();
+            let event_data: CardUpdateEvent = serde_json::from_str(&data).unwrap();
             update_card(
                 &read_state_file(),
-                updated_card.project,
-                updated_card.inbox,
-                updated_card.card,
+                event_data.project,
+                event_data.inbox,
+                event_data.card,
             );
         }
         None => {}
     });
     tauri::event::listen(Events::CreateCard.to_string(), |data| match data {
         Some(data) => {
-            let new_card: CardCreateEvent = serde_json::from_str(&data).unwrap();
+            let event_data: CardCreateEvent = serde_json::from_str(&data).unwrap();
+            println!("{}", serde_json::to_string_pretty(&event_data).unwrap());
             create_card(
                 &read_state_file(),
-                new_card.project,
-                new_card.inbox,
-                new_card.card,
+                event_data.project,
+                event_data.inbox,
+                event_data.card,
             );
         }
         None => {}

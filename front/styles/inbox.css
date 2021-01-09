@@ -27,10 +27,39 @@
   border: 1px solid var(--light1);
   padding: 1rem;
 }
+.inbox.card-form.metadata {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border: none;
+}
 
 .inbox.card-form label {
   display: none;
 }
+
+.card-form.tags-time label {
+  display: block;
+}
+
+.inbox.card-form.tags-time.time-input {
+  width: 2rem;
+}
+.inbox.card-form.tags-time.time-input:invalid {
+  border: 2px solid red;
+}
+.card-form.save-button {
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  width: 80px;
+  height: 3.25rem;
+}
+.card-form.save-button:hover {
+  background: var(--accent-hover);
+}
+
+
 .inbox.card-form > .as-p {
   min-height: 30px;
   border: 1px solid var(--light0);
