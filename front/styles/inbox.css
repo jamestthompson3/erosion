@@ -54,6 +54,7 @@
   border: none;
   width: 80px;
   height: 3.25rem;
+  box-shadow: 3px 3px 0 1px var(--accent-darken);
 }
 .card-form.save-button:hover {
   background: var(--accent-hover);

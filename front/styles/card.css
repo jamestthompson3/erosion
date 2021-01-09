@@ -10,7 +10,8 @@
 .card.status {
   width: 1.25rem;
   height: 1.25rem;
-  margin: 1rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
   position: relative;
   display: block;
 }
@@ -18,7 +19,6 @@
   text-decoration: line-through;
 }
 .card.status label {
-  position: relative;
   min-height: 34px;
   display: block;
   padding-left: 40px;

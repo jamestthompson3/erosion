@@ -7,7 +7,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-pub fn register_listeners(mut handle: tauri::WebviewMut) {
+pub fn register_init(mut handle: tauri::WebviewMut) {
     let mut data_dir = get_data_dir();
     data_dir.push("state.json");
     tauri::event::emit(
@@ -16,28 +16,45 @@ pub fn register_listeners(mut handle: tauri::WebviewMut) {
         Some(data_dir.to_str()),
     )
     .unwrap();
+}
+pub fn register_card_update(mut handle: tauri::WebviewMut) {
     tauri::event::listen(Events::UpdateCard.to_string(), move |data| match data {
         Some(data) => {
             let event_data: CardUpdateEvent = serde_json::from_str(&data).unwrap();
-            update_card(
+            let updated_state = update_card(
                 &read_state_file(),
                 event_data.project,
                 event_data.inbox,
                 event_data.card,
             );
+            tauri::event::emit(
+                &mut handle,
+                Events::StateUpdated.to_string(),
+                Some(serde_json::to_string(&updated_state).unwrap()),
+            )
+            .unwrap();
         }
         None => {}
     });
-    tauri::event::listen(Events::CreateCard.to_string(), |data| match data {
+}
+pub fn register_card_create(mut handle: tauri::WebviewMut) {
+    tauri::event::listen(Events::CreateCard.to_string(), move |data| match data {
         Some(data) => {
             let event_data: CardCreateEvent = serde_json::from_str(&data).unwrap();
             println!("{}", serde_json::to_string_pretty(&event_data).unwrap());
-            create_card(
+            let updated_state = create_card(
                 &read_state_file(),
                 event_data.project,
                 event_data.inbox,
                 event_data.card,
             );
+
+            tauri::event::emit(
+                &mut handle,
+                Events::StateUpdated.to_string(),
+                Some(serde_json::to_string(&updated_state).unwrap()),
+            )
+            .unwrap();
         }
         None => {}
     });
@@ -71,6 +88,7 @@ pub enum Events {
     DeleteCard,
     UpdateCard,
     MoveCard,
+    StateUpdated,
     CreateInbox,
     DeleteInbox,
 }

@@ -1,31 +1,13 @@
 import { global, messages, appContext } from "../messages.js";
-import Component from "./Component.js";
 
-class Card extends Component {
+class Card {
   constructor(parent, props) {
-    super(parent, props);
-    this.state = {
-      color: this.createCardColor(),
-      card: props.card
-    };
-    this.render();
-  }
-  createCardColor() {
-    const colors = [
-      "rgb(193, 0, 255)",
-      "rgb(0, 0, 255)",
-      "rgb(255, 0, 0)",
-      "rgb(0, 255, 0)",
-      "rgb(255, 210,98)",
-      "rgb(255, 98, 220)"
-    ];
-    const rand = () => ~~(Math.random() * 5) + 1;
-    return colors[rand()];
-  }
-  render() {
-    const { card, color } = this.state;
-    this.parent.innerHTML = `
-        <div class="card status">
+    this.color = this.createCardColor();
+    this.state = { ...props };
+    this.parent = parent;
+    const { card } = this.state;
+    parent.innerHTML = `
+        <div title=${card.status} class="card status">
          <input type="checkbox" id=${card.id} ${
       card.status === "Done" ? "checked" : ""
     }/>
@@ -38,8 +20,20 @@ class Card extends Component {
     `;
     const cardStatus = this.parent.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";
-    this.parent.style.setProperty("--color", color);
+    this.parent.style.setProperty("--color", this.color);
     cardStatus.addEventListener("change", this.updateStatus);
+  }
+  createCardColor() {
+    const colors = [
+      "rgb(193, 0, 255)",
+      "rgb(0, 0, 255)",
+      "rgb(255, 0, 0)",
+      "rgb(0, 255, 0)",
+      "rgb(255, 210,98)",
+      "rgb(255, 98, 220)"
+    ];
+    const rand = () => ~~(Math.random() * 5) + 1;
+    return colors[rand()];
   }
   updateStatus = () => {
     const {
@@ -69,11 +63,25 @@ class Card extends Component {
       project,
       card: updated
     });
-    this.setState({ card: updated });
+    this.update({ card: updated });
   }
-  // think about this more...
-  update() {
-    this.render();
+  update(next) {
+    // think about this more...
+    Object.assign(this.state, next);
+    const { card } = this.state;
+    // adjust dynamic data
+    // get selectors
+    const cardStatus = this.parent.querySelector("input");
+    const cardTitle = this.parent.querySelector(".card.title");
+    const cardText = this.parent.querySelector(".card.text");
+    const cardDescription = this.parent.querySelector(".card.description");
+    const cardStatusContainer = this.parent.querySelector(".card.status");
+    cardStatusContainer.title = card.title;
+    cardStatus.checked = card.status === "Done";
+    cardStatus.indeterminate = card.status === "InProgress";
+    cardDescription.dataset.status = card.status;
+    cardTitle.innerText = card.title;
+    cardText.innerText = card.text;
   }
 }
 export default Card;

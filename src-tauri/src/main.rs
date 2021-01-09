@@ -1,6 +1,6 @@
 #![cfg_attr(
-  all(not(debug_assertions), target_os = "windows"),
-  windows_subsystem = "windows"
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
 )]
 #![allow(dead_code)]
 
@@ -9,18 +9,20 @@ mod cards;
 mod cmd;
 mod data_structures;
 mod envrionment;
+mod events;
 mod filesystem;
 mod inboxes;
-mod projects;
-mod events;
 mod lenses;
+mod projects;
 
 fn main() {
-  bootstrap::bootstrap();
-  tauri::AppBuilder::new()
-    .setup(|webview, _| {
-        events::register_listeners(webview.as_mut());
-    })
-    .build()
-    .run();
+    bootstrap::bootstrap();
+    tauri::AppBuilder::new()
+        .setup(|webview, _| {
+            events::register_init(webview.as_mut());
+            events::register_card_create(webview.as_mut());
+            events::register_card_create(webview.as_mut());
+        })
+        .build()
+        .run();
 }

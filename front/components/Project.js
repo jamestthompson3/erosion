@@ -22,7 +22,11 @@ class Project {
   createInboxes() {
     const inboxes = this.project.inboxes;
     inboxes.forEach(inbox => {
-      new Inbox(inbox, this.container);
+      const inboxContainer = document.createElement("div");
+      inboxContainer.classList.add("inbox", "container");
+      inboxContainer.dataset.key = inbox.id;
+      this.container.appendChild(inboxContainer);
+      new Inbox(inboxContainer, inbox);
     });
   }
 }
