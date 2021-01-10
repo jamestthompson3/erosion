@@ -1,4 +1,4 @@
-import { addDays, addMonths } from "../utils/time.js";
+import { addDays, addMonths, formatTimeString } from "../utils/time.js";
 import Component from "./Component.js";
 
 class DayPicker extends Component {
@@ -40,7 +40,11 @@ class DayPicker extends Component {
       <input
         type="time"
         class="time-input"
-        value=${String.prototype.concat(day.getHours(), ":", day.getMinutes())}
+        value=${String.prototype.concat(
+          formatTimeString(day.getHours()),
+          ":",
+          formatTimeString(day.getMinutes())
+        )}
       />
     </div>
   </div>

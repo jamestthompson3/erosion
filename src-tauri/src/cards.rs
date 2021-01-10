@@ -29,6 +29,7 @@ impl Card {
             text: data.text,
             title: data.title,
             scheduled: data.scheduled,
+            completed: None,
             time_allotted: data.time_allotted,
         }
     }

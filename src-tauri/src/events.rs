@@ -2,7 +2,7 @@ use crate::{
     cards::CardFragment,
     data_structures::Card,
     filesystem::{get_data_dir, read_state_file},
-    lenses::{create_card, update_card},
+    lenses::{create_card, delete_card, update_card},
 };
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -17,17 +17,16 @@ pub fn register_init(mut handle: tauri::WebviewMut) {
     )
     .unwrap();
 }
-pub fn register_card_update(mut handle: tauri::WebviewMut) {
+pub fn register_card_update() {
     tauri::event::listen(Events::UpdateCard.to_string(), move |data| match data {
         Some(data) => {
             let event_data: CardUpdateEvent = serde_json::from_str(&data).unwrap();
-            let updated_state = update_card(
+            update_card(
                 &read_state_file(),
                 event_data.project,
                 event_data.inbox,
                 event_data.card,
             );
-            serde_json::to_string_pretty(&updated_state).unwrap();
         }
         None => {}
     });
@@ -36,7 +35,6 @@ pub fn register_card_create(mut handle: tauri::WebviewMut) {
     tauri::event::listen(Events::CreateCard.to_string(), move |data| match data {
         Some(data) => {
             let event_data: CardCreateEvent = serde_json::from_str(&data).unwrap();
-            println!("{}", serde_json::to_string_pretty(&event_data).unwrap());
             let updated_state = create_card(
                 &read_state_file(),
                 event_data.project,
@@ -50,6 +48,20 @@ pub fn register_card_create(mut handle: tauri::WebviewMut) {
                 Some(serde_json::to_string(&updated_state).unwrap()),
             )
             .unwrap();
+        }
+        None => {}
+    });
+}
+pub fn register_card_delete() {
+    tauri::event::listen(Events::DeleteCard.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: CardDeleteEvent = serde_json::from_str(&data).unwrap();
+            delete_card(
+                &read_state_file(),
+                event_data.project,
+                event_data.inbox,
+                event_data.card,
+            );
         }
         None => {}
     });
@@ -71,9 +83,9 @@ pub struct CardCreateEvent {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CardDeleteEvent {
-    card_id: String,
-    inbox: String,
     project: String,
+    inbox: String,
+    card: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]

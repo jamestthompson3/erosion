@@ -33,10 +33,12 @@ export const messages = {
   WorkspaceInit: "WorkspaceInit",
   WorkspaceReady: "WorkspaceReady",
   UpdateCard: "UpdateCard",
-  CreateCard: "CreateCard"
+  CreateCard: "CreateCard",
+  StateUpdated: "StateUpdated",
+  DeleteCard: "DeleteCard"
 };
 
-function kby(projects) {
+export function kby(projects) {
   let keyedByCard = {};
   // for some reason, .reduce doesn't work on the Linux webkit...
   for (const project of projects) {
@@ -60,7 +62,7 @@ function inboxReducer(projectId) {
   };
 }
 
-function inboxKby(projects) {
+export function inboxKby(projects) {
   const keyedBy = {};
   for (const project of projects) {
     for (const inbox of project.inboxes) {
@@ -73,17 +75,6 @@ function inboxKby(projects) {
 // FIXME don't really like this too much, it relies on execution order of the app
 export const appContext = new Map();
 export const contextEmitter = emitter();
-contextEmitter.on(messages.WorkspaceInit, async payload => {
-  const { fs } = window.__TAURI__;
-  const state = JSON.parse(await fs.readTextFile(payload));
-  const cardKeyed = kby(state.projects);
-  const inboxKeyed = inboxKby(state.projects);
-  appContext.set("state", state);
-  appContext.set("cardKeyed", cardKeyed);
-  appContext.set("inboxKeyed", inboxKeyed);
-  contextEmitter.emit(messages.WorkspaceReady);
-});
-
 // TODO later maybe refactor out tauri vs REST API
 export function globalEmitter() {
   const tauri = window.__TAURI__;

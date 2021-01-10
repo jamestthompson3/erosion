@@ -22,6 +22,7 @@ export default class App extends Component {
     listenFor(messages.WorkspaceInit, payload => {
       contextEmitter.emit(messages.WorkspaceInit, payload);
     });
+    listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
     contextEmitter.on(messages.WorkspaceReady, () => {
       const state = appContext.get("state");
       state.projects.forEach(project => {
@@ -33,6 +34,9 @@ export default class App extends Component {
       });
       contextEmitter.on(messages.UpdateCard, updatePayload => {
         this.updateCard(updatePayload);
+      });
+      contextEmitter.on(messages.DeleteCard, updatePayload => {
+        this.removeCard(updatePayload);
       });
       this.setState(state);
     });
@@ -70,9 +74,26 @@ export default class App extends Component {
     const { project, inbox, card } = updatePayload;
     const foundProject = findProject(project, this.state);
     const foundInbox = findInbox(inbox, foundProject);
+    this.setState(
+      updateStateProjects(
+        this.state,
+        updateProjectInboxes(foundProject, updateInboxCards(foundInbox, card))
+      )
+    );
+  }
+  globalUpdated(newState) {
+    this.setState(JSON.parse(newState));
+  }
+  removeCard(updatePayload) {
+    const { project, inbox, card } = updatePayload;
+    const foundProject = findProject(project, this.state);
+    const foundInbox = findInbox(inbox, foundProject);
     const updatedState = updateStateProjects(
       this.state,
-      updateProjectInboxes(foundProject, updateInboxCards(foundInbox, card))
+      updateProjectInboxes(foundProject, {
+        ...foundInbox,
+        cards: foundInbox.cards.filter(c => c.id !== card)
+      })
     );
     this.setState(updatedState);
   }

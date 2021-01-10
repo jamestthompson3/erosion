@@ -53,6 +53,7 @@ extends_base!(
         tag: Option<Vec<String>>,
         text: Option<String>,
         time_allotted: u16,
+        completed: Option<String>,
     }
 );
 

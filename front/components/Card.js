@@ -8,21 +8,30 @@ class Card extends Component {
     this.state = { ...props };
     const { card } = this.state;
     parent.innerHTML = `
-        <div title=${card.status} class="card status">
-         <input type="checkbox" id=${card.id} ${
+        <div class="card status-container">
+          <div title=${card.status} class="card status">
+            <input type="checkbox" id=${card.id} ${
       card.status === "Done" ? "checked" : ""
     }/>
-         <label for=${card.id}></label>
+            <label for=${card.id}></label>
+          </div>
+          <div class="card description" data-status=${card.status}>
+            <h3 class="card title">${card.title}</h3>
+            <p class="card text">${card.text || ""}</p>
+          </div>
         </div>
-        <div class="card description" data-status=${card.status}>
-         <h3 class="card title">${card.title}</h3>
-         <p class="card text">${card.text || ""}</p>
+        <div class="card actions">
+          <button class="card actions delete">🗑</button>
         </div>
     `;
     const cardStatus = this.parent.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";
     this.parent.style.setProperty("--color", this.color);
     cardStatus.addEventListener("change", this.updateStatus);
+    const deleteButton = this.parent.querySelector(
+      "button.card.actions.delete"
+    );
+    deleteButton.addEventListener("click", this.deleteCard);
   }
   createCardColor() {
     const colors = [
@@ -33,22 +42,34 @@ class Card extends Component {
       "rgb(255, 210,98)",
       "rgb(255, 98, 220)"
     ];
-    const rand = () => ~~(Math.random() * 5) + 1;
+    const rand = () => ~~(Math.random() * 6);
     return colors[rand()];
   }
+  deleteCard = () => {
+    const {
+      card: { id }
+    } = this.state;
+    const keyedByCard = appContext.get("cardKeyed")[id];
+    const { inbox, project } = keyedByCard;
+    postData(messages.DeleteCard, {
+      inbox,
+      project,
+      card: id
+    });
+  };
   updateStatus = () => {
     const {
       card: { status }
     } = this.state;
     switch (status) {
       case "Done":
-        this.updateField({ status: "Todo" });
+        this.updateField({ status: "Todo", completed: null });
         break;
       case "Todo":
         this.updateField({ status: "InProgress" });
         break;
       case "InProgress":
-        this.updateField({ status: "Done" });
+        this.updateField({ status: "Done", completed: new Date() });
         break;
       default:
         break;
