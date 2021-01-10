@@ -1,10 +1,11 @@
-import { global, messages, appContext } from "../messages.js";
+import { postData, messages, appContext } from "../messages.js";
+import Component from "./Component.js";
 
-class Card {
+class Card extends Component {
   constructor(parent, props) {
+    super(parent, props);
     this.color = this.createCardColor();
     this.state = { ...props };
-    this.parent = parent;
     const { card } = this.state;
     parent.innerHTML = `
         <div title=${card.status} class="card status">
@@ -58,17 +59,16 @@ class Card {
     const keyedCard = appContext.get("cardKeyed")[card.id];
     const { inbox, project } = keyedCard;
     const updated = Object.assign({}, card, updatedData);
-    global.emit(messages.UpdateCard, {
+    postData(messages.UpdateCard, {
       inbox,
       project,
       card: updated
     });
-    this.update({ card: updated });
+    this.setState({ card: updated });
   }
-  update(next) {
-    // think about this more...
-    Object.assign(this.state, next);
+  update() {
     const { card } = this.state;
+    console.log("calling update for: ", card.id);
     // adjust dynamic data
     // get selectors
     const cardStatus = this.parent.querySelector("input");
@@ -84,4 +84,5 @@ class Card {
     cardText.innerText = card.text;
   }
 }
+
 export default Card;

@@ -1,33 +1,28 @@
-import Inbox from "./Inbox.js";
+import Inbox from "./inbox/index.js";
+import Component from "./Component.js";
 
-class Project {
-  constructor(project) {
-    this.project = project;
-    this.createContainer();
-    this.createTitle();
-    this.createInboxes();
-  }
-  createContainer() {
-    const container = document.createElement("div");
-    this.container = container;
-    container.classList.add("project", "container");
-    document.body.appendChild(container);
-  }
-  createTitle() {
-    const title = document.createElement("h1");
-    title.innerText = this.project.name;
-    title.classList.add("project", "title");
-    this.container.appendChild(title);
-  }
-  createInboxes() {
-    const inboxes = this.project.inboxes;
+class Project extends Component {
+  constructor(parent, props) {
+    super(parent, props);
+    parent.innerHTML = `
+      <h1 class="project title">${props.name}</h1>
+    `;
+    const inboxes = props.inboxes;
     inboxes.forEach(inbox => {
       const inboxContainer = document.createElement("div");
       inboxContainer.classList.add("inbox", "container");
       inboxContainer.dataset.key = inbox.id;
-      this.container.appendChild(inboxContainer);
+      this.parent.appendChild(inboxContainer);
       new Inbox(inboxContainer, inbox);
     });
+  }
+  update() {
+    const {
+      project: { title, inboxes }
+    } = this.props;
+    const titleEl = this.parent.querySelector("h1");
+    titleEl.innerText = title;
+    this.sweepAndUpdate(".inbox.container", inboxes, Inbox);
   }
 }
 

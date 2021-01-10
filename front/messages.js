@@ -36,24 +36,6 @@ export const messages = {
   CreateCard: "CreateCard"
 };
 
-// TODO later maybe refactor out tauri vs REST API
-export function globalEmitter() {
-  const tauri = window.__TAURI__;
-  const { event } = tauri;
-  return {
-    on(e, cb) {
-      event.listen(e, ({ payload }) => {
-        cb(payload);
-      });
-    },
-    emit(e, ...args) {
-      event.emit(e, JSON.stringify(...args));
-    }
-  };
-}
-
-export const global = globalEmitter();
-
 function kby(projects) {
   let keyedByCard = {};
   // for some reason, .reduce doesn't work on the Linux webkit...
@@ -101,3 +83,25 @@ contextEmitter.on(messages.WorkspaceInit, async payload => {
   appContext.set("inboxKeyed", inboxKeyed);
   contextEmitter.emit(messages.WorkspaceReady);
 });
+
+// TODO later maybe refactor out tauri vs REST API
+export function globalEmitter() {
+  const tauri = window.__TAURI__;
+  const { event } = tauri;
+  return {
+    on(e, cb) {
+      event.listen(e, ({ payload }) => {
+        cb(payload);
+      });
+    },
+    emit(e, ...args) {
+      contextEmitter.emit(e, args);
+      event.emit(e, JSON.stringify(...args));
+    }
+  };
+}
+
+const globalEvents = globalEmitter();
+
+export const postData = globalEvents.emit;
+export const listenFor = globalEvents.on;

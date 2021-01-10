@@ -59,9 +59,7 @@ class DayPicker extends Component {
     dayUpdater.addEventListener("change", this.updateDay);
     timeUpdater.addEventListener("change", this.setTime);
   }
-  // bleh... can be better
-  update = next => {
-    Object.assign(this.props, next);
+  update = () => {
     this.render();
   };
   decrementMonth = () => {
