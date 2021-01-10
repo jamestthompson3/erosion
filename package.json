@@ -8,5 +8,8 @@
     "snowpack": "^2.18.5",
     "tauri": "^0.13.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.17.0"
+  }
 }
