@@ -95,8 +95,8 @@ export function globalEmitter() {
       });
     },
     emit(e, ...args) {
-      contextEmitter.emit(e, args);
       event.emit(e, JSON.stringify(...args));
+      contextEmitter.emit(e, ...args);
     }
   };
 }

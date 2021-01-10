@@ -21,11 +21,12 @@ class Component {
     }
   };
   /**
+   * FIXME: Currently borked since props don't pass down correctly :/
    * @param {string} querySelector - querySelector class string like ".card.container"
    * @param {Record<string, HasId>[]} dataset  - a data set whose items implement the HasId interface
    * @param {Function} ChildClass - a class that instantiates the component's children
    */
-  sweepAndUpdate(querySelector, dataset, ChildClass) {
+  _sweepAndUpdate(querySelector, dataset, ChildClass) {
     const children = this.parent.querySelectorAll(querySelector);
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
@@ -37,7 +38,8 @@ class Component {
       const childToUpdate = childrenById.get(item.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
-        childToUpdate.withProps({ ...item });
+        // WARNING this might break if props include functions
+        childToUpdate.withProps(item);
       } else {
         const cardContainer = document.createElement("div");
         cardContainer.classList.add(
@@ -45,6 +47,7 @@ class Component {
         );
         cardContainer.dataset.key = item.id;
         this.parent.appendChild(cardContainer);
+        // WARNING this might break if props include functions
         new ChildClass(cardContainer, { ...item });
       }
     });

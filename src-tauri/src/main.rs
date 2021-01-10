@@ -20,7 +20,7 @@ fn main() {
     tauri::AppBuilder::new()
         .setup(|webview, _| {
             events::register_init(webview.as_mut());
-            events::register_card_create(webview.as_mut());
+            events::register_card_update(webview.as_mut());
             events::register_card_create(webview.as_mut());
         })
         .build()

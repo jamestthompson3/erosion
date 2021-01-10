@@ -27,12 +27,7 @@ pub fn register_card_update(mut handle: tauri::WebviewMut) {
                 event_data.inbox,
                 event_data.card,
             );
-            tauri::event::emit(
-                &mut handle,
-                Events::StateUpdated.to_string(),
-                Some(serde_json::to_string(&updated_state).unwrap()),
-            )
-            .unwrap();
+            serde_json::to_string_pretty(&updated_state).unwrap();
         }
         None => {}
     });

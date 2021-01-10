@@ -7,6 +7,14 @@ import {
   appContext
 } from "../messages.js";
 
+import {
+  findInbox,
+  findProject,
+  updateInboxCards,
+  updateProjectInboxes,
+  updateStateProjects
+} from "../utils/lenses.js";
+
 export default class App extends Component {
   constructor() {
     super(document.body);
@@ -23,10 +31,49 @@ export default class App extends Component {
         document.body.appendChild(projectContainer);
         new Project(projectContainer, project);
       });
+      contextEmitter.on(messages.UpdateCard, updatePayload => {
+        this.updateCard(updatePayload);
+      });
       this.setState(state);
     });
   }
   update() {
-    this.sweepAndUpdate(".project.container", this.state.projects, Project);
+    this.sweepAndUpdate();
+  }
+  sweepAndUpdate() {
+    const { projects } = this.state;
+    const children = this.parent.querySelectorAll(".project.container");
+    // create a map here so we can quickly look up if the child exists by using the cardId
+    const childrenById = new Map();
+    const markedToRemove = new Set(children);
+    markedToRemove.forEach(child => {
+      childrenById.set(child.dataset.key, child);
+    });
+    projects.forEach(project => {
+      const childToUpdate = childrenById.get(project.id);
+      if (childToUpdate) {
+        markedToRemove.delete(childToUpdate);
+        childToUpdate.withProps(project);
+      } else {
+        const projectContainer = document.createElement("div");
+        projectContainer.classList.add("project", "container");
+        projectContainer.dataset.key = project.id;
+        this.parent.appendChild(projectContainer);
+        new Project(projectContainer, project);
+      }
+    });
+    markedToRemove.forEach(oldNode => {
+      this.parent.removeChild(oldNode);
+    });
+  }
+  updateCard(updatePayload) {
+    const { project, inbox, card } = updatePayload;
+    const foundProject = findProject(project, this.state);
+    const foundInbox = findInbox(inbox, foundProject);
+    const updatedState = updateStateProjects(
+      this.state,
+      updateProjectInboxes(foundProject, updateInboxCards(foundInbox, card))
+    );
+    this.setState(updatedState);
   }
 }

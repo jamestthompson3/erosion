@@ -4,12 +4,12 @@ import Component from "../Component.js";
 import NewCardForm from "./NewCardForm.js";
 
 class Inbox extends Component {
-  constructor(parent, inbox) {
-    super(parent, inbox);
+  constructor(parent, props) {
+    super(parent, props, "INBOX");
     this.state = {
-      inbox,
       showForm: false
     };
+    const { inbox } = props;
     parent.innerHTML = `
       <div class="inbox actions">
         <h2 class="inbox title">${inbox.name}</h2>
@@ -33,7 +33,7 @@ class Inbox extends Component {
     this.setState({ showForm: !this.state.showForm });
   };
   update() {
-    const { inbox } = this.state;
+    const { inbox } = this.props;
     const cards = this.parent.querySelectorAll(".card.container");
     // update singleton children
     const title = this.parent.querySelector("h2");
@@ -45,7 +45,7 @@ class Inbox extends Component {
       cardForm.classList.add("inbox", "card-form");
       this.parent.insertBefore(cardForm, cards[0]);
       new NewCardForm(cardForm, {
-        inbox: this.state.inbox.id,
+        inbox: inbox.id,
         closeForm: () => {
           this.setState({ showForm: false });
         }
@@ -54,24 +54,28 @@ class Inbox extends Component {
     if (!this.state.showForm && newCardForm) {
       this.parent.removeChild(newCardForm);
     }
-    // update mapped children
-    const markedToRemove = new Set(cards);
+    this.sweepAndUpdate();
+  }
+  sweepAndUpdate() {
+    const { inbox } = this.props;
+    const children = this.parent.querySelectorAll(".card.container");
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
+    const markedToRemove = new Set(children);
     markedToRemove.forEach(child => {
-      childrenById.set(child.dataset.id, child);
+      childrenById.set(child.dataset.key, child);
     });
     inbox.cards.forEach(card => {
-      let existingChild = childrenById.get(card.id);
-      if (existingChild) {
-        markedToRemove.delete(existingChild);
-        existingChild.withProps(card);
+      const childToUpdate = childrenById.get(card.id);
+      if (childToUpdate) {
+        markedToRemove.delete(childToUpdate);
+        childToUpdate.withProps({ card });
       } else {
         const cardContainer = document.createElement("div");
         cardContainer.classList.add("card", "container");
         cardContainer.dataset.key = card.id;
         this.parent.appendChild(cardContainer);
-        existingChild = new Card(cardContainer, { card });
+        new Card(cardContainer, { card });
       }
     });
     markedToRemove.forEach(oldNode => {

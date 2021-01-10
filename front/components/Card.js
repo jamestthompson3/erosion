@@ -3,7 +3,7 @@ import Component from "./Component.js";
 
 class Card extends Component {
   constructor(parent, props) {
-    super(parent, props);
+    super(parent, props, "CARD");
     this.color = this.createCardColor();
     this.state = { ...props };
     const { card } = this.state;
@@ -58,7 +58,7 @@ class Card extends Component {
     const { card } = this.state;
     const keyedCard = appContext.get("cardKeyed")[card.id];
     const { inbox, project } = keyedCard;
-    const updated = Object.assign({}, card, updatedData);
+    const updated = { ...card, ...updatedData };
     postData(messages.UpdateCard, {
       inbox,
       project,
@@ -68,7 +68,6 @@ class Card extends Component {
   }
   update() {
     const { card } = this.state;
-    console.log("calling update for: ", card.id);
     // adjust dynamic data
     // get selectors
     const cardStatus = this.parent.querySelector("input");
@@ -76,7 +75,7 @@ class Card extends Component {
     const cardText = this.parent.querySelector(".card.text");
     const cardDescription = this.parent.querySelector(".card.description");
     const cardStatusContainer = this.parent.querySelector(".card.status");
-    cardStatusContainer.title = card.title;
+    cardStatusContainer.title = card.status;
     cardStatus.checked = card.status === "Done";
     cardStatus.indeterminate = card.status === "InProgress";
     cardDescription.dataset.status = card.status;
