@@ -25,7 +25,7 @@ impl Card {
             created: now,
             modifier: user,
             status: data.status,
-            tag: data.tag,
+            tags: data.tag,
             text: data.text,
             title: data.title,
             scheduled: data.scheduled,

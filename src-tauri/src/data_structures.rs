@@ -50,7 +50,7 @@ extends_base!(
     struct Card {
         scheduled: Option<String>,
         status: CardStatus,
-        tag: Option<Vec<String>>,
+        tags: Option<Vec<String>>,
         text: Option<String>,
         time_allotted: u16,
         completed: Option<String>,

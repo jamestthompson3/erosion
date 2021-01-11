@@ -1,4 +1,5 @@
 import { postData, messages, appContext } from "../messages.js";
+import { existsAndRender } from "../utils/rendering.js";
 import Component from "./Component.js";
 
 class Card extends Component {
@@ -10,9 +11,10 @@ class Card extends Component {
     parent.innerHTML = `
         <div class="card status-container">
           <div title=${card.status} class="card status">
-            <input type="checkbox" id=${card.id} ${
-      card.status === "Done" ? "checked" : ""
-    }/>
+            <input type="checkbox" id=${card.id} ${existsAndRender(
+      card.status === "Done",
+      "checked"
+    )}/>
             <label for=${card.id}></label>
           </div>
           <div class="card description" data-status=${card.status}>
@@ -20,8 +22,30 @@ class Card extends Component {
             <p class="card text">${card.text || ""}</p>
           </div>
         </div>
+      <div class="card metadata">
+      <p>📆 ${existsAndRender(
+        card.scheduled,
+        new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        }).format(new Date(card.scheduled))
+      )}</p>
+      <p>⌛ ${card.time_allotted} min</p>
+            ${existsAndRender(card.tags, () =>
+              card.tags.map(t => `<p>${t}</p>`).join("\n")
+            )}
+      </div>
         <div class="card actions">
-          <button class="card actions delete">🗑</button>
+          <button aria-label="delete card" class="card actions delete">
+            <svg xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+          </button>
+          <button aria-label="edit card" class="card actions edit">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"  fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+            </svg>
+          </button>
         </div>
     `;
     const cardStatus = this.parent.querySelector("input");
@@ -31,18 +55,25 @@ class Card extends Component {
     const deleteButton = this.parent.querySelector(
       "button.card.actions.delete"
     );
+
+    const editButton = this.parent.querySelector("button.card.actions.edit");
     deleteButton.addEventListener("click", this.deleteCard);
+    editButton.addEventListener("click", () => {});
   }
   createCardColor() {
     const colors = [
-      "rgb(193, 0, 255)",
-      "rgb(0, 0, 255)",
-      "rgb(255, 0, 0)",
-      "rgb(0, 255, 0)",
-      "rgb(255, 210,98)",
-      "rgb(255, 98, 220)"
+      "#7400b8ff",
+      "#6930c3ff",
+      "#5e60ceff",
+      "#5390d9ff",
+      "#4ea8deff",
+      "#48bfe3ff",
+      "#56cfe1ff",
+      "#64dfdfff",
+      "#72efddff",
+      "#80ffdbff"
     ];
-    const rand = () => ~~(Math.random() * 6);
+    const rand = () => ~~(Math.random() * 9);
     return colors[rand()];
   }
   deleteCard = () => {
