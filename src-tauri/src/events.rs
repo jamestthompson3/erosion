@@ -2,7 +2,9 @@ use crate::{
     cards::CardFragment,
     data_structures::Card,
     filesystem::{get_data_dir, read_state_file},
-    lenses::{create_card, delete_card, update_card},
+    inboxes::Inbox,
+    lenses::{create_card, delete_card, update_card, update_inbox, update_project},
+    projects::Project,
 };
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -67,6 +69,37 @@ pub fn register_card_delete() {
     });
 }
 
+pub fn register_inbox_update() {
+    tauri::event::listen(Events::UpdateInbox.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: InboxUpdateEvent = serde_json::from_str(&data).unwrap();
+            update_inbox(&read_state_file(), event_data.project, event_data.inbox);
+        }
+        None => {}
+    });
+}
+
+pub fn register_project_update() {
+    tauri::event::listen(Events::UpdateProject.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: ProjectUpdateEvent = serde_json::from_str(&data).unwrap();
+            update_project(&read_state_file(), event_data.project);
+        }
+        None => {}
+    });
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProjectUpdateEvent {
+    project: Project,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct InboxUpdateEvent {
+    project: String,
+    inbox: Inbox,
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CardUpdateEvent {
     card: Card,
@@ -98,6 +131,8 @@ pub enum Events {
     StateUpdated,
     CreateInbox,
     DeleteInbox,
+    UpdateInbox,
+    UpdateProject,
 }
 
 impl fmt::Display for Events {

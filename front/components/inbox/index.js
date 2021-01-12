@@ -1,11 +1,13 @@
 import Card from "../Card.js";
 import Component from "../Component.js";
+import { debounceEvent } from "../../utils/rendering.js";
+import { postData, messages, appContext } from "../../messages.js";
 
 import NewCardForm from "./NewCardForm.js";
 
 class Inbox extends Component {
   constructor(parent, props) {
-    super(parent, props, "INBOX");
+    super(parent, props);
     this.state = {
       showForm: false
     };
@@ -28,16 +30,70 @@ class Inbox extends Component {
       parent.appendChild(cardContainer);
       new Card(cardContainer, { card });
     });
+    parent.addEventListener("click", this.clickAway, false);
+    const boxTitle = parent.querySelector(".inbox.title");
+    if (boxTitle) {
+      const titleEdit = document.createElement("input");
+      titleEdit.classList.add("inbox", "as-h2");
+      titleEdit.value = inbox.name;
+      titleEdit.addEventListener(
+        "change",
+        debounceEvent(e => {
+          this.updateField({ name: e.target.value });
+        }, 500)
+      );
+      titleEdit.addEventListener("keyup", e => {
+        if (e.which === 13) {
+          e.preventDefault();
+          this.clickAway();
+        }
+      });
+
+      boxTitle.addEventListener("dblclick", () => {
+        boxTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
   }
+  clickAway = () => {
+    const titleEdit = this.parent.querySelector(".as-h2");
+    if (titleEdit) {
+      const boxTitle = document.createElement("h2");
+      boxTitle.classList.add("inbox", "title");
+      boxTitle.innerText = titleEdit.value;
+      titleEdit.replaceWith(boxTitle);
+      boxTitle.addEventListener("dblclick", () => {
+        boxTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+  };
   openForm = () => {
     this.setState({ showForm: !this.state.showForm });
   };
+  updateField(updatedData) {
+    const { inbox } = this.props;
+    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
+    const { project } = keyedInbox;
+    const updated = { ...inbox, ...updatedData };
+    postData(messages.UpdateInbox, {
+      project,
+      inbox: updated
+    });
+    this.withProps({ inbox: updated });
+  }
   update() {
     const { inbox } = this.props;
     const cards = this.parent.querySelectorAll(".card.container");
     // update singleton children
     const title = this.parent.querySelector("h2");
-    title.innerText = inbox.name;
+    if (title) title.innerText = inbox.name;
     // create the cardForm component
     const newCardForm = this.parent.querySelector(".inbox.card-form");
     if (this.state.showForm && !newCardForm) {

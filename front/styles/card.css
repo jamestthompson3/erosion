@@ -8,6 +8,18 @@
   margin: 0.5rem 0rem;
   justify-content: space-between;
 }
+.card.text {
+  max-width: 400px;
+  width: 400px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+.card.description {
+  max-width: 400px;
+}
 .card.status-container {
   display: flex;
   align-items: center;
@@ -111,4 +123,9 @@
 }
 .card.actions.edit:hover {
   color: var(--color);
+}
+.card.as-p {
+  font-size: 1em;
+  padding: 0.25rem;
+  width: 400px;
 }

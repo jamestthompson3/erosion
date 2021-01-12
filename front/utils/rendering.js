@@ -10,3 +10,13 @@ export function existsAndRender(item, renderExpression) {
   }
   return "";
 }
+
+export function debounceEvent(fn, time) {
+  let debounced;
+  return function(e) {
+    if (debounced) {
+      clearTimeout(debounced);
+    }
+    debounced = setTimeout(() => fn(e), time);
+  };
+}

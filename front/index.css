@@ -20,6 +20,24 @@
 /*
  * Global utility classes
  */
+.as-h1 {
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
+.as-h2 {
+  display: block;
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
 .as-h3 {
   display: block;
   font-size: 1.17em;
@@ -47,8 +65,8 @@
 }
 
 /*
- * Day picker styles
- */
+   * Day picker styles
+   */
 .day-container {
   display: flex;
   flex-direction: column;
@@ -66,7 +84,7 @@
   font-weight: bold;
 }
 
-.day-container * >  .increment-decrement {
+.day-container * > .increment-decrement {
   font-weight: bold;
   font-size: 1rem;
   color: var(--dark0);

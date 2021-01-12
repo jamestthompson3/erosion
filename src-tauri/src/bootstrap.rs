@@ -76,7 +76,7 @@ fn create_initial_settings() -> Result<(), std::io::Error> {
 
 fn create_initial_project() -> Project {
     let mut project = Project::create("Tasks");
-    let mut inbox = Inbox::create("Default");
+    let mut inbox = Inbox::create("Default Inbox");
     let initial_card = Card::create(CardFragment {
         scheduled: None,
         status: CardStatus::Todo,

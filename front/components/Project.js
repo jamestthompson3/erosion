@@ -1,6 +1,9 @@
 import Inbox from "./inbox/index.js";
 import Component from "./Component.js";
 
+import { debounceEvent } from "../../utils/rendering.js";
+import { postData, messages } from "../messages.js";
+
 class Project extends Component {
   constructor(parent, props) {
     super(parent, props);
@@ -15,11 +18,63 @@ class Project extends Component {
       this.parent.appendChild(inboxContainer);
       new Inbox(inboxContainer, { inbox });
     });
+
+    parent.addEventListener("click", this.clickAway, false);
+    const projectTitle = parent.querySelector(".project.title");
+    if (projectTitle) {
+      const titleEdit = document.createElement("input");
+      titleEdit.classList.add("project", "as-h1");
+      titleEdit.value = props.name;
+      titleEdit.addEventListener(
+        "change",
+        debounceEvent(e => {
+          this.updateField({ name: e.target.value });
+        }, 500)
+      );
+      titleEdit.addEventListener("keyup", e => {
+        if (e.which === 13) {
+          e.preventDefault();
+          this.clickAway();
+        }
+      });
+
+      projectTitle.addEventListener("dblclick", () => {
+        projectTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+  }
+  clickAway = () => {
+    const titleEdit = this.parent.querySelector(".as-h1");
+    if (titleEdit) {
+      const projectTitle = document.createElement("h1");
+      projectTitle.classList.add("project", "title");
+      projectTitle.innerText = titleEdit.value;
+      titleEdit.replaceWith(projectTitle);
+      projectTitle.addEventListener("dblclick", () => {
+        projectTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+  };
+
+  updateField(updatedData) {
+    const updated = { ...this.props, ...updatedData };
+    postData(messages.UpdateProject, {
+      project: updated
+    });
+    this.withProps(updated);
   }
   update() {
     const { name } = this.props;
     const titleEl = this.parent.querySelector("h1");
-    titleEl.innerText = name;
+    if (titleEl) titleEl.innerText = name;
     this.sweepAndUpdate();
   }
   sweepAndUpdate() {

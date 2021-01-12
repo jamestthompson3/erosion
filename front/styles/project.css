@@ -1,3 +1,12 @@
 .project.container {
  padding: var(--padding);
 }
+.project.title {
+  text-align: center;
+}
+.project.as-h1 {
+  padding: 0.25rem;
+  text-align: center;
+  border: 1px solid var(--light0);
+  margin: auto;
+}

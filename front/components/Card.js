@@ -1,10 +1,10 @@
 import { postData, messages, appContext } from "../messages.js";
-import { existsAndRender } from "../utils/rendering.js";
+import { existsAndRender, debounceEvent } from "../utils/rendering.js";
 import Component from "./Component.js";
 
 class Card extends Component {
   constructor(parent, props) {
-    super(parent, props, "CARD");
+    super(parent, props);
     this.color = this.createCardColor();
     this.state = { ...props };
     const { card } = this.state;
@@ -48,7 +48,9 @@ class Card extends Component {
           </button>
         </div>
     `;
-    const cardStatus = this.parent.querySelector("input");
+
+    const cardStatus = parent.querySelector("input");
+    parent.addEventListener("click", this.clickAway, false);
     cardStatus.indeterminate = card.status === "InProgress";
     this.parent.style.setProperty("--color", this.color);
     cardStatus.addEventListener("change", this.updateStatus);
@@ -56,6 +58,7 @@ class Card extends Component {
       "button.card.actions.delete"
     );
 
+    this.setUpEditableEvents();
     const editButton = this.parent.querySelector("button.card.actions.edit");
     deleteButton.addEventListener("click", this.deleteCard);
     editButton.addEventListener("click", () => {});
@@ -76,6 +79,88 @@ class Card extends Component {
     const rand = () => ~~(Math.random() * 9);
     return colors[rand()];
   }
+  setUpEditableEvents() {
+    const { card } = this.props;
+    const cardTitle = this.parent.querySelector(".card.title");
+    const cardText = this.parent.querySelector(".card.text");
+    if (cardTitle) {
+      const titleEdit = document.createElement("input");
+      titleEdit.classList.add("card", "as-h3");
+      titleEdit.value = card.title;
+      titleEdit.addEventListener(
+        "change",
+        debounceEvent(e => {
+          this.updateField({ title: e.target.value });
+        }, 500)
+      );
+      titleEdit.addEventListener("keyup", e => {
+        if (e.which === 13) {
+          e.preventDefault();
+          this.clickAway();
+        }
+      });
+
+      cardTitle.addEventListener("dblclick", () => {
+        cardTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+    if (cardText) {
+      const textEdit = document.createElement("textarea");
+      textEdit.classList.add("card", "as-p");
+      textEdit.value = card.text;
+      cardText.addEventListener("dblclick", () => {
+        cardText.replaceWith(textEdit);
+        textEdit.focus();
+        textEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+      textEdit.addEventListener(
+        "change",
+        debounceEvent(e => {
+          if (e.which === 18) {
+            e.preventDefault();
+            this.clickAway();
+          }
+          this.updateField({ text: e.target.value });
+        }, 500)
+      );
+    }
+  }
+  clickAway = () => {
+    const textEdit = this.parent.querySelector(".as-p");
+    if (textEdit) {
+      const cardText = document.createElement("p");
+      cardText.classList.add("card", "text");
+      cardText.innerText = textEdit.value;
+      textEdit.replaceWith(cardText);
+      cardText.addEventListener("dblclick", () => {
+        cardText.replaceWith(textEdit);
+        textEdit.focus();
+        textEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+    const titleEdit = this.parent.querySelector(".as-h3");
+    if (titleEdit) {
+      const cardTitle = document.createElement("h3");
+      cardTitle.classList.add("card", "title");
+      cardTitle.innerText = titleEdit.value;
+      titleEdit.replaceWith(cardTitle);
+      cardTitle.addEventListener("dblclick", () => {
+        cardTitle.replaceWith(titleEdit);
+        titleEdit.focus();
+        titleEdit.addEventListener("click", e => {
+          e.stopPropagation();
+        });
+      });
+    }
+  };
   deleteCard = () => {
     const {
       card: { id }
@@ -131,8 +216,8 @@ class Card extends Component {
     cardStatus.checked = card.status === "Done";
     cardStatus.indeterminate = card.status === "InProgress";
     cardDescription.dataset.status = card.status;
-    cardTitle.innerText = card.title;
-    cardText.innerText = card.text;
+    if (cardTitle) cardTitle.innerText = card.title;
+    if (cardText) cardText.innerText = card.text;
   }
 }
 

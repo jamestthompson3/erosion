@@ -23,6 +23,8 @@ fn main() {
             events::register_card_update();
             events::register_card_delete();
             events::register_card_create(webview.as_mut());
+            events::register_inbox_update();
+            events::register_project_update();
         })
         .build()
         .run();

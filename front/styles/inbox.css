@@ -21,6 +21,11 @@
   cursor: pointer;
 }
 
+.inbox.as-h2 {
+ padding: 0.25rem;
+ border: 1px solid var(--light1);
+}
+
 /*****/
 
 .inbox.card-form {
