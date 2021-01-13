@@ -1,5 +1,6 @@
 import Card from "../Card.js";
 import Component from "../Component.js";
+import Cancel from "../icons/Cancel.js";
 import { debounceEvent } from "../../utils/rendering.js";
 import { postData, messages, appContext } from "../../messages.js";
 
@@ -96,7 +97,9 @@ class Inbox extends Component {
     if (title) title.innerText = inbox.name;
     // create the cardForm component
     const newCardForm = this.parent.querySelector(".inbox.card-form");
+    const addButton = this.parent.querySelector(".inbox.add-card");
     if (this.state.showForm && !newCardForm) {
+      addButton.innerHTML = Cancel();
       const cardForm = document.createElement("div");
       cardForm.classList.add("inbox", "card-form");
       this.parent.insertBefore(cardForm, cards[0]);
@@ -108,6 +111,7 @@ class Inbox extends Component {
       });
     }
     if (!this.state.showForm && newCardForm) {
+      addButton.innerText = "➕";
       this.parent.removeChild(newCardForm);
     }
     this.sweepAndUpdate();

@@ -15,13 +15,45 @@
   border: none;
   cursor: pointer;
 }
+.project.inbox-form {
+  display: flex;
+  align-items: center;
+}
+
+.inbox-form.accept {
+  color: var(--affirmative);
+}
+
+.inbox-form.cancel {
+  color: var(--cancel);
+}
+
+.inbox-form button {
+  background: transparent;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 25px;
+}
+
+.inbox-form button:hover {
+  background: var(--light0);
+}
+
+.project.new-inbox-name {
+  height: 2rem;
+  border: 1px solid var(--light1);
+  margin: 1rem;
+  padding: 0.55rem;
+  font-size: 1.25rem;
+}
 .project.add-inbox svg {
   width: 25px;
   height: 25px;
 }
 .project.as-h1 {
   padding: 0.25rem;
-  text-align: center;
   border: 1px solid var(--light0);
-  margin: auto;
 }

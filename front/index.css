@@ -11,6 +11,8 @@
   --shadow: 4px 7px 0 1px hsla(0, 0%, 0%, 0.95);
   --shadow-button: 0px -1px 20px 0px hsla(0, 0%, 0%, 0.18);
   --radius: 0px;
+  --affirmative: #10AC84;
+  --cancel: #F05228;
 }
 * > * {
   margin: 0px;

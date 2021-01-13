@@ -3,7 +3,10 @@ use crate::{
     data_structures::Card,
     filesystem::{get_data_dir, read_state_file},
     inboxes::Inbox,
-    lenses::{create_card, create_project, delete_card, update_card, update_inbox, update_project},
+    lenses::{
+        create_card, create_inbox, create_project, delete_card, update_card, update_inbox,
+        update_project,
+    },
     projects::Project,
 };
 use serde::{Deserialize, Serialize};
@@ -69,6 +72,23 @@ pub fn register_card_delete() {
     });
 }
 
+pub fn register_inbox_create(mut handle: tauri::WebviewMut) {
+    tauri::event::listen(Events::CreateInbox.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: InboxCreateEvent = serde_json::from_str(&data).unwrap();
+            let updated_state =
+                create_inbox(&read_state_file(), event_data.project, &event_data.name);
+            tauri::event::emit(
+                &mut handle,
+                Events::StateUpdated.to_string(),
+                Some(serde_json::to_string(&updated_state).unwrap()),
+            )
+            .unwrap();
+        }
+        None => {}
+    });
+}
+
 pub fn register_inbox_update() {
     tauri::event::listen(Events::UpdateInbox.to_string(), move |data| match data {
         Some(data) => {
@@ -118,6 +138,12 @@ pub struct ProjectUpdateEvent {
 pub struct InboxUpdateEvent {
     project: String,
     inbox: Inbox,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct InboxCreateEvent {
+    project: String,
+    name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
