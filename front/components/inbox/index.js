@@ -15,7 +15,7 @@ class Inbox extends Component {
     parent.innerHTML = `
       <div class="inbox actions">
         <h2 class="inbox title">${inbox.name}</h2>
-        <button class="inbox add-card" aria-label="add card to inbox">➕</button>
+        <button title="add card to inbox" class="inbox add-card" aria-label="add card to inbox">➕</button>
       </div>
     `;
     // add event listeners

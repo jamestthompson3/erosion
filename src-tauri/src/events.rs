@@ -3,7 +3,7 @@ use crate::{
     data_structures::Card,
     filesystem::{get_data_dir, read_state_file},
     inboxes::Inbox,
-    lenses::{create_card, delete_card, update_card, update_inbox, update_project},
+    lenses::{create_card, create_project, delete_card, update_card, update_inbox, update_project},
     projects::Project,
 };
 use serde::{Deserialize, Serialize};
@@ -89,6 +89,26 @@ pub fn register_project_update() {
     });
 }
 
+pub fn register_project_create(mut handle: tauri::WebviewMut) {
+    tauri::event::listen(Events::CreateProject.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: ProjectCreateEvent = serde_json::from_str(&data).unwrap();
+            let updated_state = create_project(&read_state_file(), &event_data.name);
+            tauri::event::emit(
+                &mut handle,
+                Events::StateUpdated.to_string(),
+                Some(serde_json::to_string(&updated_state).unwrap()),
+            )
+            .unwrap();
+        }
+        None => {}
+    });
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProjectCreateEvent {
+    name: String,
+}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectUpdateEvent {
     project: Project,
@@ -133,6 +153,7 @@ pub enum Events {
     DeleteInbox,
     UpdateInbox,
     UpdateProject,
+    CreateProject,
 }
 
 impl fmt::Display for Events {

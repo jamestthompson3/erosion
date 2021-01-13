@@ -4,6 +4,21 @@
 .project.title {
   text-align: center;
 }
+.project.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.project.add-inbox {
+  margin: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.project.add-inbox svg {
+  width: 25px;
+  height: 25px;
+}
 .project.as-h1 {
   padding: 0.25rem;
   text-align: center;
