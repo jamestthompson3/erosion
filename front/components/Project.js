@@ -7,11 +7,16 @@ import NewInbox from "./icons/NewInbox.js";
 import { debounceEvent } from "../../utils/rendering.js";
 import { postData, messages } from "../messages.js";
 
+const states = {
+  ADD_INBOX: "add_inbox",
+  VIEW: "view"
+};
+
 class Project extends Component {
   constructor(parent, props) {
     super(parent, props);
     this.state = {
-      showForm: false
+      current: states.VIEW
     };
     parent.innerHTML = `
       <div class="project actions">
@@ -22,7 +27,6 @@ class Project extends Component {
       </div>
     `;
     const inboxes = props.inboxes;
-    console.log(inboxes);
     inboxes.forEach(inbox => {
       const inboxContainer = document.createElement("div");
       inboxContainer.classList.add("inbox", "container");
@@ -32,7 +36,7 @@ class Project extends Component {
     });
     const addInboxButton = parent.querySelector(".project.add-inbox");
     addInboxButton.addEventListener("click", () =>
-      this.setState({ showForm: !this.state.showForm })
+      this.setState({ current: states.ADD_INBOX })
     );
 
     parent.addEventListener("click", this.clickAway, false);
@@ -96,7 +100,7 @@ class Project extends Component {
     // create the cardForm component
     const newInboxForm = this.parent.querySelector(".project.inbox-form");
     const addInboxButton = this.parent.querySelector(".project.add-inbox");
-    if (this.state.showForm && !newInboxForm) {
+    if (this.state.current === states.ADD_INBOX && !newInboxForm) {
       addInboxButton.innerHTML = Cancel();
       const inboxForm = document.createElement("div");
       inboxForm.classList.add("project", "inbox-form");
@@ -104,11 +108,11 @@ class Project extends Component {
       new NewInboxForm(inboxForm, {
         project: id,
         closeForm: () => {
-          this.setState({ showForm: false });
+          this.setState({ current: states.VIEW });
         }
       });
     }
-    if (!this.state.showForm && newInboxForm) {
+    if (this.state.current === states.VIEW && newInboxForm) {
       this.parent.removeChild(newInboxForm);
       addInboxButton.innerHTML = NewInbox();
     }
@@ -158,12 +162,12 @@ class NewInboxForm extends Component {
     cancel.addEventListener("click", () => this.props.closeForm());
   }
   save = () => {
-    const projectName = this.parent.querySelector("input");
-    if (projectName.value !== "") {
+    const inboxName = this.parent.querySelector("input");
+    if (inboxName.value !== "") {
       const { project, closeForm } = this.props;
       postData(messages.CreateInbox, {
         project,
-        name: projectName.value.trim()
+        name: inboxName.value.trim()
       });
       closeForm();
     }

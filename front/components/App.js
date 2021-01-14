@@ -1,9 +1,13 @@
 import Project from "./Project.js";
 import Component from "./Component.js";
+import NewProject from "./icons/NewProject.js";
+import Cancel from "./icons/Cancel.js";
+import Check from "./icons/Check.js";
 import {
   listenFor,
   messages,
   contextEmitter,
+  postData,
   appContext
 } from "../messages.js";
 
@@ -19,6 +23,10 @@ export default class App extends Component {
   constructor() {
     super(document.body);
     this.state = {};
+    const createProjectForm = document.createElement("div");
+    createProjectForm.classList.add("project", "project-form");
+    document.body.appendChild(createProjectForm);
+    new NewProjectForm(createProjectForm, {});
     listenFor(messages.WorkspaceInit, payload => {
       contextEmitter.emit(messages.WorkspaceInit, payload);
     });
@@ -96,5 +104,57 @@ export default class App extends Component {
       })
     );
     this.setState(updatedState);
+  }
+}
+
+class NewProjectForm extends Component {
+  constructor(el, props) {
+    super(el, props);
+    this.state = {
+      current: "VIEW"
+    };
+    el.innerHTML = `
+        <button aria-label="add project" title="add project to workspace" class="project add-project">${NewProject()}</button>
+    `;
+    const addButton = el.querySelector(".project.add-project");
+    addButton.addEventListener("click", () => {
+      this.setState({ current: "ADD_PROJECT" });
+    });
+  }
+  save = () => {
+    const projectName = this.parent.querySelector(".project.new-project-name");
+    if (projectName.value !== "") {
+      postData(messages.CreateProject, {
+        name: projectName.value.trim()
+      });
+      this.setState({ current: "VIEW" });
+    }
+  };
+  update() {
+    const { current } = this.state;
+    if (current === "VIEW") {
+      this.parent.innerHTML = `
+        <button aria-label="add project" title="add project to workspace" class="project add-project">${NewProject()}</button>
+      `;
+      const addButton = this.parent.querySelector(".project.add-project");
+      addButton.addEventListener("click", () => {
+        this.setState({ current: "ADD_PROJECT" });
+      });
+    }
+    if (current === "ADD_PROJECT") {
+      this.parent.innerHTML = `
+        <input placeholder="project name" class="project new-project-name" type="text"></inbox>
+        <button class="project-form accept" title="save project">${Check()}</button>
+        <button class="project-form cancel" title="cancel creation">${Cancel()}</button>
+        `;
+      const input = this.parent.querySelector("input");
+      input.focus();
+      const save = this.parent.querySelector(".project-form.accept");
+      const cancel = this.parent.querySelector(".project-form.cancel");
+      save.addEventListener("click", this.save);
+      cancel.addEventListener("click", () => {
+        this.setState({ current: "VIEW" });
+      });
+    }
   }
 }

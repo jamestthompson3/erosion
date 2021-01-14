@@ -1,5 +1,7 @@
 .project.container {
  padding: var(--padding);
+ display: flex;
+ flex-direction: column;
 }
 .project.title {
   text-align: center;
@@ -8,6 +10,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.project.add-project {
+  align-self: flex-start;
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
 .project.add-inbox {
   margin: 1rem;
@@ -20,15 +28,15 @@
   align-items: center;
 }
 
-.inbox-form.accept {
+.inbox-form.accept, .project-form.accept {
   color: var(--affirmative);
 }
 
-.inbox-form.cancel {
+.inbox-form.cancel, .project-form.cancel {
   color: var(--cancel);
 }
 
-.inbox-form button {
+.inbox-form button, .project-form button {
   background: transparent;
   cursor: pointer;
   width: 2.5rem;
@@ -42,7 +50,7 @@
   background: var(--light0);
 }
 
-.project.new-inbox-name {
+.project.new-inbox-name, .project.new-project-name {
   height: 2rem;
   border: 1px solid var(--light1);
   margin: 1rem;

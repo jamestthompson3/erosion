@@ -38,6 +38,7 @@ export const messages = {
   DeleteCard: "DeleteCard",
   UpdateInbox: "UpdateInbox",
   CreateInbox: "CreateInbox",
+  CreateProject: "CreateProject",
   UpdateProject: "UpdateProject"
 };
 
