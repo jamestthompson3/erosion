@@ -34,7 +34,8 @@ class Card extends Component {
       )}</p>
       <p>⌛ ${card.time_allotted} min</p>
             ${existsAndRender(card.tags, () =>
-              card.tags.map(t => `<p>${t}</p>`).join("\n")
+              // TODO maybe do some sort of emoji mapping to mental state
+              card.tags.map(t => `<p class="card tag">🧠 ${t}</p>`).join("\n")
             )}
       </div>
         <div class="card actions">

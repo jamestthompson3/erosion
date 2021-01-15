@@ -8,7 +8,7 @@ use uuid::Uuid;
 pub struct CardFragment {
     pub scheduled: Option<String>,
     pub status: CardStatus,
-    pub tag: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
     pub text: Option<String>,
     pub title: String,
     pub time_allotted: u16,
@@ -25,7 +25,7 @@ impl Card {
             created: now,
             modifier: user,
             status: data.status,
-            tags: data.tag,
+            tags: data.tags,
             text: data.text,
             title: data.title,
             scheduled: data.scheduled,
@@ -44,7 +44,7 @@ mod tests {
         let test_data = CardFragment {
             scheduled: Some("2020-12-31T14:08:18.162530941+02:00".to_string()),
             status: CardStatus::Todo,
-            tag: None,
+            tags: None,
             text: None,
             title: String::from("start unit tests"),
             time_allotted: 0,

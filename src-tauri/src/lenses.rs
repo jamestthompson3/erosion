@@ -296,7 +296,7 @@ mod tests {
         let card = Card::create(CardFragment {
             scheduled: None,
             status: CardStatus::InProgress,
-            tag: None,
+            tags: None,
             text: Some(String::from("cool test text")),
             title: String::from("Title card"),
             time_allotted: 0,
@@ -331,7 +331,7 @@ mod tests {
         let card = Card::create(CardFragment {
             scheduled: None,
             status: CardStatus::InProgress,
-            tag: None,
+            tags: None,
             text: Some(String::from("cool test text")),
             title: String::from("Title card"),
             time_allotted: 0,
@@ -351,7 +351,7 @@ mod tests {
         let card_frag = CardFragment {
             scheduled: None,
             status: CardStatus::InProgress,
-            tag: None,
+            tags: None,
             text: Some(String::from("cool test text")),
             title: String::from("Title card"),
             time_allotted: 0,

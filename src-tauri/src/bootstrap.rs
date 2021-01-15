@@ -80,7 +80,7 @@ fn create_initial_project() -> Project {
     let initial_card = Card::create(CardFragment {
         scheduled: None,
         status: CardStatus::Todo,
-        tag: Some(vec![String::from("learning")]),
+        tags: Some(vec![String::from("explore")]),
         text: Some(String::from("welcome to erosion")),
         title: String::from("get started"),
         time_allotted: 5,
