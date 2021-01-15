@@ -3,7 +3,6 @@ use std::env::var;
 use crate::{
     cards::CardFragment,
     data_structures::{Card, Id, State},
-    filesystem::write_data_file,
     inboxes::Inbox,
     projects::Project,
 };
@@ -72,7 +71,7 @@ fn save_state_to_disk(updated: &State) {
         }
         Err(_) => {}
     }
-    write_data_file("state", &serde_json::to_string(updated).unwrap()).unwrap();
+    updated.write();
 }
 
 #[macro_export]

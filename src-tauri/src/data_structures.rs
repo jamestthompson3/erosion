@@ -68,8 +68,7 @@ pub enum CardBase {
     Settings(Settings),
     Card(Card),
 }
-// TODO Write data to disk from here??
-// how to update deeply nested data
+
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct State {
     pub user: String,
