@@ -11,7 +11,8 @@ use serde_json::json;
 use std::fs::DirBuilder;
 
 pub fn bootstrap() {
-    let data_dir = get_data_dir();
+    let mut data_dir = get_data_dir();
+    data_dir.push("state.json");
     if !data_dir.exists() {
         create_initial_files().unwrap();
     } else {

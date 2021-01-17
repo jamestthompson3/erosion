@@ -22,10 +22,13 @@ pub fn get_data_dir() -> std::path::PathBuf {
         Ok(dir) => return std::path::PathBuf::from(dir),
         Err(_) => {}
     }
-    let env = var("EROSION_ENV").unwrap();
+    let env = var("EROSION_ENV");
     let project_dirs = ProjectDirs::from("com", "erosion app", "erosion").unwrap();
     let data_dir = project_dirs.data_dir();
-    data_dir.join(env)
+    match env {
+        Ok(e) => data_dir.join(e),
+        Err(_) => (*data_dir).to_path_buf(),
+    }
 }
 
 pub fn prep_data_file(name: &str) -> std::path::PathBuf {

@@ -148,6 +148,8 @@ class Inbox extends Component {
     const cards = this.parent.querySelectorAll(".card.container");
     // update singleton children
     const title = this.parent.querySelector("h2");
+    const inboxIndicator = this.parent.querySelector(".inbox.indicator");
+    if (inboxIndicator) inboxIndicator.innerText = inbox.cards.length;
     if (title) title.innerText = inbox.name;
     // create the cardForm component
     const newCardForm = this.parent.querySelector(".inbox.card-form");
@@ -186,7 +188,13 @@ class Inbox extends Component {
         childToUpdate.withProps({ card });
       } else {
         const cardContainer = document.createElement("div");
+        const inboxCollapsed = JSON.parse(
+          localStorage.getItem(`${this.props.inbox.id}-collapsed`)
+        );
         cardContainer.classList.add("card", "container");
+        if (inboxCollapsed) {
+          cardContainer.style.display = "none";
+        }
         cardContainer.dataset.key = card.id;
         this.parent.appendChild(cardContainer);
         new Card(cardContainer, { card });
