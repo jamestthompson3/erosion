@@ -1,18 +1,21 @@
 .workspace.sidebar {
   width: 80px;
   background: var(--dark1);
-  height: 100%;
-  position: fixed;
+  height: 120px;
+  position: sticky;
+  top: 2rem;
 }
 .workspace.container {
-  background: var(--light0);
+  display: flex;
+  background: radial-gradient(var(--light0), rgb(237, 235, 235) 47.06%, hsl(0, 0%, 92%));
+  align-items: baseline;
+  justify-content: space-between;
 }
 .workspace.projects {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-width: 75%;
-  margin-left: 80px;
 }
 .workspace.spacer {
   width: 4px;
