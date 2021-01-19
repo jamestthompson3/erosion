@@ -1,6 +1,6 @@
 .inbox.container {
   padding: calc(var(--padding) / 2);
-  border: 1px solid var(--light1);
+  background: white;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: flex;

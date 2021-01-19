@@ -1,0 +1,19 @@
+.workspace.sidebar {
+  width: 80px;
+  background: var(--dark1);
+  height: 100%;
+  position: fixed;
+}
+.workspace.container {
+  background: var(--light0);
+}
+.workspace.projects {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 75%;
+  margin-left: 80px;
+}
+.workspace.spacer {
+  width: 4px;
+}

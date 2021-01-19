@@ -1,6 +1,6 @@
 :root {
   --padding: 2rem;
-  --light0: hsl(0, 0%, 89%);
+  --light0: hsl(0, 0%, 94%);
   --light1: hsl(0, 0%, 76%);
   --dark1: hsl(0, 0%, 39%);
   --dark0: hsl(0, 0%, 0%);
@@ -17,6 +17,31 @@
 * > * {
   margin: 0px;
   padding: 0px;
+}
+
+html {
+  height: 100vh;
+}
+body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  height: 100vh;
+  scroll-snap-type: y proximity;
+  /* overscroll-behavior: none; */
+}
+html,
+body {
+  font: inherit;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
+@media(max-width: 485px) {
+  body {
+    height: auto;
+  }
 }
 
 /*

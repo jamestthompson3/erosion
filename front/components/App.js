@@ -3,6 +3,7 @@ import Component from "./Component.js";
 import NewProject from "./icons/NewProject.js";
 import Cancel from "./icons/Cancel.js";
 import Check from "./icons/Check.js";
+import WorkspaceSidebar from "./WorkspaceSidebar.js";
 import {
   listenFor,
   messages,
@@ -23,9 +24,23 @@ export default class App extends Component {
   constructor() {
     super(document.body);
     this.state = {};
-    const createProjectForm = document.createElement("div");
-    createProjectForm.classList.add("project", "project-form");
-    document.body.appendChild(createProjectForm);
+    document.body.innerHTML = `
+     <div class="workspace container">
+      <aside class="workspace sidebar"></aside>
+      <div class="workspace projects">
+        <div class="project project-form"></div>
+      </div>
+      <div class="workspace spacer"></div>
+     </div>
+    `;
+    const createProjectForm = document.body.querySelector(
+      ".project.project-form"
+    );
+    const sidebar = document.body.querySelector(".workspace.sidebar");
+    const workspaceContainer = document.body.querySelector(
+      ".workspace.projects"
+    );
+    new WorkspaceSidebar(sidebar, {});
     new NewProjectForm(createProjectForm, {});
     listenFor(messages.WorkspaceInit, payload => {
       contextEmitter.emit(messages.WorkspaceInit, payload);
@@ -37,7 +52,7 @@ export default class App extends Component {
         const projectContainer = document.createElement("div");
         projectContainer.classList.add("project", "container");
         projectContainer.dataset.id = project.id;
-        document.body.appendChild(projectContainer);
+        workspaceContainer.appendChild(projectContainer);
         new Project(projectContainer, project);
       });
       contextEmitter.on(messages.UpdateCard, updatePayload => {
@@ -53,8 +68,12 @@ export default class App extends Component {
     this.sweepAndUpdate();
   }
   sweepAndUpdate() {
+    const workspaceContainer = document.body.querySelector(
+      ".workspace.projects"
+    );
+    console.log(workspaceContainer);
     const { projects } = this.state;
-    const children = this.parent.querySelectorAll(".project.container");
+    const children = workspaceContainer.querySelectorAll(".project.container");
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
@@ -70,12 +89,12 @@ export default class App extends Component {
         const projectContainer = document.createElement("div");
         projectContainer.classList.add("project", "container");
         projectContainer.dataset.key = project.id;
-        this.parent.appendChild(projectContainer);
+        workspaceContainer.appendChild(projectContainer);
         new Project(projectContainer, project);
       }
     });
     markedToRemove.forEach(oldNode => {
-      this.parent.removeChild(oldNode);
+      workspaceContainer.removeChild(oldNode);
     });
   }
   updateCard(updatePayload) {
