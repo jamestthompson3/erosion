@@ -129,3 +129,21 @@
   padding: 0.25rem;
   width: 400px;
 }
+
+
+/**
+ *
+ * Smaller screens
+ * */
+
+@media(max-width: 485px) {
+  .card.text {
+    display: none;
+  }
+  .card.title {
+    font-size: 1rem;
+  }
+  .card.metadata {
+    display: none;
+  }
+}

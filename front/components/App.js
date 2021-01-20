@@ -9,7 +9,8 @@ import {
   messages,
   contextEmitter,
   postData,
-  appContext
+  appContext,
+  newProjectEmitter
 } from "../messages.js";
 
 import {
@@ -132,12 +133,12 @@ class NewProjectForm extends Component {
     this.state = {
       current: "VIEW"
     };
-    el.innerHTML = `
-        <button aria-label="add project" title="add project to workspace" class="project add-project">${NewProject()}</button>
-    `;
-    const addButton = el.querySelector(".project.add-project");
-    addButton.addEventListener("click", () => {
-      this.setState({ current: "ADD_PROJECT" });
+    newProjectEmitter.on("TOGGLE", () => {
+      if (this.state.current === "VIEW") {
+        this.setState({ current: "ADD_PROJECT" });
+      } else {
+        this.setState({ current: "VIEW" });
+      }
     });
   }
   save = () => {
@@ -152,13 +153,7 @@ class NewProjectForm extends Component {
   update() {
     const { current } = this.state;
     if (current === "VIEW") {
-      this.parent.innerHTML = `
-        <button aria-label="add project" title="add project to workspace" class="project add-project">${NewProject()}</button>
-      `;
-      const addButton = this.parent.querySelector(".project.add-project");
-      addButton.addEventListener("click", () => {
-        this.setState({ current: "ADD_PROJECT" });
-      });
+      this.parent.innerHTML = ``;
     }
     if (current === "ADD_PROJECT") {
       this.parent.innerHTML = `

@@ -11,12 +11,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.project.add-project {
-  align-self: flex-start;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-}
+
 .project.add-inbox {
   margin: 1rem;
   background: transparent;
@@ -24,6 +19,11 @@
   cursor: pointer;
 }
 .project.inbox-form {
+  display: flex;
+  align-items: center;
+}
+
+.project.project-form {
   display: flex;
   align-items: center;
 }
@@ -44,10 +44,6 @@
   border: none;
   padding: 0.5rem;
   border-radius: 25px;
-}
-
-.inbox-form button:hover {
-  background: var(--light0);
 }
 
 .project.new-inbox-name, .project.new-project-name {

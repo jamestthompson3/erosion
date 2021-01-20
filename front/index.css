@@ -38,6 +38,10 @@ body {
   width: 100%;
 }
 
+button:hover {
+  transform: scale(1.05);
+}
+
 @media(max-width: 485px) {
   body {
     height: auto;

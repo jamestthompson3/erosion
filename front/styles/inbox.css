@@ -87,3 +87,18 @@
   border: 1px solid var(--light0);
   padding: 0.25rem;
 }
+
+/**
+ *
+ * Smaller screens
+ * */
+
+  @media(max-width: 485px) {
+    .inbox.title {
+      font-size: 1.25rem;
+      white-space: nowrap;
+    }
+    .inbox.indicator {
+      font-size: 0.85rem;
+    }
+  }

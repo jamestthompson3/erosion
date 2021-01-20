@@ -97,6 +97,7 @@ export function globalEmitter() {
 }
 
 const globalEvents = globalEmitter();
+export const newProjectEmitter = emitter();
 
 export const postData = globalEvents.emit;
 export const listenFor = globalEvents.on;
