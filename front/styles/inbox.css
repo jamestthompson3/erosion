@@ -97,7 +97,7 @@
  * Smaller screens
  * */
 
-  @media(max-width: 485px) {
+  @media(max-width: 500px) {
     .inbox.title {
       font-size: 1.25rem;
       white-space: nowrap;

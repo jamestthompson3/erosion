@@ -5,6 +5,7 @@
   --dark1: hsl(0, 0%, 39%);
   --dark0: hsl(0, 0%, 0%);
   --accent: hsl(199, 100%, 50%);
+  --accent-alt: #7400b8ff;
   --accent-hover: hsl(199, 100%, 47%);
   --accent-darken: hsl(199, 100%, 40%);
   --bg-gradient: linear-gradient(hsl(0, 0%, 100%), hsl(0, 0%, 96%));
@@ -21,12 +22,14 @@
 
 html {
   height: 100vh;
+  width: 100vw;
 }
 body {
   overflow-x: hidden;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   height: 100vh;
+  width: 100%;
   scroll-snap-type: y proximity;
   /* overscroll-behavior: none; */
 }
@@ -35,14 +38,13 @@ body {
   font: inherit;
   margin: 0px;
   padding: 0px;
-  width: 100%;
 }
 
 button:hover {
   transform: scale(1.05);
 }
 
-@media(max-width: 485px) {
+@media(max-width: 500px) {
   body {
     height: auto;
   }
@@ -93,6 +95,13 @@ button:hover {
   width: 100%;
   resize: none;
   font-family: inherit;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
 }
 
 /*

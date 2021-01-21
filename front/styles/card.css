@@ -3,26 +3,26 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--light1);
+  border-radius: var(--radius);
   --color: transparent;
   box-shadow: 4px 4px 0 var(--color);
   margin: 0.5rem 0rem;
   justify-content: space-between;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 .card.text {
-  max-width: 400px;
-  width: 400px;
   display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  word-wrap: normal;
+  width: 100%;
 }
 .card.description {
-  max-width: 400px;
+  flex-grow: 1;
+  overflow: hidden;
 }
 .card.status-container {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 .card.status {
   width: 1.25rem;
@@ -100,6 +100,9 @@
   outline: 0;
 }
 
+.card.metadata {
+  margin: 0 0.5rem;
+}
 .card.metadata p {
   padding: 0.25rem;
 }
@@ -136,7 +139,7 @@
  * Smaller screens
  * */
 
-@media(max-width: 485px) {
+@media(max-width: 500px) {
   .card.text {
     display: none;
   }

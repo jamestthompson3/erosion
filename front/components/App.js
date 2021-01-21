@@ -1,6 +1,5 @@
 import Project from "./Project.js";
 import Component from "./Component.js";
-import NewProject from "./icons/NewProject.js";
 import Cancel from "./icons/Cancel.js";
 import Check from "./icons/Check.js";
 import WorkspaceSidebar from "./WorkspaceSidebar.js";
@@ -72,7 +71,6 @@ export default class App extends Component {
     const workspaceContainer = document.body.querySelector(
       ".workspace.projects"
     );
-    console.log(workspaceContainer);
     const { projects } = this.state;
     const children = workspaceContainer.querySelectorAll(".project.container");
     // create a map here so we can quickly look up if the child exists by using the cardId

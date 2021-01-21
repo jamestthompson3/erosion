@@ -1,10 +1,22 @@
 .project.container {
  padding: var(--padding);
  display: flex;
+ border-radius: var(--radius);
  flex-direction: column;
 }
+
 .project.title {
   text-align: center;
+  text-shadow: 4px 4px var(--accent), 3.75px 3.75px var(--accent),
+    3.5px 3.5px var(--accent), 3.25px 3.25px var(--accent),
+    3px 3px var(--accent), 2.75px 2.75px var(--accent),
+    2.5px 2.5px var(--accent), 2.25px 2.25px var(--accent),
+    2px 2px var(--accent), 1.75px 1.75px var(--accent),
+    1.5px 1.5px var(--accent), 1.25px 1.25px var(--accent),
+    1px 1px var(--accent), 0.75px 0.75px var(--accent),
+    0.5px 0.5px var(--accent), 0.25px 0.25px var(--accent),
+    0px 0px var(--accent);
+  color: var(--accent-alt);
 }
 .project.actions {
   display: flex;

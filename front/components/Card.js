@@ -18,8 +18,8 @@ class Card extends Component {
             <label for=${card.id}></label>
           </div>
           <div class="card description" data-status=${card.status}>
-            <h3 class="card title">${card.title}</h3>
-            <p class="card text">${card.text || ""}</p>
+            <h3 class="card title ellipsis">${card.title}</h3>
+            <p class="card text ellipsis">${card.text || ""}</p>
           </div>
         </div>
       <div class="card metadata">
