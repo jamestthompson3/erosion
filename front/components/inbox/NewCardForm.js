@@ -1,6 +1,7 @@
 import DayPicker from "../DayPicker.js";
 import Component from "../Component.js";
 import { postData, messages, appContext } from "../../messages.js";
+import { addDays, addHours, addMinutes } from "../../utils/time.js";
 
 import InboxTagTime from "./InboxTagTime.js";
 
@@ -8,30 +9,38 @@ class NewCardForm extends Component {
   constructor(parent, props) {
     super(parent, props);
     this.state = {
-      scheduled: new Date(),
+      scheduled: undefined,
       title: undefined,
       text: undefined,
       time_allotted: 0,
-      tags: []
+      tags: [],
+      customDate: false
     };
-    const { scheduled, time_allotted, tags } = this.state;
+    const { time_allotted, tags } = this.state;
     this.parent.innerHTML = `
       <label for="title">card title</label>
       <input type="text" class="as-h3" id="title" placeholder="card title">
       <label for="body">card text (optional)</label>
       <textarea class="as-p" id="body" placeholder="(optional) Add a description, links, or encouragement"></textarea>
       <div class="inbox card-form metadata">
-         <div class="day-container"></div>
+         <div class="day-container">
+            <label for="scheduled">Start task</label>
+            <select name="task-scheduled" id="task-scheduled">
+              <option value=""></option>
+              <option value="20">In 20 Minutes</option>
+              <option value="1">In an Hour</option>
+              <option value="tomorrow">Tomorrow</option>
+              <option value="next week">Next Week</option>
+              <option value="custom">Custom</option>
+            </select>
+         </div>
          <div class="card-form tags-time"></div>
       </div>
       <button class="card-form save-button">Save</button>
     `;
-    const dayPicker = this.parent.querySelector(".day-container");
-    new DayPicker(dayPicker, {
-      day: scheduled,
-      updateDay: day => this.setState({ scheduled: day })
-    });
     const tagsTime = this.parent.querySelector(".card-form.tags-time");
+    const timeScheduled = this.parent.querySelector("#task-scheduled");
+    timeScheduled.addEventListener("change", this.scheduled);
     new InboxTagTime(tagsTime, {
       time: time_allotted,
       tags,
@@ -65,13 +74,39 @@ class NewCardForm extends Component {
     });
     closeForm();
   };
-  // NOTE! calling this with new props won't do anything.
+  scheduled = e => {
+    const today = new Date();
+    switch (e.target.value) {
+      case "20":
+        this.setState({ scheduled: addMinutes(today, 20) });
+        break;
+      case "1":
+        this.setState({ scheduled: addHours(today, 1) });
+        break;
+      case "tomorrow":
+        this.setState({ scheduled: new Date(addDays(today, 1).setHours(9)) });
+        break;
+      case "next week":
+        this.setState({ scheduled: new Date(addDays(today, 7).setHours(9)) });
+        break;
+      case "custom":
+        this.setState({ customDate: true });
+        break;
+      default:
+        break;
+    }
+  };
   update() {
-    const { scheduled, time_allotted, tags } = this.state;
+    const { scheduled, time_allotted, tags, customDate } = this.state;
     const dayPicker = this.parent.querySelector(".day-container");
+    if (customDate) {
+      new DayPicker(dayPicker, {
+        day: scheduled || new Date(),
+        updateDay: day => this.setState({ scheduled: day })
+      });
+    }
     const tagsTime = this.parent.querySelector(".card-form.tags-time");
     tagsTime.update({ time: time_allotted, tags });
-    dayPicker.update({ day: scheduled });
   }
 }
 

@@ -46,6 +46,7 @@
 }
 .inbox.card-form.metadata {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-evenly;
   border: none;
@@ -53,6 +54,9 @@
 
 .inbox.card-form label {
   display: none;
+}
+.inbox.card-form > .day-container label {
+  display: inline;
 }
 
 .card-form.tags-time label {
@@ -100,5 +104,15 @@
     }
     .inbox.indicator {
       font-size: 0.85rem;
+    }
+    .inbox.card-form.metadata {
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-form.tags-time {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1rem;
+      align-items: center;
     }
   }

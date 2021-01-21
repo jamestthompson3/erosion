@@ -47,7 +47,6 @@ class DayPicker extends Component {
         )}
       />
     </div>
-  </div>
 `;
     // attach event listeners
     const monthIncrement = this.parent.querySelector("#month-increment");
