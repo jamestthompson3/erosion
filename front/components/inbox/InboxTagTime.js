@@ -1,13 +1,13 @@
 class InboxTagTime {
-  constructor(parent, props) {
-    this.parent = parent;
+  constructor(el, props) {
+    this.el = el;
     this.props = props;
-    parent.update = this.update;
+    el.update = this.update;
     this.render();
   }
   render() {
     const { time, tags } = this.props;
-    this.parent.innerHTML = `
+    this.el.innerHTML = `
       <label for="new-card-time-allotted">time allotted (min)</label>
       <input
           type="text"
@@ -28,10 +28,10 @@ class InboxTagTime {
       <option value="recharge">Recharge</option>
       </select>
     `;
-    const timeInput = this.parent.querySelector("#new-card-time-allotted");
+    const timeInput = this.el.querySelector("#new-card-time-allotted");
     timeInput.value = time;
     timeInput.addEventListener("change", this.handleTimeChange);
-    const tagSelect = this.parent.querySelector("select");
+    const tagSelect = this.el.querySelector("select");
     tagSelect.value = tags[0];
     tagSelect.addEventListener("change", this.handleTagChange);
   }

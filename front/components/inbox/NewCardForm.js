@@ -6,8 +6,8 @@ import { addDays, addHours, addMinutes } from "../../utils/time.js";
 import InboxTagTime from "./InboxTagTime.js";
 
 class NewCardForm extends Component {
-  constructor(parent, props) {
-    super(parent, props);
+  constructor(el, props) {
+    super(el, props);
     this.state = {
       scheduled: undefined,
       title: undefined,
@@ -17,7 +17,7 @@ class NewCardForm extends Component {
       customDate: false
     };
     const { time_allotted, tags } = this.state;
-    this.parent.innerHTML = `
+    this.el.innerHTML = `
       <label for="title">card title</label>
       <input type="text" class="as-h3" id="title" placeholder="card title">
       <label for="body">card text (optional)</label>
@@ -38,8 +38,8 @@ class NewCardForm extends Component {
       </div>
       <button class="card-form save-button">Save</button>
     `;
-    const tagsTime = this.parent.querySelector(".card-form.tags-time");
-    const timeScheduled = this.parent.querySelector("#task-scheduled");
+    const tagsTime = this.el.querySelector(".card-form.tags-time");
+    const timeScheduled = this.el.querySelector("#task-scheduled");
     timeScheduled.addEventListener("change", this.scheduled);
     new InboxTagTime(tagsTime, {
       time: time_allotted,
@@ -51,11 +51,11 @@ class NewCardForm extends Component {
         this.setState({ tags: [tag] });
       }
     });
-    const title = this.parent.querySelector("#title");
+    const title = this.el.querySelector("#title");
     title.addEventListener("change", this.handleTitleChange);
-    const text = this.parent.querySelector("#body");
+    const text = this.el.querySelector("#body");
     text.addEventListener("change", this.handleTextChange);
-    const submitButton = this.parent.querySelector(".card-form.save-button");
+    const submitButton = this.el.querySelector(".card-form.save-button");
     submitButton.addEventListener("click", this.submit);
   }
   handleTitleChange = e => {
@@ -98,14 +98,14 @@ class NewCardForm extends Component {
   };
   update() {
     const { scheduled, time_allotted, tags, customDate } = this.state;
-    const dayPicker = this.parent.querySelector(".day-container");
+    const dayPicker = this.el.querySelector(".day-container");
     if (customDate) {
       new DayPicker(dayPicker, {
         day: scheduled || new Date(),
         updateDay: day => this.setState({ scheduled: day })
       });
     }
-    const tagsTime = this.parent.querySelector(".card-form.tags-time");
+    const tagsTime = this.el.querySelector(".card-form.tags-time");
     tagsTime.update({ time: time_allotted, tags });
   }
 }

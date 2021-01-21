@@ -140,7 +140,7 @@ class NewProjectForm extends Component {
     });
   }
   save = () => {
-    const projectName = this.parent.querySelector(".project.new-project-name");
+    const projectName = this.el.querySelector(".project.new-project-name");
     if (projectName.value !== "") {
       postData(messages.CreateProject, {
         name: projectName.value.trim()
@@ -151,18 +151,18 @@ class NewProjectForm extends Component {
   update() {
     const { current } = this.state;
     if (current === "VIEW") {
-      this.parent.innerHTML = ``;
+      this.el.innerHTML = ``;
     }
     if (current === "ADD_PROJECT") {
-      this.parent.innerHTML = `
+      this.el.innerHTML = `
         <input placeholder="project name" class="project new-project-name" type="text"></inbox>
         <button class="project-form accept" title="save project">${Check()}</button>
         <button class="project-form cancel" title="cancel creation">${Cancel()}</button>
         `;
-      const input = this.parent.querySelector("input");
+      const input = this.el.querySelector("input");
       input.focus();
-      const save = this.parent.querySelector(".project-form.accept");
-      const cancel = this.parent.querySelector(".project-form.cancel");
+      const save = this.el.querySelector(".project-form.accept");
+      const cancel = this.el.querySelector(".project-form.cancel");
       save.addEventListener("click", this.save);
       cancel.addEventListener("click", () => {
         this.setState({ current: "VIEW" });

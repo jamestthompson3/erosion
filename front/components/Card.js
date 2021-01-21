@@ -3,12 +3,12 @@ import { existsAndRender, debounceEvent } from "../utils/rendering.js";
 import Component from "./Component.js";
 
 class Card extends Component {
-  constructor(parent, props) {
-    super(parent, props);
+  constructor(el, props) {
+    super(el, props);
     this.color = this.createCardColor();
     this.state = { ...props };
     const { card } = this.state;
-    parent.innerHTML = `
+    el.innerHTML = `
         <div class="card status-container">
           <div title=${card.status} class="card status">
             <input type="checkbox" id=${card.id} ${existsAndRender(
@@ -50,17 +50,15 @@ class Card extends Component {
         </div>
     `;
 
-    const cardStatus = parent.querySelector("input");
-    parent.addEventListener("click", this.clickAway, false);
+    const cardStatus = el.querySelector("input");
+    el.addEventListener("click", this.clickAway, false);
     cardStatus.indeterminate = card.status === "InProgress";
-    this.parent.style.setProperty("--color", this.color);
+    this.el.style.setProperty("--color", this.color);
     cardStatus.addEventListener("change", this.updateStatus);
-    const deleteButton = this.parent.querySelector(
-      "button.card.actions.delete"
-    );
+    const deleteButton = this.el.querySelector("button.card.actions.delete");
 
     this.setUpEditableEvents();
-    const editButton = this.parent.querySelector("button.card.actions.edit");
+    const editButton = this.el.querySelector("button.card.actions.edit");
     deleteButton.addEventListener("click", this.deleteCard);
     editButton.addEventListener("click", () => {});
   }
@@ -82,8 +80,8 @@ class Card extends Component {
   }
   setUpEditableEvents() {
     const { card } = this.props;
-    const cardTitle = this.parent.querySelector(".card.title");
-    const cardText = this.parent.querySelector(".card.text");
+    const cardTitle = this.el.querySelector(".card.title");
+    const cardText = this.el.querySelector(".card.text");
     if (cardTitle) {
       const titleEdit = document.createElement("input");
       titleEdit.classList.add("card", "as-h3");
@@ -133,7 +131,7 @@ class Card extends Component {
     }
   }
   clickAway = () => {
-    const textEdit = this.parent.querySelector(".as-p");
+    const textEdit = this.el.querySelector(".as-p");
     if (textEdit) {
       const cardText = document.createElement("p");
       cardText.classList.add("card", "text");
@@ -147,7 +145,7 @@ class Card extends Component {
         });
       });
     }
-    const titleEdit = this.parent.querySelector(".as-h3");
+    const titleEdit = this.el.querySelector(".as-h3");
     if (titleEdit) {
       const cardTitle = document.createElement("h3");
       cardTitle.classList.add("card", "title");
@@ -208,11 +206,11 @@ class Card extends Component {
     const { card } = this.state;
     // adjust dynamic data
     // get selectors
-    const cardStatus = this.parent.querySelector("input");
-    const cardTitle = this.parent.querySelector(".card.title");
-    const cardText = this.parent.querySelector(".card.text");
-    const cardDescription = this.parent.querySelector(".card.description");
-    const cardStatusContainer = this.parent.querySelector(".card.status");
+    const cardStatus = this.el.querySelector("input");
+    const cardTitle = this.el.querySelector(".card.title");
+    const cardText = this.el.querySelector(".card.text");
+    const cardDescription = this.el.querySelector(".card.description");
+    const cardStatusContainer = this.el.querySelector(".card.status");
     cardStatusContainer.title = card.status;
     cardStatus.checked = card.status === "Done";
     cardStatus.indeterminate = card.status === "InProgress";

@@ -10,13 +10,13 @@ import { postData, messages, appContext } from "../../messages.js";
 import NewCardForm from "./NewCardForm.js";
 
 class Inbox extends Component {
-  constructor(parent, props) {
-    super(parent, props);
+  constructor(el, props) {
+    super(el, props);
     this.state = {
       showForm: false
     };
     const { inbox } = props;
-    parent.innerHTML = `
+    el.innerHTML = `
       <div class="inbox actions">
         <h2 class="inbox title">${inbox.name}</h2>
             <div id="inbox-action-indicator">
@@ -27,12 +27,12 @@ class Inbox extends Component {
       </div>
     `;
     // add event listeners
-    const addButton = parent.querySelector(".inbox.add-card");
+    const addButton = el.querySelector(".inbox.add-card");
     addButton.addEventListener("click", this.openForm);
-    const collapseButton = parent.querySelector(".inbox.collapse");
+    const collapseButton = el.querySelector(".inbox.collapse");
     collapseButton.addEventListener("click", () => this.toggleCollapse());
-    parent.addEventListener("click", this.clickAway, false);
-    const boxTitle = parent.querySelector(".inbox.title");
+    el.addEventListener("click", this.clickAway, false);
+    const boxTitle = el.querySelector(".inbox.title");
     if (boxTitle) {
       const titleEdit = document.createElement("input");
       titleEdit.classList.add("inbox", "as-h2");
@@ -64,22 +64,20 @@ class Inbox extends Component {
       const cardContainer = document.createElement("div");
       cardContainer.classList.add("card", "container");
       cardContainer.dataset.key = card.id;
-      parent.appendChild(cardContainer);
+      el.appendChild(cardContainer);
       new Card(cardContainer, { card });
     });
     // collapse cards if saved in localStorage
     if (JSON.parse(localStorage.getItem(`${this.props.inbox.id}-collapsed`))) {
-      const children = this.parent.querySelectorAll(".card.container");
-      const actionsContainer = this.parent.querySelector(
-        "#inbox-action-indicator"
-      );
-      const headerActions = this.parent.querySelector(".inbox.actions");
+      const children = this.el.querySelectorAll(".card.container");
+      const actionsContainer = this.el.querySelector("#inbox-action-indicator");
+      const headerActions = this.el.querySelector(".inbox.actions");
       const collapseButton = actionsContainer.querySelector(".inbox.collapse");
       this.styleCollapse(children, headerActions, collapseButton);
     }
   }
   clickAway = () => {
-    const titleEdit = this.parent.querySelector(".as-h2");
+    const titleEdit = this.el.querySelector(".as-h2");
     if (titleEdit) {
       const boxTitle = document.createElement("h2");
       boxTitle.classList.add("inbox", "title");
@@ -98,11 +96,9 @@ class Inbox extends Component {
     this.setState({ showForm: !this.state.showForm });
   };
   toggleCollapse = () => {
-    const children = this.parent.querySelectorAll(".card.container");
-    const actionsContainer = this.parent.querySelector(
-      "#inbox-action-indicator"
-    );
-    const headerActions = this.parent.querySelector(".inbox.actions");
+    const children = this.el.querySelectorAll(".card.container");
+    const actionsContainer = this.el.querySelector("#inbox-action-indicator");
+    const headerActions = this.el.querySelector(".inbox.actions");
     const collapseButton = actionsContainer.querySelector(".inbox.collapse");
     if (JSON.parse(localStorage.getItem(`${this.props.inbox.id}-collapsed`))) {
       this.styleExpand(children, headerActions, collapseButton);
@@ -115,7 +111,7 @@ class Inbox extends Component {
       child.style.display = "flex";
     });
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, false);
-    headerActions.removeChild(this.parent.querySelector(".inbox.indicator"));
+    headerActions.removeChild(this.el.querySelector(".inbox.indicator"));
     collapseButton.innerHTML = Expand();
   };
   styleCollapse = (children, headerActions, collapseButton) => {
@@ -145,20 +141,20 @@ class Inbox extends Component {
   }
   update() {
     const { inbox } = this.props;
-    const cards = this.parent.querySelectorAll(".card.container");
+    const cards = this.el.querySelectorAll(".card.container");
     // update singleton children
-    const title = this.parent.querySelector("h2");
-    const inboxIndicator = this.parent.querySelector(".inbox.indicator");
+    const title = this.el.querySelector("h2");
+    const inboxIndicator = this.el.querySelector(".inbox.indicator");
     if (inboxIndicator) inboxIndicator.innerText = inbox.cards.length;
     if (title) title.innerText = inbox.name;
     // create the cardForm component
-    const newCardForm = this.parent.querySelector(".inbox.card-form");
-    const addButton = this.parent.querySelector(".inbox.add-card");
+    const newCardForm = this.el.querySelector(".inbox.card-form");
+    const addButton = this.el.querySelector(".inbox.add-card");
     if (this.state.showForm && !newCardForm) {
       addButton.innerHTML = Cancel();
       const cardForm = document.createElement("div");
       cardForm.classList.add("inbox", "card-form");
-      this.parent.insertBefore(cardForm, cards[0]);
+      this.el.insertBefore(cardForm, cards[0]);
       new NewCardForm(cardForm, {
         inbox: inbox.id,
         closeForm: () => {
@@ -168,13 +164,13 @@ class Inbox extends Component {
     }
     if (!this.state.showForm && newCardForm) {
       addButton.innerHTML = Add();
-      this.parent.removeChild(newCardForm);
+      this.el.removeChild(newCardForm);
     }
     this.sweepAndUpdate();
   }
   sweepAndUpdate() {
     const { inbox } = this.props;
-    const children = this.parent.querySelectorAll(".card.container");
+    const children = this.el.querySelectorAll(".card.container");
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
@@ -196,12 +192,12 @@ class Inbox extends Component {
           cardContainer.style.display = "none";
         }
         cardContainer.dataset.key = card.id;
-        this.parent.appendChild(cardContainer);
+        this.el.appendChild(cardContainer);
         new Card(cardContainer, { card });
       }
     });
     markedToRemove.forEach(oldNode => {
-      this.parent.removeChild(oldNode);
+      this.el.removeChild(oldNode);
     });
   }
 }

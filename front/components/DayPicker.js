@@ -2,14 +2,14 @@ import { addDays, addMonths, formatTimeString } from "../utils/time.js";
 import Component from "./Component.js";
 
 class DayPicker extends Component {
-  constructor(parent, props) {
-    super(parent, props);
-    parent.update = this.update;
+  constructor(el, props) {
+    super(el, props);
+    el.update = this.update;
     this.render();
   }
   render() {
     const { day } = this.props;
-    this.parent.innerHTML = `
+    this.el.innerHTML = `
       <div class="month">
         <button class="increment-decrement" id="month-decrement">
         👈
@@ -49,12 +49,12 @@ class DayPicker extends Component {
     </div>
 `;
     // attach event listeners
-    const monthIncrement = this.parent.querySelector("#month-increment");
-    const monthDecrement = this.parent.querySelector("#month-decrement");
-    const dayIncrement = this.parent.querySelector("#day-increment");
-    const dayDecrement = this.parent.querySelector("#day-decrement");
-    const dayUpdater = this.parent.querySelector(".day-input");
-    const timeUpdater = this.parent.querySelector(".time-input");
+    const monthIncrement = this.el.querySelector("#month-increment");
+    const monthDecrement = this.el.querySelector("#month-decrement");
+    const dayIncrement = this.el.querySelector("#day-increment");
+    const dayDecrement = this.el.querySelector("#day-decrement");
+    const dayUpdater = this.el.querySelector(".day-input");
+    const timeUpdater = this.el.querySelector(".time-input");
     monthIncrement.addEventListener("click", this.incrementMonth);
     monthDecrement.addEventListener("click", this.decrementMonth);
     dayIncrement.addEventListener("click", this.incrementDay);

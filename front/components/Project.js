@@ -13,12 +13,12 @@ const states = {
 };
 
 class Project extends Component {
-  constructor(parent, props) {
-    super(parent, props);
+  constructor(el, props) {
+    super(el, props);
     this.state = {
       current: states.VIEW
     };
-    parent.innerHTML = `
+    el.innerHTML = `
       <div class="project actions">
         <h1 class="project title">${props.name}</h1>
         <button title="add inbox to project" class="project add-inbox" aria-label="add inbox to project">
@@ -31,16 +31,16 @@ class Project extends Component {
       const inboxContainer = document.createElement("div");
       inboxContainer.classList.add("inbox", "container");
       inboxContainer.dataset.key = inbox.id;
-      this.parent.appendChild(inboxContainer);
+      this.el.appendChild(inboxContainer);
       new Inbox(inboxContainer, { inbox });
     });
-    const addInboxButton = parent.querySelector(".project.add-inbox");
+    const addInboxButton = el.querySelector(".project.add-inbox");
     addInboxButton.addEventListener("click", () =>
       this.setState({ current: states.ADD_INBOX })
     );
 
-    parent.addEventListener("click", this.clickAway, false);
-    const projectTitle = parent.querySelector(".project.title");
+    el.addEventListener("click", this.clickAway, false);
+    const projectTitle = el.querySelector(".project.title");
     if (projectTitle) {
       const titleEdit = document.createElement("input");
       titleEdit.classList.add("project", "as-h1");
@@ -68,7 +68,7 @@ class Project extends Component {
     }
   }
   clickAway = () => {
-    const titleEdit = this.parent.querySelector(".as-h1");
+    const titleEdit = this.el.querySelector(".as-h1");
     if (titleEdit) {
       const projectTitle = document.createElement("h1");
       projectTitle.classList.add("project", "title");
@@ -93,18 +93,18 @@ class Project extends Component {
   }
   update() {
     const { name, id } = this.props;
-    const titleEl = this.parent.querySelector("h1");
+    const titleEl = this.el.querySelector("h1");
     if (titleEl) titleEl.innerText = name;
-    const children = this.parent.querySelectorAll(".inbox.container");
+    const children = this.el.querySelectorAll(".inbox.container");
 
     // create the cardForm component
-    const newInboxForm = this.parent.querySelector(".project.inbox-form");
-    const addInboxButton = this.parent.querySelector(".project.add-inbox");
+    const newInboxForm = this.el.querySelector(".project.inbox-form");
+    const addInboxButton = this.el.querySelector(".project.add-inbox");
     if (this.state.current === states.ADD_INBOX && !newInboxForm) {
       addInboxButton.innerHTML = Cancel();
       const inboxForm = document.createElement("div");
       inboxForm.classList.add("project", "inbox-form");
-      this.parent.insertBefore(inboxForm, children[0]);
+      this.el.insertBefore(inboxForm, children[0]);
       new NewInboxForm(inboxForm, {
         project: id,
         closeForm: () => {
@@ -113,14 +113,14 @@ class Project extends Component {
       });
     }
     if (this.state.current === states.VIEW && newInboxForm) {
-      this.parent.removeChild(newInboxForm);
+      this.el.removeChild(newInboxForm);
       addInboxButton.innerHTML = NewInbox();
     }
     this.sweepAndUpdate();
   }
   sweepAndUpdate() {
     const { inboxes } = this.props;
-    const children = this.parent.querySelectorAll(".inbox.container");
+    const children = this.el.querySelectorAll(".inbox.container");
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
@@ -136,12 +136,12 @@ class Project extends Component {
         const inboxContainer = document.createElement("div");
         inboxContainer.classList.add("inbox", "container");
         inboxContainer.dataset.key = inbox.id;
-        this.parent.appendChild(inboxContainer);
+        this.el.appendChild(inboxContainer);
         new Inbox(inboxContainer, { inbox });
       }
     });
     markedToRemove.forEach(oldNode => {
-      this.parent.removeChild(oldNode);
+      this.el.removeChild(oldNode);
     });
   }
 }
@@ -162,7 +162,7 @@ class NewInboxForm extends Component {
     cancel.addEventListener("click", () => this.props.closeForm());
   }
   save = () => {
-    const inboxName = this.parent.querySelector("input");
+    const inboxName = this.el.querySelector("input");
     if (inboxName.value !== "") {
       const { project, closeForm } = this.props;
       postData(messages.CreateInbox, {
