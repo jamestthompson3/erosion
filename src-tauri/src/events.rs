@@ -12,7 +12,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-pub fn register_init(mut handle: tauri::WebviewMut) {
+pub fn workspace_init(mut handle: tauri::WebviewMut) {
     tauri::event::emit(
         &mut handle,
         Events::WorkspaceInit.to_string(),
