@@ -1,6 +1,10 @@
 import { postData, messages, appContext } from "../messages.js";
 import { existsAndRender, debounceEvent } from "../utils/rendering.js";
+import VertMenu from "./icons/VertMenu.js";
+import MenuSelect from "./MenuSelect.js";
 import Component from "./Component.js";
+import Trash from "./icons/Trash.js";
+import Edit from "./icons/Edit.js";
 
 class Card extends Component {
   constructor(el, props) {
@@ -39,28 +43,30 @@ class Card extends Component {
             )}
       </div>
         <div class="card actions">
-          <button aria-label="delete card" class="card actions delete">
-            <svg xmlns="http://www.w3.org/2000/svg"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-          </button>
-          <button aria-label="edit card" class="card actions edit">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"  fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-            </svg>
-          </button>
         </div>
     `;
 
+    const actionContainer = el.querySelector(".card.actions");
+    new MenuSelect(actionContainer, {
+      trigger: () =>
+        `<button class="card actions menu-button" aria-label="card actions">${VertMenu()}</button>`,
+      children: {
+        render: () => `
+      <button aria-label="delete card" class="card actions delete">${Trash()}</button>
+      <button aria-label="edit card" class="card actions edit">${Edit()}</button>
+      `,
+        bootstrap: menu => {
+          const deleteButton = menu.querySelector(".card.actions.delete");
+          deleteButton.addEventListener("click", this.deleteCard);
+        }
+      }
+    });
     const cardStatus = el.querySelector("input");
     el.addEventListener("click", this.clickAway, false);
     cardStatus.indeterminate = card.status === "InProgress";
     this.el.style.setProperty("--color", this.color);
     cardStatus.addEventListener("change", this.updateStatus);
-    const deleteButton = this.el.querySelector("button.card.actions.delete");
-
     this.setUpEditableEvents();
-    const editButton = this.el.querySelector("button.card.actions.edit");
-    deleteButton.addEventListener("click", this.deleteCard);
-    editButton.addEventListener("click", () => {});
   }
   createCardColor() {
     const colors = [

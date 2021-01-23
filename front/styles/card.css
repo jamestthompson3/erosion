@@ -118,14 +118,15 @@
   color: red;
 }
 .card.actions.edit {
-  cursor: pointer;
-  background: transparent;
-  border: none;
   width: 2rem;
   height: 2rem;
 }
 .card.actions.edit:hover {
   color: var(--color);
+}
+.card.actions.menu-button {
+  width: 2rem;
+  height: 2rem;
 }
 .card.as-p {
   font-size: 1em;
@@ -138,7 +139,11 @@
  *
  * Smaller screens
  * */
-
+@media(max-width: 700px) {
+  .card.status-container {
+    width: 80%;
+  }
+}
 @media(max-width: 500px) {
   .card.text {
     display: none;

@@ -20,9 +20,8 @@ import {
  * Part of the issue is that these components are not pure, or at least do not have some sort of output.
  */
 (function() {
-  contextEmitter.on(messages.WorkspaceInit, async payload => {
-    const { fs } = window.__TAURI__;
-    const state = JSON.parse(await fs.readTextFile(payload));
+  contextEmitter.on(messages.WorkspaceInit, payload => {
+    const state = JSON.parse(payload);
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
     appContext.set("state", state);

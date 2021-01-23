@@ -1,7 +1,7 @@
 use crate::{
     cards::CardFragment,
     data_structures::Card,
-    filesystem::{get_data_dir, read_state_file},
+    filesystem::{read_data_file, read_state_file},
     inboxes::Inbox,
     lenses::{
         create_card, create_inbox, create_project, delete_card, update_card, update_inbox,
@@ -13,12 +13,10 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 
 pub fn register_init(mut handle: tauri::WebviewMut) {
-    let mut data_dir = get_data_dir();
-    data_dir.push("state.json");
     tauri::event::emit(
         &mut handle,
         Events::WorkspaceInit.to_string(),
-        Some(data_dir.to_str()),
+        Some(read_data_file("state").unwrap()),
     )
     .unwrap();
 }

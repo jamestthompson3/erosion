@@ -1,6 +1,6 @@
 .inbox.container {
   padding: calc(var(--padding) / 2);
-  background: white;
+  background: var(--bg-solid);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   display: flex;
@@ -71,8 +71,6 @@
 }
 .card-form.save-button {
   background: var(--accent);
-  cursor: pointer;
-  border: none;
   width: 80px;
   height: 3.25rem;
   box-shadow: 3px 3px 0 1px var(--accent-darken);

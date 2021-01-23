@@ -1,5 +1,6 @@
 :root {
   --padding: 2rem;
+  --bg-solid: white;
   --light0: hsl(0, 0%, 94%);
   --light1: hsl(0, 0%, 76%);
   --dark1: hsl(0, 0%, 39%);
@@ -42,6 +43,12 @@ body {
 
 button:hover {
   transform: scale(1.05);
+}
+
+button {
+  cursor: pointer;
+  background: transparent;
+  border: none;
 }
 
 @media(max-width: 500px) {
@@ -102,6 +109,15 @@ button:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   word-wrap: normal;
+}
+
+.menu.contextual {
+  position: absolute;
+  z-index: 1000;
+  background: var(--bg-solid);
+  border: 1px solid;
+  border-radius: var(--radius);
+  padding: 8px;
 }
 
 /*

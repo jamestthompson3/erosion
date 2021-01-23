@@ -12,9 +12,6 @@
 }
 
 .workspace.sidebar button {
-  cursor: pointer;
-  background: transparent;
-  border: none;
   color: white;
   width: 2rem;
   height: 2rem;
