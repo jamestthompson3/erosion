@@ -27,15 +27,16 @@ class Card extends Component {
           </div>
         </div>
       <div class="card metadata">
-      <p>📆 ${existsAndRender(
+      ${existsAndRender(
         card.scheduled,
-        new Intl.DateTimeFormat("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric"
-        }).format(new Date(card.scheduled))
-      )}</p>
+        `<p>📆
+          ${new Intl.DateTimeFormat("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          }).format(new Date(card.scheduled))}</p>`
+      )}
       <p>⌛ ${card.time_allotted} min</p>
             ${existsAndRender(card.tags, () =>
               // TODO maybe do some sort of emoji mapping to mental state
