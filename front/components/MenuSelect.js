@@ -32,7 +32,6 @@ export default class MenuSelect extends Component {
       const menu = document.createElement("div");
       menu.classList.add("contextual", "menu");
       menu.style.top = `${anchorRect.bottom + 5 + pageYOffset}px`;
-      console.log(children);
       menu.innerHTML = `
        ${children.render()}
       `;

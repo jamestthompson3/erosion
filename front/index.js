@@ -2,6 +2,7 @@ import App from "./components/App.js";
 import {
   contextEmitter,
   kby,
+  postData,
   inboxKby,
   messages,
   appContext,
@@ -20,6 +21,10 @@ import {
  * Part of the issue is that these components are not pure, or at least do not have some sort of output.
  */
 (function() {
+  const tauri = window.__TAURI__;
+  if (!tauri) {
+    postData(messages.WorkspaceInit, "WorkspaceInit");
+  }
   contextEmitter.on(messages.WorkspaceInit, payload => {
     const state = JSON.parse(payload);
     const cardKeyed = kby(state.projects);

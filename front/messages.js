@@ -84,18 +84,52 @@ export const contextEmitter = emitter();
 // TODO later maybe refactor out tauri vs REST API
 export function globalEmitter() {
   const tauri = window.__TAURI__;
-  const { event } = tauri;
+  if (tauri) {
+    const { event } = tauri;
+    return {
+      on(e, cb) {
+        event.listen(e, ({ payload }) => {
+          cb(payload);
+        });
+      },
+      emit(e, ...args) {
+        event.emit(e, JSON.stringify(...args));
+        contextEmitter.emit(e, ...args);
+      }
+    };
+  }
+  const promises = {};
   return {
     on(e, cb) {
-      event.listen(e, ({ payload }) => {
-        cb(payload);
-      });
+      if (promises[e]) {
+        promises[e]
+          .then(r => r.json())
+          .then(cb)
+          .then(() => delete promises[e])
+          .catch(err => {
+            console.error(err);
+            delete promises[e];
+          });
+      }
     },
     emit(e, ...args) {
-      event.emit(e, JSON.stringify(...args));
+      promises[e] = fetch("/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: constructBody(e, args)
+      });
       contextEmitter.emit(e, ...args);
     }
   };
+}
+
+function constructBody(e, args) {
+  if (args.length === 1 && typeof args[0] === "string") {
+    return `{ "event": ${JSON.stringify(...args)} }`;
+  }
+  return `{ "event": {"${e}": ${JSON.stringify(...args)}}}`;
 }
 
 const globalEvents = globalEmitter();
