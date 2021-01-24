@@ -40,15 +40,7 @@ fn json_body() -> impl Filter<Extract = (Message,), Error = warp::Rejection> + C
 
 mod handlers {
   use super::Message;
-  use crate::{
-    data_structures::State,
-    events::{EventManager, Events},
-    filesystem::read_state_file,
-    lenses::{
-      create_card, create_inbox, create_project, delete_card, delete_inbox, delete_project,
-      update_card, update_inbox, update_project,
-    },
-  };
+  use crate::events::{EventManager, Events};
   use std::convert::Infallible;
 
   pub async fn read_message(
@@ -81,7 +73,7 @@ mod handlers {
         Ok(warp::reply::json(&empty))
       }
       Events::UpdateCard(event) => {
-        update_card(&read_state_file(), event.project, event.inbox, event.card);
+        db.update_card(event);
         Ok(warp::reply::json(&empty))
       }
       _ => {
