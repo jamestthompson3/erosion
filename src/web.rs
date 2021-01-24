@@ -64,6 +64,10 @@ mod handlers {
         let state: String = db.create_card(event);
         Ok(warp::reply::json(&state))
       }
+      Events::UpdateCard(event) => {
+        db.update_card(event);
+        Ok(warp::reply::json(&empty))
+      }
       Events::CreateInbox(event) => {
         let state: String = db.create_inbox(event);
         Ok(warp::reply::json(&state))
@@ -72,8 +76,20 @@ mod handlers {
         db.update_inbox(event);
         Ok(warp::reply::json(&empty))
       }
-      Events::UpdateCard(event) => {
-        db.update_card(event);
+      Events::DeleteInbox(event) => {
+        db.delete_inbox(event);
+        Ok(warp::reply::json(&empty))
+      }
+      Events::CreateProject(event) => {
+        let state: String = db.create_project(event);
+        Ok(warp::reply::json(&state))
+      }
+      Events::UpdateProject(event) => {
+        db.update_project(event);
+        Ok(warp::reply::json(&empty))
+      }
+      Events::DeleteProject(event) => {
+        db.delete_project(event);
         Ok(warp::reply::json(&empty))
       }
       _ => {

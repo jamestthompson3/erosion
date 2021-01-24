@@ -26,9 +26,9 @@ async fn main() {
   match opts.backend {
     Some(backend) => match backend {
       cli::Backend::Web => {
-        println!("\n│\n└────> Starting web backend");
+        println!("┌────────────────────┐\n│Starting web backend│\n└────────────────────┘");
         let api = web::routes();
-        warp::serve(api).run(([127, 0, 0, 1], 3030)).await;
+        warp::serve(api).run(([0, 0, 0, 0], 3030)).await;
       }
       cli::Backend::Unix => {
         println!("Unix backend");

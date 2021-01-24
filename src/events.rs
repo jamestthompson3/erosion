@@ -3,7 +3,10 @@ use crate::{
   data_structures::{Card, State},
   filesystem::read_state_file,
   inboxes::Inbox,
-  lenses::{create_card, create_inbox, delete_card, update_card, update_inbox},
+  lenses::{
+    create_card, create_inbox, create_project, delete_card, delete_inbox, delete_project,
+    update_card, update_inbox, update_project,
+  },
   projects::Project,
 };
 use serde::{Deserialize, Serialize};
@@ -120,6 +123,23 @@ impl EventManager {
   pub fn update_inbox(&mut self, e: InboxUpdateEvent) {
     let mut current_state = self.state.lock().unwrap();
     *current_state = update_inbox(&current_state, e.project, e.inbox);
+  }
+  pub fn delete_inbox(&mut self, e: InboxDeleteEvent) {
+    let mut current_state = self.state.lock().unwrap();
+    *current_state = delete_inbox(&current_state, e.project, e.inbox);
+  }
+  pub fn create_project(&mut self, e: ProjectCreateEvent) -> String {
+    let mut current_state = self.state.lock().unwrap();
+    *current_state = create_project(&current_state, &e.name);
+    serde_json::to_string(&*current_state).unwrap()
+  }
+  pub fn update_project(&mut self, e: ProjectUpdateEvent) {
+    let mut current_state = self.state.lock().unwrap();
+    *current_state = update_project(&current_state, e.project);
+  }
+  pub fn delete_project(&mut self, e: ProjectDeleteEvent) {
+    let mut current_state = self.state.lock().unwrap();
+    *current_state = delete_project(&current_state, e.project_id);
   }
   pub fn init_workspace(&self) -> String {
     let current_state = self.state.lock().unwrap();
