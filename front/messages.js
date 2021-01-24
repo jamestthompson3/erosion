@@ -98,29 +98,37 @@ export function globalEmitter() {
       }
     };
   }
-  const promises = {};
+  const listeners = new Map();
   return {
     on(e, cb) {
-      if (promises[e]) {
-        promises[e]
-          .then(r => r.json())
-          .then(cb)
-          .then(() => delete promises[e])
-          .catch(err => {
-            console.error(err);
-            delete promises[e];
-          });
+      const callbacks = listeners.get(e);
+      if (!callbacks) {
+        listeners.set(e, new Set([cb]));
+      } else {
+        callbacks.add(cb);
       }
     },
     emit(e, ...args) {
-      promises[e] = fetch("/todos", {
+      // We can do this because we're getting the whole state back on create calls
+      const eventLabel = e.includes("Create") ? messages.StateUpdated : e;
+      const promise = fetch("/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: constructBody(e, args)
       });
-      contextEmitter.emit(e, ...args);
+      contextEmitter.emit(eventLabel, ...args);
+      if (listeners.has(eventLabel)) {
+        promise
+          .then(r => r.json())
+          .then(result => {
+            Array.from(listeners.get(eventLabel)).map(cb => {
+              cb(result);
+            });
+          })
+          .catch(console.error);
+      }
     }
   };
 }

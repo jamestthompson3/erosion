@@ -21,11 +21,7 @@ import {
  * Part of the issue is that these components are not pure, or at least do not have some sort of output.
  */
 (function() {
-  const tauri = window.__TAURI__;
-  if (!tauri) {
-    postData(messages.WorkspaceInit, "WorkspaceInit");
-  }
-  contextEmitter.on(messages.WorkspaceInit, payload => {
+  listenFor(messages.WorkspaceInit, payload => {
     const state = JSON.parse(payload);
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
@@ -42,6 +38,10 @@ import {
     appContext.set("cardKeyed", cardKeyed);
     appContext.set("inboxKeyed", inboxKeyed);
   });
+  const tauri = window.__TAURI__;
+  if (!tauri) {
+    postData(messages.WorkspaceInit, "WorkspaceInit");
+  }
 
   new App();
 })();
