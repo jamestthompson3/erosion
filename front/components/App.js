@@ -61,6 +61,13 @@ export default class App extends Component {
       contextEmitter.on(messages.DeleteCard, updatePayload => {
         this.removeCard(updatePayload);
       });
+      contextEmitter.on(messages.DeleteInbox, updatePayload => {
+        this.removeInbox(updatePayload);
+      });
+
+      contextEmitter.on(messages.DeleteProject, updatePayload => {
+        this.removeProject(updatePayload);
+      });
       this.setState(state);
     });
   }
@@ -106,6 +113,22 @@ export default class App extends Component {
         updateProjectInboxes(foundProject, updateInboxCards(foundInbox, card))
       )
     );
+  }
+  removeInbox(updatePayload) {
+    const { project, inbox } = updatePayload;
+    const foundProject = findProject(project, this.state);
+    const updatedState = updateStateProjects(this.state, {
+      ...foundProject,
+      inboxes: foundProject.inboxes.filter(box => box.id !== inbox)
+    });
+    this.setState(updatedState);
+  }
+  removeProject(updatePayload) {
+    const { project_id } = updatePayload;
+    this.setState({
+      ...this.state,
+      projects: this.state.projects.filter(p => p.id !== project_id)
+    });
   }
   globalUpdated(newState) {
     this.setState(JSON.parse(newState));

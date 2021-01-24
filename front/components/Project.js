@@ -2,6 +2,7 @@ import Inbox from "./inbox/index.js";
 import Component from "./Component.js";
 import Cancel from "./icons/Cancel.js";
 import Check from "./icons/Check.js";
+import Trash from "./icons/Trash.js";
 import NewInbox from "./icons/NewInbox.js";
 
 import { debounceEvent } from "../../utils/rendering.js";
@@ -20,10 +21,15 @@ class Project extends Component {
     };
     el.innerHTML = `
       <div class="project actions">
-        <h1 class="project title">${props.name}</h1>
-        <button title="add inbox to project" class="project add-inbox" aria-label="add inbox to project">
-        ${NewInbox()}
-        </button>
+        <h1 class="project title ellipsis">${props.name}</h1>
+        <div style="display:flex;">
+          <button title="add inbox to project" class="project add-inbox" aria-label="add inbox to project">
+          ${NewInbox()}
+          </button>
+          <button title="delete project" class="project delete-project" aria-label="delete project">
+          ${Trash()}
+          </button>
+        </div>
       </div>
     `;
     const inboxes = props.inboxes;
@@ -38,6 +44,8 @@ class Project extends Component {
     addInboxButton.addEventListener("click", () =>
       this.setState({ current: states.ADD_INBOX })
     );
+    const deleteProjectButton = el.querySelector(".project.delete-project");
+    deleteProjectButton.addEventListener("click", this.deleteProject);
 
     el.addEventListener("click", this.clickAway, false);
     const projectTitle = el.querySelector(".project.title");
@@ -67,6 +75,12 @@ class Project extends Component {
       });
     }
   }
+  deleteProject = () => {
+    const { id } = this.props;
+    postData(messages.DeleteProject, {
+      project_id: id
+    });
+  };
   clickAway = () => {
     const titleEdit = this.el.querySelector(".as-h1");
     if (titleEdit) {

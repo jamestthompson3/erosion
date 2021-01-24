@@ -4,6 +4,7 @@ import Cancel from "../icons/Cancel.js";
 import Collapse from "../icons/Collapse.js";
 import Expand from "../icons/Expand.js";
 import Add from "../icons/Add.js";
+import Trash from "../icons/Trash.js";
 import { debounceEvent } from "../../utils/rendering.js";
 import { postData, messages, appContext } from "../../messages.js";
 
@@ -22,6 +23,7 @@ class Inbox extends Component {
             <div id="inbox-action-indicator">
               <button title="collapse view" class="inbox collapse" aria-label="collapse view">${Expand()}</button>
               <button title="add card to inbox" class="inbox add-card" aria-label="add card to inbox">${Add()}</button>
+              <button title="delete inbox" class="inbox delete-inbox" aria-label="delete inbox">${Trash()}</button>
             </div>
           </div>
       </div>
@@ -31,6 +33,9 @@ class Inbox extends Component {
     addButton.addEventListener("click", this.openForm);
     const collapseButton = el.querySelector(".inbox.collapse");
     collapseButton.addEventListener("click", () => this.toggleCollapse());
+    const deleteButton = el.querySelector(".inbox.delete-inbox");
+    deleteButton.addEventListener("click", () => this.delete());
+    // TODO handle outside click on whole document
     el.addEventListener("click", this.clickAway, false);
     const boxTitle = el.querySelector(".inbox.title");
     if (boxTitle) {
@@ -76,6 +81,16 @@ class Inbox extends Component {
       this.styleCollapse(children, headerActions, collapseButton);
     }
   }
+  delete = () => {
+    const { inbox } = this.props;
+
+    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
+    const { project } = keyedInbox;
+    postData(messages.DeleteInbox, {
+      project,
+      inbox: inbox.id
+    });
+  };
   clickAway = () => {
     const titleEdit = this.el.querySelector(".as-h2");
     if (titleEdit) {

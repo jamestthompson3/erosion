@@ -36,10 +36,12 @@ export const messages = {
   CreateCard: "CreateCard",
   StateUpdated: "StateUpdated",
   DeleteCard: "DeleteCard",
+  DeleteInbox: "DeleteInbox",
   UpdateInbox: "UpdateInbox",
   CreateInbox: "CreateInbox",
   CreateProject: "CreateProject",
-  UpdateProject: "UpdateProject"
+  UpdateProject: "UpdateProject",
+  DeleteProject: "DeleteProject"
 };
 
 export function kby(projects) {

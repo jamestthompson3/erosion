@@ -19,12 +19,12 @@
   justify-content: space-between;
   align-items: center;
 }
-.inbox.add-card, .inbox.collapse {
+.inbox.add-card, .inbox.collapse, .inbox.delete-inbox {
   width: 1.5rem;
   height: 1.5rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+}
+.inbox.delete-inbox:hover {
+  color: var(--cancel);
 }
 .inbox.indicator {
   background: var(--accent);

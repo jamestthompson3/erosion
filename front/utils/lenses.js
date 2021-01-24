@@ -1,3 +1,7 @@
+/**
+ * Operates on State
+ * set operations take Project[]
+ */
 function ProjectLens() {
   return {
     get: state => state.projects,
@@ -10,6 +14,10 @@ function ProjectLens() {
   };
 }
 
+/**
+ * Operates on a Project
+ * set operations take Inbox[]
+ */
 function InboxLens() {
   return {
     get: project => project.inboxes,
@@ -22,6 +30,10 @@ function InboxLens() {
   };
 }
 
+/**
+ * Operates on an Inbox
+ * set operations take Card[]
+ */
 function CardLens() {
   return {
     get: inbox => inbox.cards,
@@ -60,14 +72,29 @@ export function findCard(id, inbox) {
   return inboxCards.find(inbox => inbox.id === id);
 }
 
+/**
+ * @param project: {Inbox} - inbox
+ * @param  project: {Card} - card
+ * @returns Inbox
+ */
 export function updateInboxCards(inbox, card) {
   return cards.set(mapReplace(cards.get(inbox), card), inbox);
 }
 
+/**
+ * @param project: {Project} - project
+ * @param  project: {Inbox} - Inbox
+ * @returns Project
+ */
 export function updateProjectInboxes(project, inbox) {
   return inboxes.set(mapReplace(inboxes.get(project), inbox), project);
 }
 
+/**
+ * @param state: {State} - global state
+ * @param  project: {Project} - project
+ * @returns State
+ */
 export function updateStateProjects(state, project) {
   return projects.set(mapReplace(projects.get(state), project), state);
 }

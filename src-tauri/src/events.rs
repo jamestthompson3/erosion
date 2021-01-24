@@ -4,8 +4,8 @@ use crate::{
     filesystem::{read_data_file, read_state_file},
     inboxes::Inbox,
     lenses::{
-        create_card, create_inbox, create_project, delete_card, update_card, update_inbox,
-        update_project,
+        create_card, create_inbox, create_project, delete_card, delete_inbox, delete_project,
+        update_card, update_inbox, update_project,
     },
     projects::Project,
 };
@@ -97,11 +97,31 @@ pub fn register_inbox_update() {
     });
 }
 
+pub fn register_inbox_delete() {
+    tauri::event::listen(Events::DeleteInbox.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: InboxDeleteEvent = serde_json::from_str(&data).unwrap();
+            delete_inbox(&read_state_file(), event_data.project, event_data.inbox);
+        }
+        None => {}
+    });
+}
+
 pub fn register_project_update() {
     tauri::event::listen(Events::UpdateProject.to_string(), move |data| match data {
         Some(data) => {
             let event_data: ProjectUpdateEvent = serde_json::from_str(&data).unwrap();
             update_project(&read_state_file(), event_data.project);
+        }
+        None => {}
+    });
+}
+
+pub fn register_project_delete() {
+    tauri::event::listen(Events::DeleteProject.to_string(), move |data| match data {
+        Some(data) => {
+            let event_data: ProjectDeleteEvent = serde_json::from_str(&data).unwrap();
+            delete_project(&read_state_file(), event_data.project_id);
         }
         None => {}
     });
@@ -127,6 +147,11 @@ pub fn register_project_create(mut handle: tauri::WebviewMut) {
 pub struct ProjectCreateEvent {
     name: String,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ProjectDeleteEvent {
+    project_id: String,
+}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ProjectUpdateEvent {
     project: Project,
@@ -136,6 +161,12 @@ pub struct ProjectUpdateEvent {
 pub struct InboxUpdateEvent {
     project: String,
     inbox: Inbox,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct InboxDeleteEvent {
+    project: String,
+    inbox: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -178,6 +209,7 @@ pub enum Events {
     UpdateInbox,
     UpdateProject,
     CreateProject,
+    DeleteProject,
 }
 
 impl fmt::Display for Events {

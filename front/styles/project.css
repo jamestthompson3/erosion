@@ -24,11 +24,14 @@
   align-items: center;
 }
 
-.project.add-inbox {
+.project.add-inbox, .project.delete-project {
   margin: 1rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+  width: 25px;
+  height: 25px;
+}
+
+.project.delete-project:hover {
+  color: var(--cancel);
 }
 .project.inbox-form {
   display: flex;
@@ -61,10 +64,6 @@
   margin: 1rem;
   padding: 0.55rem;
   font-size: 1.25rem;
-}
-.project.add-inbox svg {
-  width: 25px;
-  height: 25px;
 }
 .project.as-h1 {
   padding: 0.25rem;
