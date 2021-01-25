@@ -11,3 +11,6 @@ WixTools
 config.json
 bundle.json
 node_modules/
+
+front/bundle.js
+front/bundle.js.map
