@@ -154,4 +154,7 @@
   .card.metadata {
     display: none;
   }
+  .card.container {
+    padding: 0px;
+  }
 }

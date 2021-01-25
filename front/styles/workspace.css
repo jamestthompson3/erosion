@@ -19,7 +19,6 @@
 }
 .workspace.container {
   display: flex;
-  background: radial-gradient(var(--light0), rgb(237, 235, 235) 47.06%, hsl(0, 0%, 92%));
   align-items: baseline;
   justify-content: space-between;
 }

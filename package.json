@@ -1,0 +1,14 @@
+{
+  "name": "erosion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:jamestthompson3/erosion.git",
+  "author": "Taylor Thompson <taylor.thompson@epicgames.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild ./front/index.js --bundle --minify --sourcemap --target=chrome80,firefox80,safari11,edge16 --outfile=./front/bundle.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.8.34"
+  }
+}
