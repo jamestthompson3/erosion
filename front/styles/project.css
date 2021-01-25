@@ -7,6 +7,7 @@
 
 .project.title {
   text-align: center;
+  width: 100%;
   text-shadow: 4px 4px var(--accent), 3.75px 3.75px var(--accent),
     3.5px 3.5px var(--accent), 3.25px 3.25px var(--accent),
     3px 3px var(--accent), 2.75px 2.75px var(--accent),
