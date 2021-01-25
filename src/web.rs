@@ -40,14 +40,21 @@ fn json_body() -> impl Filter<Extract = (Message,), Error = warp::Rejection> + C
 
 mod handlers {
   use super::Message;
-  use crate::events::{EventManager, Events};
+  use crate::{
+    cli,
+    events::{EventManager, Events},
+  };
   use std::convert::Infallible;
+  use structopt::StructOpt;
 
   pub async fn read_message(
     msg: Message,
     mut db: EventManager,
   ) -> Result<impl warp::Reply, Infallible> {
-    println!("{:?}", msg);
+    let opts = cli::Command::from_args();
+    if opts.debug {
+      println!("{:?}", msg);
+    }
     // TODO maybe send the actual State object instead of the string.
     // I will have change the JSON.parse call on index.js if that's the case
     let empty = String::from("{}");

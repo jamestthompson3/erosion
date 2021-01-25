@@ -18,6 +18,7 @@ mod projects;
 mod web;
 
 use structopt::StructOpt;
+use web_view::*;
 
 #[tokio::main]
 async fn main() {
@@ -26,9 +27,23 @@ async fn main() {
   match opts.backend {
     Some(backend) => match backend {
       cli::Backend::Web => {
-        println!("┌────────────────────┐\n│Starting web backend│\n└────────────────────┘");
+        println!("┌────────────────────────────────────────────┐\n│Starting web backend @ http://0.0.0.0:37633 │\n└────────────────────────────────────────────┘");
         let api = web::routes();
-        warp::serve(api).run(([0, 0, 0, 0], 3030)).await;
+        if opts.gui {
+          std::thread::spawn(|| {
+            web_view::builder()
+              .title("Erosion")
+              .content(Content::Url("http://0.0.0.0:37633"))
+              .size(800, 600)
+              .resizable(true)
+              .debug(true)
+              .user_data(())
+              .invoke_handler(|_webview, _arg| Ok(()))
+              .run()
+              .unwrap();
+          });
+        }
+        warp::serve(api).run(([0, 0, 0, 0], 37633)).await;
       }
       cli::Backend::Unix => {
         println!("Unix backend");

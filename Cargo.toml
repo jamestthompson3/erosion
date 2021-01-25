@@ -18,6 +18,7 @@ serde = { version = "1.0.118", features = [ "derive" ] }
 clap = "2.33.3"
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
+web-view = "0.7.2"
 
 
 [[bin]]
