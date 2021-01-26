@@ -14,12 +14,12 @@ pub fn routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejecti
 
 /// POST /todos with JSON body
 fn todos(
-  db: EventManager,
+  manager: EventManager,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
   warp::path!("todos")
     .and(warp::post())
     .and(json_body())
-    .and(with_db(db))
+    .and(with_db(manager))
     .and_then(handlers::read_message)
 }
 
@@ -27,9 +27,9 @@ fn index() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> +
   warp::get().and(warp::fs::dir("front"))
 }
 fn with_db(
-  db: EventManager,
+  manager: EventManager,
 ) -> impl Filter<Extract = (EventManager,), Error = std::convert::Infallible> + Clone {
-  warp::any().map(move || db.clone())
+  warp::any().map(move || manager.clone())
 }
 
 fn json_body() -> impl Filter<Extract = (Message,), Error = warp::Rejection> + Clone {
@@ -49,7 +49,7 @@ mod handlers {
 
   pub async fn read_message(
     msg: Message,
-    mut db: EventManager,
+    mut manager: EventManager,
   ) -> Result<impl warp::Reply, Infallible> {
     let opts = cli::Command::from_args();
     if opts.debug {
@@ -60,43 +60,43 @@ mod handlers {
     let empty = String::from("{}");
     match msg.event {
       Events::WorkspaceInit => {
-        let state: String = db.init_workspace();
+        let state: String = manager.init_workspace();
         Ok(warp::reply::json(&state))
       }
       Events::DeleteCard(event) => {
-        db.delete_card(event);
+        manager.delete_card(event);
         Ok(warp::reply::json(&empty))
       }
       Events::CreateCard(event) => {
-        let state: String = db.create_card(event);
+        let state: String = manager.create_card(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateCard(event) => {
-        db.update_card(event);
+        manager.update_card(event);
         Ok(warp::reply::json(&empty))
       }
       Events::CreateInbox(event) => {
-        let state: String = db.create_inbox(event);
+        let state: String = manager.create_inbox(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateInbox(event) => {
-        db.update_inbox(event);
+        manager.update_inbox(event);
         Ok(warp::reply::json(&empty))
       }
       Events::DeleteInbox(event) => {
-        db.delete_inbox(event);
+        manager.delete_inbox(event);
         Ok(warp::reply::json(&empty))
       }
       Events::CreateProject(event) => {
-        let state: String = db.create_project(event);
+        let state: String = manager.create_project(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateProject(event) => {
-        db.update_project(event);
+        manager.update_project(event);
         Ok(warp::reply::json(&empty))
       }
       Events::DeleteProject(event) => {
-        db.delete_project(event);
+        manager.delete_project(event);
         Ok(warp::reply::json(&empty))
       }
       _ => {
