@@ -1720,8 +1720,7 @@ checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
 [[package]]
 name = "web-view"
 version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "042fdd5e2aac30c4d790545ac8dc3d426982cd01477556386fdd7b763fe87956"
+source = "git+https://github.com/jamestthompson3/web-view?branch=block-loop#3ac8b1cf1cb9413fe254be7693607850cccb2113"
 dependencies = [
  "boxfnonce",
  "tinyfiledialogs",
@@ -1754,8 +1753,7 @@ dependencies = [
 [[package]]
 name = "webview-sys"
 version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d938595ad694c40284038a2b779d47c1e971dc4d33f008a907ad425762312f48"
+source = "git+https://github.com/jamestthompson3/web-view?branch=block-loop#3ac8b1cf1cb9413fe254be7693607850cccb2113"
 dependencies = [
  "cc",
  "gdk-sys",

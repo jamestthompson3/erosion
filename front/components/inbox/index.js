@@ -19,7 +19,7 @@ class Inbox extends Component {
     const { inbox } = props;
     el.innerHTML = `
       <div class="inbox actions">
-        <h2 class="inbox title">${inbox.name}</h2>
+        <h2 class="inbox title ellipsis">${inbox.name}</h2>
             <div id="inbox-action-indicator">
               <button title="collapse view" class="inbox collapse" aria-label="collapse view">${Expand()}</button>
               <button title="add card to inbox" class="inbox add-card" aria-label="add card to inbox">${Add()}</button>

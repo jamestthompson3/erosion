@@ -31,30 +31,30 @@ async fn main() {
         println!("│Starting web backend @ http://0.0.0.0:37633 │");
         println!("└────────────────────────────────────────────┘");
         let api = web::routes();
+        tokio::spawn(async move {
+          warp::serve(api).run(([0, 0, 0, 0], 37633)).await;
+        });
         if opts.gui {
-          std::thread::spawn(|| {
-            let mut webview = web_view::builder()
-              .title("Erosion")
-              .content(Content::Url("http://0.0.0.0:37633"))
-              .size(800, 1200)
-              .resizable(true)
-              .debug(true)
-              .user_data(())
-              .invoke_handler(|_webview, _arg| Ok(()))
-              .build()
-              .unwrap();
-            webview.set_color((0, 0, 0));
-            let res = webview.run();
-            std::process::exit(match res {
-              Ok(()) => 0,
-              Err(err) => {
-                eprintln!("\x1b[38;5;81m{:?}\x1b[0m", err);
-                1
-              }
-            });
+          let mut webview = web_view::builder()
+            .title("Erosion")
+            .content(Content::Url("http://0.0.0.0:37633"))
+            .size(800, 1200)
+            .resizable(true)
+            .debug(true)
+            .user_data(())
+            .invoke_handler(|_webview, _arg| Ok(()))
+            .build()
+            .unwrap();
+          webview.set_color((53, 27, 105));
+          let res = webview.run();
+          std::process::exit(match res {
+            Ok(()) => 0,
+            Err(err) => {
+              eprintln!("\x1b[38;5;81m{:?}\x1b[0m", err);
+              1
+            }
           });
         }
-        warp::serve(api).run(([0, 0, 0, 0], 37633)).await;
       }
       cli::Backend::Unix => {
         println!("Unix backend");
