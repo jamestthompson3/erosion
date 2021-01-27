@@ -81,7 +81,7 @@ export function inboxKby(projects) {
 // FIXME don't really like this too much, it relies on execution order of the app
 export const appContext = new Map();
 export const contextEmitter = emitter();
-// TODO later maybe refactor out tauri vs REST API
+
 export function globalEmitter() {
   const tauri = window.__TAURI__;
   if (tauri) {
