@@ -223,6 +223,38 @@ pub fn delete_card(state: &State, project: String, inbox: String, card_id: Strin
   updated_state
 }
 
+pub struct Move {
+  src: String,
+  dest: String,
+}
+
+pub struct CardMove {
+  inbox: Move,
+  project: Move,
+}
+
+pub fn move_card(state: &State, card_id: String, instructions: CardMove) -> State {
+  let src_project = find_project(state, instructions.project.src).unwrap();
+  let dest_project = find_project(state, instructions.project.dest).unwrap();
+  let mut src_inbox = find_inbox(&src_project, instructions.inbox.src).unwrap();
+  let mut dest_inbox = find_inbox(&dest_project, instructions.inbox.dest).unwrap();
+  let found_card = find_card(&src_inbox, card_id.clone()).unwrap();
+  src_inbox.cards = src_inbox
+    .cards
+    .iter()
+    .filter(|c| c.id() != card_id)
+    .map(|x| x.clone())
+    .collect();
+  // TODO get position of the card in array and insert it there
+  dest_inbox.cards.push(found_card);
+  let updated_src = update_project_inboxes(&src_project, &src_inbox);
+  let updated_dest = update_project_inboxes(&dest_project, &dest_inbox);
+  let updated_state =
+    update_state_projects(&update_state_projects(state, &updated_src), &updated_dest);
+  save_state_to_disk(&updated_state);
+  updated_state
+}
+
 // Inboxes
 pub fn create_inbox(state: &State, project: String, name: &str) -> State {
   let mut found_project = find_project(state, project).unwrap();
@@ -420,6 +452,71 @@ mod tests {
       card.id.to_owned(),
     );
     assert_eq!(new_card, None);
+  }
+  #[test]
+  fn lenses_move_card() {
+    let state = bootstrap_tests().unwrap();
+    let test_proj = ProjectLens::get(&state).unwrap().first().unwrap();
+    let updated_state = create_project(&state, "test_proj2");
+    let initial_inbox = &InboxLens::get(&test_proj).unwrap().first().unwrap();
+    let test_proj2 = &ProjectLens::get(&updated_state).unwrap()[1];
+    let updated_inbox_state = create_inbox(&updated_state, test_proj2.id(), "cool");
+    let created_inbox = &InboxLens::get(&&ProjectLens::get(&updated_inbox_state).unwrap()[1])
+      .unwrap()
+      .first()
+      .unwrap();
+    let created_card_state = create_card(
+      &updated_inbox_state,
+      test_proj2.id(),
+      created_inbox.id(),
+      CardFragment {
+        scheduled: None,
+        status: CardStatus::InProgress,
+        tags: None,
+        text: Some(String::from("cool test text")),
+        title: String::from("Title card"),
+        time_allotted: 0,
+      },
+    );
+    let final_created_proj = &find_project(&created_card_state, test_proj2.id()).unwrap();
+    let final_created_inbox = find_inbox(final_created_proj, created_inbox.id()).unwrap();
+    let created_card = final_created_inbox.cards.first().unwrap();
+    let final_state = move_card(
+      &created_card_state,
+      created_card.id(),
+      CardMove {
+        inbox: Move {
+          src: created_inbox.id(),
+          dest: initial_inbox.id(),
+        },
+        project: Move {
+          src: test_proj2.id(),
+          dest: test_proj.id(),
+        },
+      },
+    );
+    let final_dest_project = find_project(&final_state, test_proj.id()).unwrap();
+    let final_dest_inbox = find_inbox(&final_dest_project, initial_inbox.id()).unwrap();
+    let final_dest_card = find_card(&final_dest_inbox, created_card.id()).unwrap();
+    assert_ne!(final_state, state);
+    assert_eq!(final_dest_card, *created_card);
+    assert_eq!(
+      final_dest_inbox
+        .cards
+        .iter()
+        .find(|card| card.id() == created_card.id()),
+      Some(created_card)
+    );
+    let final_src_project = find_project(&final_state, test_proj2.id()).unwrap();
+    println!("{}", serde_json::to_string_pretty(&created_card).unwrap());
+    let final_src_inbox = find_inbox(&final_src_project, created_inbox.id()).unwrap();
+    println!(
+      "{}",
+      serde_json::to_string_pretty(&final_src_inbox).unwrap()
+    );
+    let final_src_card = find_card(&final_src_inbox, created_card.id.to_owned());
+    assert_eq!(final_src_card, None);
+    assert_eq!(final_src_inbox.cards.len(), 0);
   }
   #[test]
   fn lenses_create_inbox() {

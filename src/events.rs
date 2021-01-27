@@ -146,6 +146,9 @@ impl EventManager {
     serde_json::to_string(&*current_state).unwrap()
   }
   pub fn print(&self) {
-    println!("{:?}", self.state.lock().unwrap());
+    println!(
+      "{:?}",
+      serde_json::to_string_pretty(&*self.state.lock().unwrap())
+    )
   }
 }
