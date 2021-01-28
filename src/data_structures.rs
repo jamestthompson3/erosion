@@ -36,49 +36,49 @@ macro_rules! extends_base {
 }
 
 pub trait Id {
-    fn id(&self) -> String;
+  fn id(&self) -> String;
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum CardStatus {
-    Done,
-    InProgress,
-    Todo,
+  Done,
+  InProgress,
+  Todo,
 }
 
 extends_base!(
-    struct Card {
-        scheduled: Option<String>,
-        status: CardStatus,
-        tags: Option<Vec<String>>,
-        text: Option<String>,
-        time_allotted: u16,
-        completed: Option<String>,
-    }
-);
-
-extends_base!(
-    struct Settings {
-        user: String,
-    }
+  struct Card {
+    scheduled: Option<String>,
+    status: CardStatus,
+    tags: Option<Vec<String>>,
+    text: Option<String>,
+    time_allotted: u16,
+    completed: Option<String>,
+  }
 );
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Settings {
+  pub user: String,
+  pub id: String,
+  pub show_complete: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub enum CardBase {
-    Settings(Settings),
-    Card(Card),
+  Card(Card),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct State {
-    pub user: String,
-    pub id: String,
-    pub version: String,
-    pub projects: Vec<Project>,
+  pub user: String,
+  pub id: String,
+  pub version: String,
+  pub projects: Vec<Project>,
 }
 
 impl State {
-    pub fn write(&self) {
-        write_data_file(&self.id, &serde_json::to_string(&self).unwrap()).unwrap();
-    }
+  pub fn write(&self) {
+    write_data_file(&self.id, &serde_json::to_string(&self).unwrap()).unwrap();
+  }
 }

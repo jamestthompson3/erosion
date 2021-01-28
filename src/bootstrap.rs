@@ -6,7 +6,6 @@ use crate::{
   inboxes::Inbox,
   projects::Project,
 };
-use chrono::prelude::*;
 use serde_json::json;
 use std::fs::DirBuilder;
 
@@ -57,19 +56,12 @@ fn create_initial_state() -> Result<(), std::io::Error> {
 }
 
 fn create_initial_settings() -> Result<(), std::io::Error> {
-  let now = Local::now().to_rfc3339();
   let initial_config = format!(
     r#"{{
       "id": "settings",
-      "created": "{}",
-      "modified": "{}",
       "user": "{}",
-      "modifier": "System",
-      "title": "settings",
-      "viewTemplate": "configuration"
+      "show_complete": false
     }}"#,
-    now,
-    now,
     get_user()
   );
   write_data_file("settings", &initial_config.to_string())
