@@ -81,21 +81,63 @@ export function inboxKby(projects) {
 // FIXME don't really like this too much, it relies on execution order of the app
 export const appContext = new Map();
 export const contextEmitter = emitter();
-// TODO later maybe refactor out tauri vs REST API
+
 export function globalEmitter() {
   const tauri = window.__TAURI__;
-  const { event } = tauri;
+  if (tauri) {
+    const { event } = tauri;
+    return {
+      on(e, cb) {
+        event.listen(e, ({ payload }) => {
+          cb(payload);
+        });
+      },
+      emit(e, ...args) {
+        event.emit(e, JSON.stringify(...args));
+        contextEmitter.emit(e, ...args);
+      }
+    };
+  }
+  const listeners = new Map();
   return {
     on(e, cb) {
-      event.listen(e, ({ payload }) => {
-        cb(payload);
-      });
+      const callbacks = listeners.get(e);
+      if (!callbacks) {
+        listeners.set(e, new Set([cb]));
+      } else {
+        callbacks.add(cb);
+      }
     },
     emit(e, ...args) {
-      event.emit(e, JSON.stringify(...args));
-      contextEmitter.emit(e, ...args);
+      // We can do this because we're getting the whole state back on create calls
+      const eventLabel = e.includes("Create") ? messages.StateUpdated : e;
+      const promise = fetch("/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: constructBody(e, args)
+      });
+      contextEmitter.emit(eventLabel, ...args);
+      if (listeners.has(eventLabel)) {
+        promise
+          .then(r => r.json())
+          .then(result => {
+            Array.from(listeners.get(eventLabel)).map(cb => {
+              cb(result);
+            });
+          })
+          .catch(console.error);
+      }
     }
   };
+}
+
+function constructBody(e, args) {
+  if (args.length === 1 && typeof args[0] === "string") {
+    return `{ "event": ${JSON.stringify(...args)} }`;
+  }
+  return `{ "event": {"${e}": ${JSON.stringify(...args)}}}`;
 }
 
 const globalEvents = globalEmitter();

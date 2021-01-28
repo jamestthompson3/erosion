@@ -8,6 +8,10 @@
   justify-content: space-between;
   margin: 2rem 0rem;
 }
+
+.inbox.title {
+  width: 100%;
+}
 #inbox-action-indicator {
   display: flex;
   justify-content: space-around;

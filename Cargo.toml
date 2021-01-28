@@ -7,23 +7,19 @@ license = ""
 repository = ""
 default-run = "erosion"
 edition = "2018"
-build = "src/build.rs"
 
 [dependencies]
-tauri = { version = "0.10", features = [ "all-api" ] }
 structopt = "0.3.21"
 directories = "3.0.1"
 serde_json = "1.0.61"
 chrono = "0.4.19"
 uuid = { version = "0.8.1", features = [ "v4", "serde" ] }
 serde = { version = "1.0.118", features = [ "derive" ] }
+clap = "2.33.3"
+tokio = { version = "1", features = ["full"] }
+warp = "0.3"
+web-view = { git = "https://github.com/jamestthompson3/web-view", branch = "block-loop"}
 
-[target."cfg(windows)".build-dependencies]
-winres = "0.1"
-
-[features]
-embedded-server = [ "tauri/embedded-server" ]
-no-server = [ "tauri/no-server" ]
 
 [[bin]]
 name = "erosion"

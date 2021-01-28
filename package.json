@@ -2,14 +2,13 @@
   "name": "erosion",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Taylor Thompson <jamestthompson3@gmail.com>",
+  "repository": "git@github.com:jamestthompson3/erosion.git",
+  "author": "Taylor Thompson <taylor.thompson@epicgames.com>",
   "license": "MIT",
-  "dependencies": {
-    "snowpack": "^2.18.5",
-    "tauri": "^0.13.0"
+  "scripts": {
+    "build": "esbuild ./front/index.js --bundle --minify --sourcemap --target=chrome80,firefox80,safari11,edge16 --outfile=./front/bundle.js"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.17.0"
+    "esbuild": "^0.8.34"
   }
 }

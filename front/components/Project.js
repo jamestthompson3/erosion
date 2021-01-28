@@ -5,7 +5,7 @@ import Check from "./icons/Check.js";
 import Trash from "./icons/Trash.js";
 import NewInbox from "./icons/NewInbox.js";
 
-import { debounceEvent } from "../../utils/rendering.js";
+import { debounceEvent } from "../utils/rendering.js";
 import { postData, messages } from "../messages.js";
 
 const states = {

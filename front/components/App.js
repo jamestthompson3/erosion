@@ -42,9 +42,6 @@ export default class App extends Component {
     );
     new WorkspaceSidebar(sidebar, {});
     new NewProjectForm(createProjectForm, {});
-    listenFor(messages.WorkspaceInit, payload => {
-      contextEmitter.emit(messages.WorkspaceInit, payload);
-    });
     listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
     contextEmitter.on(messages.WorkspaceReady, () => {
       const state = appContext.get("state");
