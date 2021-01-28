@@ -42,8 +42,10 @@ mod handlers {
   use super::Message;
   use crate::{
     cli,
+    data_structures::State,
     events::{EventManager, Events},
   };
+  use serde_json::json;
   use std::convert::Infallible;
   use structopt::StructOpt;
 
@@ -60,15 +62,19 @@ mod handlers {
     let empty = String::from("{}");
     match msg.event {
       Events::WorkspaceInit => {
-        let state: String = manager.init_workspace();
-        Ok(warp::reply::json(&state))
+        let state: State = manager.init_workspace();
+        let workspace = json!({
+            "state": state,
+            "settings": EventManager::send_settings()
+        });
+        Ok(warp::reply::json(&workspace))
       }
       Events::DeleteCard(event) => {
         manager.delete_card(event);
         Ok(warp::reply::json(&empty))
       }
       Events::CreateCard(event) => {
-        let state: String = manager.create_card(event);
+        let state: State = manager.create_card(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateCard(event) => {
@@ -76,7 +82,7 @@ mod handlers {
         Ok(warp::reply::json(&empty))
       }
       Events::CreateInbox(event) => {
-        let state: String = manager.create_inbox(event);
+        let state: State = manager.create_inbox(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateInbox(event) => {
@@ -88,7 +94,7 @@ mod handlers {
         Ok(warp::reply::json(&empty))
       }
       Events::CreateProject(event) => {
-        let state: String = manager.create_project(event);
+        let state: State = manager.create_project(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateProject(event) => {

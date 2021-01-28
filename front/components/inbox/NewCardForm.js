@@ -57,6 +57,7 @@ class NewCardForm extends Component {
     text.addEventListener("change", this.handleTextChange);
     const submitButton = this.el.querySelector(".card-form.save-button");
     submitButton.addEventListener("click", this.submit);
+    title.focus();
   }
   handleTitleChange = e => {
     this.setState({ title: e.target.value });

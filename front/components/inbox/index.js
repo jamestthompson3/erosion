@@ -6,7 +6,7 @@ import Expand from "../icons/Expand.js";
 import Add from "../icons/Add.js";
 import Trash from "../icons/Trash.js";
 import { debounceEvent } from "../../utils/rendering.js";
-import { postData, messages, appContext } from "../../messages.js";
+import { postData, messages, appContext, appSettings } from "../../messages.js";
 
 import NewCardForm from "./NewCardForm.js";
 
@@ -64,7 +64,10 @@ class Inbox extends Component {
       });
     }
     // create cards
-    const cards = inbox.cards;
+    const showComplete = appSettings.get("show_complete");
+    const cards = inbox.cards.filter(c =>
+      showComplete ? true : c.status !== "Done"
+    );
     cards.forEach(card => {
       const cardContainer = document.createElement("div");
       cardContainer.classList.add("card", "container");
@@ -192,7 +195,12 @@ class Inbox extends Component {
     markedToRemove.forEach(child => {
       childrenById.set(child.dataset.key, child);
     });
-    inbox.cards.forEach(card => {
+
+    const showComplete = appSettings.get("show_complete");
+    const cards = inbox.cards.filter(c =>
+      showComplete ? true : c.status !== "Done"
+    );
+    cards.forEach(card => {
       const childToUpdate = childrenById.get(card.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);

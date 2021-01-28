@@ -6,6 +6,7 @@ import {
   inboxKby,
   messages,
   appContext,
+  appSettings,
   listenFor
 } from "./messages.js";
 /*
@@ -22,16 +23,20 @@ import {
  */
 (function() {
   listenFor(messages.WorkspaceInit, payload => {
-    const state = JSON.parse(payload);
+    const { state, settings } = payload;
+    console.log({ state, settings });
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
     appContext.set("state", state);
     appContext.set("cardKeyed", cardKeyed);
     appContext.set("inboxKeyed", inboxKeyed);
+    for ([key, value] of Object.entries(settings)) {
+      appSettings.set(key, value);
+    }
     contextEmitter.emit(messages.WorkspaceReady);
   });
   listenFor(messages.StateUpdated, newState => {
-    const state = JSON.parse(newState);
+    const state = newState;
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
     appContext.set("state", state);

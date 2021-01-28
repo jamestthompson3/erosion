@@ -128,7 +128,7 @@ export default class App extends Component {
     });
   }
   globalUpdated(newState) {
-    this.setState(JSON.parse(newState));
+    this.setState(newState);
   }
   removeCard(updatePayload) {
     const { project, inbox, card } = updatePayload;

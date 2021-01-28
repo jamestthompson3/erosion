@@ -30,18 +30,19 @@ export function emitter() {
 }
 
 export const messages = {
-  WorkspaceInit: "WorkspaceInit",
-  WorkspaceReady: "WorkspaceReady",
-  UpdateCard: "UpdateCard",
   CreateCard: "CreateCard",
-  StateUpdated: "StateUpdated",
-  DeleteCard: "DeleteCard",
-  DeleteInbox: "DeleteInbox",
-  UpdateInbox: "UpdateInbox",
   CreateInbox: "CreateInbox",
   CreateProject: "CreateProject",
+  DeleteCard: "DeleteCard",
+  DeleteInbox: "DeleteInbox",
+  DeleteProject: "DeleteProject",
+  SettingsInit: "SettingsInit",
+  StateUpdated: "StateUpdated",
+  UpdateCard: "UpdateCard",
+  UpdateInbox: "UpdateInbox",
   UpdateProject: "UpdateProject",
-  DeleteProject: "DeleteProject"
+  WorkspaceInit: "WorkspaceInit",
+  WorkspaceReady: "WorkspaceReady"
 };
 
 export function kby(projects) {
@@ -80,6 +81,7 @@ export function inboxKby(projects) {
 
 // FIXME don't really like this too much, it relies on execution order of the app
 export const appContext = new Map();
+export const appSettings = new Map();
 export const contextEmitter = emitter();
 
 export function globalEmitter() {

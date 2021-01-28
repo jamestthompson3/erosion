@@ -1,6 +1,6 @@
 use crate::{
   cards::CardFragment,
-  data_structures::{Card, State},
+  data_structures::{Card, Settings, State},
   filesystem::{read_data_file, read_state_file},
   inboxes::Inbox,
   lenses::{
@@ -118,15 +118,17 @@ impl EventManager {
     let mut current_state = self.state.lock().unwrap();
     *current_state = delete_card(&current_state, e.project, e.inbox, e.card)
   }
-  pub fn create_card(&mut self, e: CardCreateEvent) -> String {
+  pub fn create_card(&mut self, e: CardCreateEvent) -> State {
     let mut current_state = self.state.lock().unwrap();
-    *current_state = create_card(&current_state, e.project, e.inbox, e.card);
-    serde_json::to_string(&*current_state).unwrap()
+    let resultant_state = create_card(&current_state, e.project, e.inbox, e.card);
+    *current_state = resultant_state.clone();
+    resultant_state
   }
-  pub fn create_inbox(&mut self, e: InboxCreateEvent) -> String {
+  pub fn create_inbox(&mut self, e: InboxCreateEvent) -> State {
     let mut current_state = self.state.lock().unwrap();
-    *current_state = create_inbox(&current_state, e.project, &e.name);
-    serde_json::to_string(&*current_state).unwrap()
+    let resultant_state = create_inbox(&current_state, e.project, &e.name);
+    *current_state = resultant_state.clone();
+    resultant_state
   }
   pub fn update_inbox(&mut self, e: InboxUpdateEvent) {
     let mut current_state = self.state.lock().unwrap();
@@ -136,10 +138,11 @@ impl EventManager {
     let mut current_state = self.state.lock().unwrap();
     *current_state = delete_inbox(&current_state, e.project, e.inbox);
   }
-  pub fn create_project(&mut self, e: ProjectCreateEvent) -> String {
+  pub fn create_project(&mut self, e: ProjectCreateEvent) -> State {
     let mut current_state = self.state.lock().unwrap();
-    *current_state = create_project(&current_state, &e.name);
-    serde_json::to_string(&*current_state).unwrap()
+    let resultant_state = create_project(&current_state, &e.name);
+    *current_state = resultant_state.clone();
+    resultant_state
   }
   pub fn update_project(&mut self, e: ProjectUpdateEvent) {
     let mut current_state = self.state.lock().unwrap();
@@ -149,12 +152,13 @@ impl EventManager {
     let mut current_state = self.state.lock().unwrap();
     *current_state = delete_project(&current_state, e.project_id);
   }
-  pub fn init_workspace(&self) -> String {
+  pub fn init_workspace(&self) -> State {
     let current_state = self.state.lock().unwrap();
-    serde_json::to_string(&*current_state).unwrap()
+    current_state.clone()
   }
-  pub fn send_settings() -> String {
-    read_data_file("settings").unwrap()
+  pub fn send_settings() -> Settings {
+    let settings: Settings = serde_json::from_str(&read_data_file("settings").unwrap()).unwrap();
+    settings
   }
   pub fn update_settings(e: SettingsUpdateEvent) {
     todo!();
