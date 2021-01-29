@@ -48,15 +48,16 @@ export default class SettingsForm extends Component {
     }
   };
   applyModalBlur() {
-    this.oldDocStyle = document.body.style.background;
+    this.oldDocStyle = document.body.style.backgroundColor;
     const workspaceContainer = document.querySelector(".workspace.container");
-    document.body.style.background = "rgba(0,0,0,0.3)";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.3)";
     workspaceContainer.style.filter = "blur(2px)";
   }
   removeModalBlur() {
-    document.body.style = this.oldDocStyle;
+    document.body.style.backgroundColor = this.oldDocStyle;
     const workspaceContainer = document.querySelector(".workspace.container");
     workspaceContainer.style.filter = "";
+    this.el.classList.add("hidden");
   }
   cancel = () => {
     this.el.classList.add("hidden");
@@ -73,5 +74,6 @@ export default class SettingsForm extends Component {
       formAsObj
     );
     postData(messages.UpdateSettings, newSettings);
+    this.removeModalBlur();
   };
 }

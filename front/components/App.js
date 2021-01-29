@@ -25,6 +25,10 @@ export default class App extends Component {
     super(document.body);
     this.state = {};
     listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
+    listenFor(
+      messages.UpdateSettings,
+      () => (window.location = window.location)
+    );
     contextEmitter.on(messages.WorkspaceReady, () => {
       document.body.innerHTML = `
      <div class="workspace container">

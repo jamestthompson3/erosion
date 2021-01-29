@@ -13,8 +13,12 @@ import NewCardForm from "./NewCardForm.js";
 class Inbox extends Component {
   constructor(el, props) {
     super(el, props);
+    const showComplete = appSettings.get("show_complete");
     this.state = {
-      showForm: false
+      showForm: false,
+      cards: props.inbox.cards.filter(c =>
+        showComplete ? true : c.status !== "Done"
+      )
     };
     const { inbox } = props;
     el.innerHTML = `
@@ -64,10 +68,7 @@ class Inbox extends Component {
       });
     }
     // create cards
-    const showComplete = appSettings.get("show_complete");
-    const cards = inbox.cards.filter(c =>
-      showComplete ? true : c.status !== "Done"
-    );
+    const { cards } = this.state;
     cards.forEach(card => {
       const cardContainer = document.createElement("div");
       cardContainer.classList.add("card", "container");
@@ -139,7 +140,7 @@ class Inbox extends Component {
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, true);
     const inboxIndicator = document.createElement("h4");
     inboxIndicator.classList.add("inbox", "indicator");
-    inboxIndicator.innerText = this.props.inbox.cards.length;
+    inboxIndicator.innerText = this.state.cards.length;
     headerActions.insertBefore(
       inboxIndicator,
       headerActions.querySelector(".inbox.title")
@@ -163,7 +164,7 @@ class Inbox extends Component {
     // update singleton children
     const title = this.el.querySelector("h2");
     const inboxIndicator = this.el.querySelector(".inbox.indicator");
-    if (inboxIndicator) inboxIndicator.innerText = inbox.cards.length;
+    if (inboxIndicator) inboxIndicator.innerText = this.state.cards.length;
     if (title) title.innerText = inbox.name;
     // create the cardForm component
     const newCardForm = this.el.querySelector(".inbox.card-form");
@@ -187,7 +188,6 @@ class Inbox extends Component {
     this.sweepAndUpdate();
   }
   sweepAndUpdate() {
-    const { inbox } = this.props;
     const children = this.el.querySelectorAll(".card.container");
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
@@ -196,11 +196,7 @@ class Inbox extends Component {
       childrenById.set(child.dataset.key, child);
     });
 
-    const showComplete = appSettings.get("show_complete");
-    const cards = inbox.cards.filter(c =>
-      showComplete ? true : c.status !== "Done"
-    );
-    cards.forEach(card => {
+    this.state.cards.forEach(card => {
       const childToUpdate = childrenById.get(card.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
