@@ -36,7 +36,7 @@ export const messages = {
   DeleteCard: "DeleteCard",
   DeleteInbox: "DeleteInbox",
   DeleteProject: "DeleteProject",
-  SettingsInit: "SettingsInit",
+  UpdateSettings: "UpdateSettings",
   StateUpdated: "StateUpdated",
   UpdateCard: "UpdateCard",
   UpdateInbox: "UpdateInbox",

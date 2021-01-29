@@ -1,0 +1,93 @@
+.settings-panel {
+  --color: var(--accent-alt);
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  left: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+.settings-panel.hidden {
+  display: none;
+}
+
+.settings-panel .settings-form {
+  background: var(--bg-solid);
+  width: 80%;
+  padding: 0.5rem;
+  margin: auto;
+}
+
+.settings-panel .title {
+  text-align: center;
+}
+
+.settings-form legend {
+  background-color: var(--color);
+  border: 1px solid var(--color);
+  color: var(--bg-solid);
+  font-weight: bold;
+  padding: 3px 6px;
+}
+
+.settings-form fieldset {
+  border: 1px solid var(--color);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-evenly;
+}
+
+.settings-form input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--dark1);
+  transition: 0.2s all linear;
+  margin-right: 5px;
+  position: relative;
+  top: 4px;
+}
+
+.settings-form input:checked {
+  border: 6px solid var(--color);
+}
+
+.settings-form input[type="text"] {
+  padding: 4px;
+  border: 1px solid var(--dark1);
+  margin: 1rem 0rem;
+}
+
+.settings-form span {
+  margin: 1rem 0rem;
+}
+
+.settings-actions {
+  width: 100%;
+  width: flex;
+  justify-content: space-evenly;
+  align-items: baseline;
+}
+
+.settings-save {
+  background: var(--color);
+  color: var(--bg-solid);
+  font-weight: bold;
+  margin: 1rem 0rem;
+  padding: 8px;
+  width: 5rem;
+}
+
+.settings-cancel {
+  background: var(--cancel);
+  color: var(--bg-solid);
+  font-weight: bold;
+  margin: 1rem 0rem;
+  padding: 8px;
+  width: 5rem;
+}

@@ -57,7 +57,7 @@ extends_base!(
   }
 );
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Settings {
   pub user: String,
   pub id: String,

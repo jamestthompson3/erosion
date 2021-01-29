@@ -31,7 +31,7 @@ async fn main() {
         println!("│Starting web backend @ http://0.0.0.0:37633 │");
         println!("└────────────────────────────────────────────┘");
         let api = web::routes();
-        tokio::spawn(async move {
+        let server = tokio::spawn(async move {
           warp::serve(api).run(([0, 0, 0, 0], 37633)).await;
         });
         if opts.gui {
@@ -54,6 +54,8 @@ async fn main() {
               1
             }
           });
+        } else {
+          server.await.unwrap();
         }
       }
       cli::Backend::Unix => {

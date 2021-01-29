@@ -105,6 +105,10 @@ mod handlers {
         manager.delete_project(event);
         Ok(warp::reply::json(&empty))
       }
+      Events::UpdateSettings(event) => {
+        EventManager::update_settings(event);
+        Ok(warp::reply::json(&empty))
+      }
       _ => {
         return Ok(warp::reply::json(&empty));
       }

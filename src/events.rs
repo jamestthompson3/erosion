@@ -1,7 +1,7 @@
 use crate::{
   cards::CardFragment,
   data_structures::{Card, Settings, State},
-  filesystem::{read_data_file, read_state_file},
+  filesystem::{read_data_file, read_state_file, write_data_file},
   inboxes::Inbox,
   lenses::{
     create_card, create_inbox, create_project, delete_card, delete_inbox, delete_project,
@@ -72,8 +72,7 @@ pub struct CardDeleteEvent {
 pub enum Events {
   CreateCard(CardCreateEvent),
   WorkspaceInit,
-  SettingsInit,
-  UpdateSettings(SettingsUpdateEvent),
+  UpdateSettings(Settings),
   DeleteCard(CardDeleteEvent),
   UpdateCard(CardUpdateEvent),
   MoveCard,
@@ -90,12 +89,6 @@ impl fmt::Display for Events {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "{:?}", self)
   }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SettingsUpdateEvent {
-  user: String,
-  show_complete: bool,
 }
 
 #[derive(Clone)]
@@ -160,8 +153,8 @@ impl EventManager {
     let settings: Settings = serde_json::from_str(&read_data_file("settings").unwrap()).unwrap();
     settings
   }
-  pub fn update_settings(e: SettingsUpdateEvent) {
-    todo!();
+  pub fn update_settings(e: Settings) {
+    write_data_file("settings", &serde_json::to_string(&e).unwrap()).unwrap();
   }
   pub fn print(&self) {
     println!(

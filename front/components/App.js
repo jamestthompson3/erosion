@@ -24,7 +24,9 @@ export default class App extends Component {
   constructor() {
     super(document.body);
     this.state = {};
-    document.body.innerHTML = `
+    listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
+    contextEmitter.on(messages.WorkspaceReady, () => {
+      document.body.innerHTML = `
      <div class="workspace container">
       <aside class="workspace sidebar"></aside>
       <div class="workspace projects">
@@ -33,17 +35,15 @@ export default class App extends Component {
       <div class="workspace spacer"></div>
      </div>
     `;
-    const createProjectForm = document.body.querySelector(
-      ".project.project-form"
-    );
-    const sidebar = document.body.querySelector(".workspace.sidebar");
-    const workspaceContainer = document.body.querySelector(
-      ".workspace.projects"
-    );
-    new WorkspaceSidebar(sidebar, {});
-    new NewProjectForm(createProjectForm, {});
-    listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
-    contextEmitter.on(messages.WorkspaceReady, () => {
+      const createProjectForm = document.body.querySelector(
+        ".project.project-form"
+      );
+      const sidebar = document.body.querySelector(".workspace.sidebar");
+      const workspaceContainer = document.body.querySelector(
+        ".workspace.projects"
+      );
+      new WorkspaceSidebar(sidebar, {});
+      new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");
       state.projects.forEach(project => {
         const projectContainer = document.createElement("div");

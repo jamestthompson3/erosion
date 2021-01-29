@@ -7,6 +7,7 @@ class Component {
   constructor(el, props = {}) {
     this.el = el;
     el.withProps = this.withProps;
+    el.forceUpdate = this.update;
     this.props = props;
   }
   setState(next) {
