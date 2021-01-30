@@ -17,7 +17,7 @@ export default class MenuSelect extends Component {
   }
   update() {
     const { shown } = this.state;
-    const { children } = this.props;
+    const { children, position } = this.props;
     const trigger = this.el.children[0];
     const menu = this.el.querySelector(".contextual.menu");
     const clickOutsideListener = e => {
@@ -31,14 +31,20 @@ export default class MenuSelect extends Component {
       const anchorRect = trigger.getBoundingClientRect();
       const menu = document.createElement("div");
       menu.classList.add("contextual", "menu");
-      menu.style.top = `${anchorRect.bottom + 5 + pageYOffset}px`;
+      menu.style.top =
+        position === "right"
+          ? `${anchorRect.top + pageYOffset}px`
+          : `${anchorRect.bottom + 5 + pageYOffset}px`;
       menu.innerHTML = `
        ${children.render()}
       `;
       children.bootstrap(menu);
       this.el.appendChild(menu);
       const menuRect = menu.getBoundingClientRect();
-      menu.style.left = `${anchorRect.left - menuRect.width / 3}px`;
+      menu.style.left =
+        position === "right"
+          ? `${anchorRect.right + 10}px`
+          : `${anchorRect.left - menuRect.width / 3.5}px`;
       document.addEventListener("click", clickOutsideListener);
     }
     if (!shown && menu) {
