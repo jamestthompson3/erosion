@@ -1,3 +1,12 @@
+.splashscreen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding);
+}
+
 .workspace.sidebar {
   width: 80px;
   background: linear-gradient(200deg, var(--accent), hsl(199, 98.98%, 45.62%) 50.84%, hsl(199, 96.97%, 45.04%));

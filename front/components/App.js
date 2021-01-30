@@ -24,6 +24,12 @@ export default class App extends Component {
   constructor() {
     super(document.body);
     this.state = {};
+    // splash screen
+    document.body.innerHTML = `
+      <div class="splashscreen">
+        <img src="/media/erosion.png" />
+      </div>
+    `;
     listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
     listenFor(
       messages.UpdateSettings,

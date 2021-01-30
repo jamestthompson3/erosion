@@ -15,10 +15,7 @@ class Inbox extends Component {
     super(el, props);
     const showComplete = appSettings.get("show_complete");
     this.state = {
-      showForm: false,
-      cards: props.inbox.cards.filter(c =>
-        showComplete ? true : c.status !== "Done"
-      )
+      showForm: false
     };
     const { inbox } = props;
     el.innerHTML = `
@@ -68,14 +65,17 @@ class Inbox extends Component {
       });
     }
     // create cards
-    const { cards } = this.state;
-    cards.forEach(card => {
-      const cardContainer = document.createElement("div");
-      cardContainer.classList.add("card", "container");
-      cardContainer.dataset.key = card.id;
-      el.appendChild(cardContainer);
-      new Card(cardContainer, { card });
-    });
+    const { cards } = this.props.inbox;
+    // FIXME figure out hou to do this maybe on the backend?
+    cards
+      .filter(c => (showComplete ? true : c.status !== "Done"))
+      .forEach(card => {
+        const cardContainer = document.createElement("div");
+        cardContainer.classList.add("card", "container");
+        cardContainer.dataset.key = card.id;
+        el.appendChild(cardContainer);
+        new Card(cardContainer, { card });
+      });
     // collapse cards if saved in localStorage
     if (JSON.parse(localStorage.getItem(`${this.props.inbox.id}-collapsed`))) {
       const children = this.el.querySelectorAll(".card.container");
@@ -130,7 +130,8 @@ class Inbox extends Component {
       child.style.display = "flex";
     });
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, false);
-    headerActions.removeChild(this.el.querySelector(".inbox.indicator"));
+    const indicatorBox = this.el.querySelector(".inbox.indicator");
+    indicatorBox && headerActions.removeChild(indicatorBox);
     collapseButton.innerHTML = Expand();
   };
   styleCollapse = (children, headerActions, collapseButton) => {
@@ -140,11 +141,17 @@ class Inbox extends Component {
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, true);
     const inboxIndicator = document.createElement("h4");
     inboxIndicator.classList.add("inbox", "indicator");
-    inboxIndicator.innerText = this.state.cards.length;
-    headerActions.insertBefore(
-      inboxIndicator,
-      headerActions.querySelector(".inbox.title")
+
+    const showComplete = appSettings.get("show_complete");
+    const indicatorNumber = this.props.inbox.cards.filter(c =>
+      showComplete ? true : c.status !== "Done"
     );
+    inboxIndicator.innerText = indicatorNumber;
+    indicatorNumber > 0 &&
+      headerActions.insertBefore(
+        inboxIndicator,
+        headerActions.querySelector(".inbox.title")
+      );
     collapseButton.innerHTML = Collapse();
   };
   updateField(updatedData) {
@@ -164,7 +171,12 @@ class Inbox extends Component {
     // update singleton children
     const title = this.el.querySelector("h2");
     const inboxIndicator = this.el.querySelector(".inbox.indicator");
-    if (inboxIndicator) inboxIndicator.innerText = this.state.cards.length;
+
+    const showComplete = appSettings.get("show_complete");
+    const indicatorNumberText = this.props.inbox.cards.filter(c =>
+      showComplete ? true : c.status !== "Done"
+    );
+    if (inboxIndicator) inboxIndicator.innerText = indicatorNumberText;
     if (title) title.innerText = inbox.name;
     // create the cardForm component
     const newCardForm = this.el.querySelector(".inbox.card-form");
@@ -196,7 +208,12 @@ class Inbox extends Component {
       childrenById.set(child.dataset.key, child);
     });
 
-    this.state.cards.forEach(card => {
+    const showComplete = appSettings.get("show_complete");
+    const cards = this.props.inbox.cards.filter(c =>
+      showComplete ? true : c.status !== "Done"
+    );
+
+    cards.forEach(card => {
       const childToUpdate = childrenById.get(card.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
