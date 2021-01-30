@@ -32,7 +32,7 @@ export default class WorkspaceSidebar extends Component {
           settingsButton.addEventListener("click", this.displaySettings);
         }
       },
-      position: window.innerWidth <= 700 || "right"
+      position: window.innerWidth <= 700 ? "fixed" : "fixed-right"
     });
   }
   displaySettings = () => {

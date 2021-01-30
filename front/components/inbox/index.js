@@ -125,6 +125,7 @@ class Inbox extends Component {
       this.styleCollapse(children, headerActions, collapseButton);
     }
   };
+
   styleExpand = (children, headerActions, collapseButton) => {
     children.forEach(child => {
       child.style.display = "flex";
@@ -134,6 +135,7 @@ class Inbox extends Component {
     indicatorBox && headerActions.removeChild(indicatorBox);
     collapseButton.innerHTML = Expand();
   };
+
   styleCollapse = (children, headerActions, collapseButton) => {
     children.forEach(child => {
       child.style.display = "none";
@@ -145,7 +147,7 @@ class Inbox extends Component {
     const showComplete = appSettings.get("show_complete");
     const indicatorNumber = this.props.inbox.cards.filter(c =>
       showComplete ? true : c.status !== "Done"
-    );
+    ).length;
     inboxIndicator.innerText = indicatorNumber;
     indicatorNumber > 0 &&
       headerActions.insertBefore(
@@ -154,6 +156,7 @@ class Inbox extends Component {
       );
     collapseButton.innerHTML = Collapse();
   };
+
   updateField(updatedData) {
     const { inbox } = this.props;
     const keyedInbox = appContext.get("inboxKeyed")[inbox.id];

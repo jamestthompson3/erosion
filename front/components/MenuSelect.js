@@ -1,5 +1,9 @@
 import Component from "./Component.js";
 
+/**
+ * @param el {HTMLElement}
+ * @param props { import("./types").MenuSelectProps }
+ */
 export default class MenuSelect extends Component {
   constructor(el, props) {
     super(el, props);
@@ -31,26 +35,51 @@ export default class MenuSelect extends Component {
       const anchorRect = trigger.getBoundingClientRect();
       const menu = document.createElement("div");
       menu.classList.add("contextual", "menu");
-      menu.style.top =
-        position === "right"
-          ? `${anchorRect.top + pageYOffset}px`
-          : `${anchorRect.bottom + 5 + pageYOffset}px`;
+      const [yPos, xPos] = getRelativePosition(position);
       menu.innerHTML = `
        ${children.render()}
       `;
       children.bootstrap(menu);
       this.el.appendChild(menu);
+      menu.style.top = getTopPosition(yPos, xPos, anchorRect);
       const menuRect = menu.getBoundingClientRect();
-      menu.style.left =
-        position === "right"
-          ? `${anchorRect.right + 10}px`
-          : `${anchorRect.left - menuRect.width / 3.5}px`;
+      menu.style.left = getLeftPosition(xPos, anchorRect, menuRect);
       document.addEventListener("click", clickOutsideListener);
     }
     if (!shown && menu) {
       const menu = this.el.querySelector(".contextual.menu");
       this.el.removeChild(menu);
       document.removeEventListener("click", clickOutsideListener);
+    }
+  }
+}
+
+function getRelativePosition(descriptor) {
+  return descriptor.split("-");
+}
+
+function getTopPosition(yPos, xPos, anchorRect) {
+  switch (yPos) {
+    case "fixed": {
+      return xPos === "right"
+        ? `${anchorRect.top}px`
+        : `${anchorRect.bottom + 5}px`;
+    }
+    default: {
+      return xPos === "right"
+        ? `${anchorRect.top + pageYOffset}px`
+        : `${anchorRect.bottom + 5 + pageYOffset}px`;
+    }
+  }
+}
+
+function getLeftPosition(xPos, anchorRect, menuRect) {
+  switch (xPos) {
+    case "right": {
+      return `${anchorRect.right + 10}px`;
+    }
+    default: {
+      return `${anchorRect.left - menuRect.width / 3.5}px`;
     }
   }
 }
