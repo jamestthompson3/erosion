@@ -9,7 +9,7 @@
     "build": "esbuild ./front/index.js --bundle --minify --sourcemap --target=chrome80,firefox80,safari11,edge16 --outfile=./front/bundle.js"
   },
   "devDependencies": {
-    "esbuild": "^0.8.34",
+    "esbuild": "^0.8.38",
     "eslint": "^7.18.0"
   },
   "dependencies": {}

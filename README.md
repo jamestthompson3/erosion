@@ -17,5 +17,5 @@ erosion web # use your browser for rendering your workspace
 
 ## Developing
 
-After installing the bundler in the previous step, you will need to run `make` to start it. It will run the bundling job every 5 seconds, but you can adjust the Makefile to your liking. In order to avoid polluting your main workspace with test data, you can source the `./env.sh` file, giving it an argument of either `dev` or `test`.
+After installing the bundler in the previous step, you will need to run `make` to start it. In order to avoid polluting your main workspace with test data, you can source the `./env.sh` file, giving it an argument of either `dev` or `test`.
 To run the tests, please source the `./env.sh` file with the argument, `test`. Start the main process with `cargo run -- web`, or, if you want to use the desktop GUI instead of your browser, `cargo run -- web -g`. You can add `-d` to enable debug logging.
