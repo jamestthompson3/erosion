@@ -42,7 +42,6 @@ export default class App extends Component {
       <div class="workspace projects">
         <div class="project project-form"></div>
       </div>
-      <div class="workspace spacer"></div>
      </div>
     `;
       const createProjectForm = document.body.querySelector(
