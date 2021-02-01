@@ -1,5 +1,4 @@
 .project.container {
- padding: var(--padding);
  display: flex;
  border-radius: var(--radius);
  flex-direction: column;

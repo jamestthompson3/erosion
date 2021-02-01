@@ -62,7 +62,7 @@ function getTopPosition(yPos, xPos, anchorRect) {
   switch (yPos) {
     case "fixed": {
       return xPos === "right"
-        ? `${anchorRect.top}px`
+        ? `${anchorRect.top + 5}px`
         : `${anchorRect.bottom + 5}px`;
     }
     default: {

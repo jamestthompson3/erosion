@@ -37,8 +37,8 @@ export default class App extends Component {
     );
     contextEmitter.on(messages.WorkspaceReady, () => {
       document.body.innerHTML = `
-     <div class="workspace container">
       <aside class="workspace sidebar"></aside>
+     <div class="workspace container">
       <div class="workspace projects">
         <div class="project project-form"></div>
       </div>
