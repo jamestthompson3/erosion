@@ -180,7 +180,7 @@ class Inbox extends Component {
     const showComplete = appSettings.get("show_complete");
     const indicatorNumberText = this.props.inbox.cards.filter(c =>
       showComplete ? true : c.status !== "Done"
-    );
+    ).length;
     if (inboxIndicator) inboxIndicator.innerText = indicatorNumberText;
     if (title) title.innerText = inbox.name;
     // create the cardForm component
