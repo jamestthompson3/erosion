@@ -76,10 +76,12 @@ class Project extends Component {
     }
   }
   deleteProject = () => {
-    const { id } = this.props;
-    postData(messages.DeleteProject, {
-      project_id: id
-    });
+    const { id, name } = this.props;
+    let confirmed = confirm(`Delete Project ${name}?`);
+    confirmed &&
+      postData(messages.DeleteProject, {
+        project_id: id
+      });
   };
   clickAway = () => {
     const titleEdit = this.el.querySelector(".as-h1");

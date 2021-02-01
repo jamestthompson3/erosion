@@ -36,7 +36,7 @@ async fn main() {
         });
         if opts.gui {
           let mut webview = web_view::builder()
-            .title("Erosion")
+            .title("⛰ Erosion")
             .content(Content::Url("http://0.0.0.0:37633"))
             .size(800, 1200)
             .resizable(true)

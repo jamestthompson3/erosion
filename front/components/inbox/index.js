@@ -33,9 +33,9 @@ class Inbox extends Component {
     const addButton = el.querySelector(".inbox.add-card");
     addButton.addEventListener("click", this.openForm);
     const collapseButton = el.querySelector(".inbox.collapse");
-    collapseButton.addEventListener("click", () => this.toggleCollapse());
+    collapseButton.addEventListener("click", this.toggleCollapse);
     const deleteButton = el.querySelector(".inbox.delete-inbox");
-    deleteButton.addEventListener("click", () => this.delete());
+    deleteButton.addEventListener("click", this.delete);
     // TODO handle outside click on whole document
     el.addEventListener("click", this.clickAway, false);
     const boxTitle = el.querySelector(".inbox.title");
@@ -90,10 +90,12 @@ class Inbox extends Component {
 
     const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
     const { project } = keyedInbox;
-    postData(messages.DeleteInbox, {
-      project,
-      inbox: inbox.id
-    });
+    let confirmed = confirm(`Delete Inbox ${inbox.name}?`);
+    confirmed &&
+      postData(messages.DeleteInbox, {
+        project,
+        inbox: inbox.id
+      });
   };
   clickAway = () => {
     const titleEdit = this.el.querySelector(".as-h2");
