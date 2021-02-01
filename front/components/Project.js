@@ -115,9 +115,7 @@ class Project extends Component {
 
     // create the cardForm component
     const newInboxForm = this.el.querySelector(".project.inbox-form");
-    const addInboxButton = this.el.querySelector(".project.add-inbox");
     if (this.state.current === states.ADD_INBOX && !newInboxForm) {
-      addInboxButton.innerHTML = Cancel();
       const inboxForm = document.createElement("div");
       inboxForm.classList.add("project", "inbox-form");
       this.el.insertBefore(inboxForm, children[0]);
@@ -130,7 +128,6 @@ class Project extends Component {
     }
     if (this.state.current === states.VIEW && newInboxForm) {
       this.el.removeChild(newInboxForm);
-      addInboxButton.innerHTML = NewInbox();
     }
     this.sweepAndUpdate();
   }

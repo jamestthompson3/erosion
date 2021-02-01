@@ -27,7 +27,7 @@ export default class MenuSelect extends Component {
     const clickOutsideListener = e => {
       const appended = this.el.querySelector(".contextual.menu"); // select after we place menu
       if (!appended) return;
-      if (!appended.contains(e.target) && shown) {
+      if (appended !== e.target && shown) {
         this.setState({ shown: !shown });
       }
     };
@@ -54,7 +54,7 @@ export default class MenuSelect extends Component {
   }
 }
 
-function getRelativePosition(descriptor) {
+function getRelativePosition(descriptor = "right") {
   return descriptor.split("-");
 }
 

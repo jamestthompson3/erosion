@@ -38,6 +38,7 @@
 .project.inbox-form {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .project.project-form {
@@ -70,4 +71,16 @@
 .project.as-h1 {
   padding: 0.25rem;
   border: 1px solid var(--light0);
+}
+/*
+ * Smaller screens
+ */
+
+@media(max-width: 700px) {
+
+.project.project-form {
+  width: 80%;
+  margin: auto;
+  flex-wrap: wrap;
+}
 }
