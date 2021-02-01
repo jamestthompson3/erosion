@@ -39,13 +39,8 @@ body {
   font-family: Iosevka;
   scroll-snap-type: y proximity;
   background: radial-gradient(var(--light0), rgb(237, 235, 235) 47.06%, hsl(0, 0%, 92%));
+  padding: calc(var(--padding) / 2);
   /* overscroll-behavior: none; */
-}
-html,
-body {
-  font-family: Iosevka;
-  margin: 0px;
-  padding: 0px;
 }
 
 button:hover {
