@@ -15,12 +15,12 @@ class Inbox extends Component {
     super(el, props);
     const showComplete = appSettings.get("show_complete");
     this.state = {
-      showForm: false
+      showForm: false,
     };
     const { inbox } = props;
     el.innerHTML = `
       <div class="inbox actions">
-        <h2 class="inbox title ellipsis">${inbox.name}</h2>
+        <h2 class="inbox title -ellipsis">${inbox.name}</h2>
             <div id="inbox-action-indicator">
               <button title="collapse view" class="inbox collapse" aria-label="collapse view">${Expand()}</button>
               <button title="add card to inbox" class="inbox add-card" aria-label="add card to inbox">${Add()}</button>
@@ -45,11 +45,11 @@ class Inbox extends Component {
       titleEdit.value = inbox.name;
       titleEdit.addEventListener(
         "change",
-        debounceEvent(e => {
+        debounceEvent((e) => {
           this.updateField({ name: e.target.value });
         }, 500)
       );
-      titleEdit.addEventListener("keyup", e => {
+      titleEdit.addEventListener("keyup", (e) => {
         if (e.which === 13) {
           e.preventDefault();
           this.clickAway();
@@ -59,7 +59,7 @@ class Inbox extends Component {
       boxTitle.addEventListener("dblclick", () => {
         boxTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", e => {
+        titleEdit.addEventListener("click", (e) => {
           e.stopPropagation();
         });
       });
@@ -68,11 +68,21 @@ class Inbox extends Component {
     const { cards } = this.props.inbox;
     // FIXME figure out hou to do this maybe on the backend?
     cards
-      .filter(c => (showComplete ? true : c.status !== "Done"))
-      .forEach(card => {
+      .filter((c) => (showComplete ? true : c.status !== "Done"))
+      .forEach((card) => {
         const cardContainer = document.createElement("div");
         cardContainer.classList.add("card", "container");
         cardContainer.dataset.key = card.id;
+        cardContainer.draggable = "true";
+        cardContainer.addEventListener("mousedown", () => {
+          cardContainer.style.cursor = "grabbing";
+        });
+        cardContainer.addEventListener("mouseup", () => {
+          cardContainer.style.cursor = "grab";
+        });
+        cardContainer.addEventListener("dragend", () => {
+          cardContainer.style.cursor = "grab";
+        });
         el.appendChild(cardContainer);
         new Card(cardContainer, { card });
       });
@@ -94,7 +104,7 @@ class Inbox extends Component {
     confirmed &&
       postData(messages.DeleteInbox, {
         project,
-        inbox: inbox.id
+        inbox: inbox.id,
       });
   };
   clickAway = () => {
@@ -107,7 +117,7 @@ class Inbox extends Component {
       boxTitle.addEventListener("dblclick", () => {
         boxTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", e => {
+        titleEdit.addEventListener("click", (e) => {
           e.stopPropagation();
         });
       });
@@ -129,7 +139,7 @@ class Inbox extends Component {
   };
 
   styleExpand = (children, headerActions, collapseButton) => {
-    children.forEach(child => {
+    children.forEach((child) => {
       child.style.display = "flex";
     });
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, false);
@@ -139,7 +149,7 @@ class Inbox extends Component {
   };
 
   styleCollapse = (children, headerActions, collapseButton) => {
-    children.forEach(child => {
+    children.forEach((child) => {
       child.style.display = "none";
     });
     localStorage.setItem(`${this.props.inbox.id}-collapsed`, true);
@@ -147,7 +157,7 @@ class Inbox extends Component {
     inboxIndicator.classList.add("inbox", "indicator");
 
     const showComplete = appSettings.get("show_complete");
-    const indicatorNumber = this.props.inbox.cards.filter(c =>
+    const indicatorNumber = this.props.inbox.cards.filter((c) =>
       showComplete ? true : c.status !== "Done"
     ).length;
     inboxIndicator.innerText = indicatorNumber;
@@ -166,7 +176,7 @@ class Inbox extends Component {
     const updated = { ...inbox, ...updatedData };
     postData(messages.UpdateInbox, {
       project,
-      inbox: updated
+      inbox: updated,
     });
     this.withProps({ inbox: updated });
   }
@@ -178,7 +188,7 @@ class Inbox extends Component {
     const inboxIndicator = this.el.querySelector(".inbox.indicator");
 
     const showComplete = appSettings.get("show_complete");
-    const indicatorNumberText = this.props.inbox.cards.filter(c =>
+    const indicatorNumberText = this.props.inbox.cards.filter((c) =>
       showComplete ? true : c.status !== "Done"
     ).length;
     if (inboxIndicator) inboxIndicator.innerText = indicatorNumberText;
@@ -195,7 +205,7 @@ class Inbox extends Component {
         inbox: inbox.id,
         closeForm: () => {
           this.setState({ showForm: false });
-        }
+        },
       });
     }
     if (!this.state.showForm && newCardForm) {
@@ -209,16 +219,16 @@ class Inbox extends Component {
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
-    markedToRemove.forEach(child => {
+    markedToRemove.forEach((child) => {
       childrenById.set(child.dataset.key, child);
     });
 
     const showComplete = appSettings.get("show_complete");
-    const cards = this.props.inbox.cards.filter(c =>
+    const cards = this.props.inbox.cards.filter((c) =>
       showComplete ? true : c.status !== "Done"
     );
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const childToUpdate = childrenById.get(card.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
@@ -237,7 +247,7 @@ class Inbox extends Component {
         new Card(cardContainer, { card });
       }
     });
-    markedToRemove.forEach(oldNode => {
+    markedToRemove.forEach((oldNode) => {
       this.el.removeChild(oldNode);
     });
   }

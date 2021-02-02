@@ -107,11 +107,14 @@ button {
     font-family: inherit;
   }
 
-  .ellipsis {
+  .-ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     word-wrap: normal;
+  }
+  .-text-cursor {
+    cursor: text;
   }
 
   .menu.contextual {
