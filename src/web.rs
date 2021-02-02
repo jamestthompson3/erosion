@@ -109,6 +109,10 @@ mod handlers {
         EventManager::update_settings(event);
         Ok(warp::reply::json(&empty))
       }
+      Events::MoveCard(event) => {
+        manager.move_card(event);
+        Ok(warp::reply::json(&empty))
+      }
       _ => {
         return Ok(warp::reply::json(&empty));
       }

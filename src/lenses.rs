@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::env::var;
 
 use crate::{
@@ -223,11 +224,13 @@ pub fn delete_card(state: &State, project: String, inbox: String, card_id: Strin
   updated_state
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Move {
   src: String,
   dest: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CardMove {
   inbox: Move,
   project: Move,

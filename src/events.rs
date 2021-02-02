@@ -5,7 +5,7 @@ use crate::{
   inboxes::Inbox,
   lenses::{
     create_card, create_inbox, create_project, delete_card, delete_inbox, delete_project,
-    update_card, update_inbox, update_project,
+    move_card, update_card, update_inbox, update_project, CardMove,
   },
   projects::Project,
 };
@@ -69,13 +69,19 @@ pub struct CardDeleteEvent {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct CardMoveEvent {
+  card_id: String,
+  instructions: CardMove,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Events {
   CreateCard(CardCreateEvent),
   WorkspaceInit,
   UpdateSettings(Settings),
   DeleteCard(CardDeleteEvent),
   UpdateCard(CardUpdateEvent),
-  MoveCard,
+  MoveCard(CardMoveEvent),
   StateUpdated,
   CreateInbox(InboxCreateEvent),
   DeleteInbox(InboxDeleteEvent),
@@ -155,6 +161,10 @@ impl EventManager {
   }
   pub fn update_settings(e: Settings) {
     write_data_file("settings", &serde_json::to_string(&e).unwrap()).unwrap();
+  }
+  pub fn move_card(&mut self, e: CardMoveEvent) {
+    let mut current_state = self.state.lock().unwrap();
+    *current_state = move_card(&current_state, e.card_id, e.instructions);
   }
   pub fn print(&self) {
     println!(
