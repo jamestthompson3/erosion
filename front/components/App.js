@@ -15,10 +15,22 @@ import {
 import {
   findInbox,
   findProject,
+  findCard,
   updateInboxCards,
   updateProjectInboxes,
   updateStateProjects
 } from "../utils/lenses.js";
+
+const handlers = {
+  get: function(target, prop) {
+    console.log("G<---", target, prop);
+    return Reflect.get(...arguments);
+  },
+  set: function(target, prop) {
+    console.log(`   ===>S`, target, prop);
+    return Reflect.set(...arguments);
+  }
+};
 
 export default class App extends Component {
   constructor() {
@@ -74,11 +86,47 @@ export default class App extends Component {
       contextEmitter.on(messages.DeleteProject, updatePayload => {
         this.removeProject(updatePayload);
       });
+      contextEmitter.on(messages.MoveCard, updatePayload => {
+        this.moveCard(updatePayload);
+      });
       this.setState(state);
     });
   }
   update() {
     this.sweepAndUpdate();
+  }
+  moveCard({ card_id, instructions: { inbox, project } }) {
+    const srcProject = findProject(project.src, this.state);
+    const destProject = findProject(project.dest, this.state);
+    const srcInbx = findInbox(inbox.src, srcProject);
+    const destInbx = findInbox(inbox.dest, destProject);
+    const foundCard = findCard(card_id, srcInbx);
+    const updatedInbox = {
+      ...srcInbx,
+      cards: srcInbx.cards.filter(c => c.id !== card_id)
+    };
+    const updatedDest = {
+      ...destInbx,
+      cards: destInbx.cards.concat(foundCard)
+    };
+    if (project.src === project.dest) {
+      const updatedProject = updateProjectInboxes(
+        updateProjectInboxes(srcProject, updatedInbox),
+        updatedDest
+      );
+      const updatedState = updateStateProjects(this.state, updatedProject);
+      this.setState(updatedState);
+    } else {
+      const updatedSrc = updateProjectInboxes(srcProject, srcInbx);
+      const updatedDest = updateProjectInboxes(destProject, destInbx);
+      this.setState(
+        updateStateProjects(
+          this.state,
+          updateStateProjects(this.state, updatedSrc),
+          updatedDest
+        )
+      );
+    }
   }
   sweepAndUpdate() {
     const workspaceContainer = document.body.querySelector(
@@ -137,6 +185,7 @@ export default class App extends Component {
     });
   }
   globalUpdated(newState) {
+    console.log("GLOBAL UPDATE!");
     this.setState(newState);
   }
   removeCard(updatePayload) {

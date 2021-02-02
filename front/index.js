@@ -24,7 +24,6 @@ import {
 (function() {
   listenFor(messages.WorkspaceInit, payload => {
     const { state, settings } = payload;
-    console.log({ state, settings });
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
     appContext.set("state", state);
