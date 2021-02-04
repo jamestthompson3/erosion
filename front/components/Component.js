@@ -1,4 +1,3 @@
-import { isEqual } from "../utils/lang.js";
 /**
  * @typedef {Object} HasId
  * @property {string} id - id for item
