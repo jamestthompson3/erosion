@@ -34,13 +34,13 @@ class Card extends Component {
             weekday: "long",
             year: "numeric",
             month: "long",
-            day: "numeric",
+            day: "numeric"
           }).format(new Date(card.scheduled))}</p>`
       )}
       <p>⌛ ${card.time_allotted} min</p>
             ${existsAndRender(card.tags, () =>
               // TODO maybe do some sort of emoji mapping to mental state
-              card.tags.map((t) => `<p class="card tag">🧠 ${t}</p>`).join("\n")
+              card.tags.map(t => `<p class="card tag">🧠 ${t}</p>`).join("\n")
             )}
       </div>
         <div class="card actions">
@@ -56,11 +56,11 @@ class Card extends Component {
       <button aria-label="delete card" class="card actions delete">${Trash()}</button>
       <button aria-label="edit card" class="card actions edit">${Edit()}</button>
       `,
-        bootstrap: (menu) => {
+        bootstrap: menu => {
           const deleteButton = menu.querySelector(".card.actions.delete");
           deleteButton.addEventListener("click", this.deleteCard);
-        },
-      },
+        }
+      }
     });
     const cardStatus = el.querySelector("input");
     el.addEventListener("click", this.clickAway, false);
@@ -80,7 +80,7 @@ class Card extends Component {
       "#56cfe1ff",
       "#64dfdfff",
       "#72efddff",
-      "#80ffdbff",
+      "#80ffdbff"
     ];
     const rand = () => ~~(Math.random() * 9);
     return colors[rand()];
@@ -95,11 +95,11 @@ class Card extends Component {
       titleEdit.value = card.title;
       titleEdit.addEventListener(
         "change",
-        debounceEvent((e) => {
+        debounceEvent(e => {
           this.updateField({ title: e.target.value });
         }, 500)
       );
-      titleEdit.addEventListener("keyup", (e) => {
+      titleEdit.addEventListener("keyup", e => {
         if (e.code === 13) {
           e.preventDefault();
           this.clickAway();
@@ -109,7 +109,7 @@ class Card extends Component {
       cardTitle.addEventListener("dblclick", () => {
         cardTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", (e) => {
+        titleEdit.addEventListener("click", e => {
           e.stopPropagation();
         });
       });
@@ -121,13 +121,13 @@ class Card extends Component {
       cardText.addEventListener("dblclick", () => {
         cardText.replaceWith(textEdit);
         textEdit.focus();
-        textEdit.addEventListener("click", (e) => {
+        textEdit.addEventListener("click", e => {
           e.stopPropagation();
         });
       });
       textEdit.addEventListener(
         "change",
-        debounceEvent((e) => {
+        debounceEvent(e => {
           if (e.which === 18) {
             e.preventDefault();
             this.clickAway();
@@ -147,7 +147,7 @@ class Card extends Component {
       cardText.addEventListener("dblclick", () => {
         cardText.replaceWith(textEdit);
         textEdit.focus();
-        textEdit.addEventListener("click", (e) => {
+        textEdit.addEventListener("click", e => {
           e.stopPropagation();
         });
       });
@@ -161,7 +161,7 @@ class Card extends Component {
       cardTitle.addEventListener("dblclick", () => {
         cardTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", (e) => {
+        titleEdit.addEventListener("click", e => {
           e.stopPropagation();
         });
       });
@@ -169,19 +169,19 @@ class Card extends Component {
   };
   deleteCard = () => {
     const {
-      card: { id },
+      card: { id }
     } = this.state;
     const keyedByCard = appContext.get("cardKeyed")[id];
     const { inbox, project } = keyedByCard;
     postData(messages.DeleteCard, {
       inbox,
       project,
-      card: id,
+      card: id
     });
   };
   updateStatus = () => {
     const {
-      card: { status },
+      card: { status }
     } = this.state;
     switch (status) {
       case "Done":
@@ -205,7 +205,7 @@ class Card extends Component {
     postData(messages.UpdateCard, {
       inbox,
       project,
-      card: updated,
+      card: updated
     });
     this.setState({ card: updated });
   }

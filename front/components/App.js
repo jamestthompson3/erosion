@@ -9,7 +9,8 @@ import {
   contextEmitter,
   postData,
   appContext,
-  newProjectEmitter
+  newProjectEmitter,
+  kby
 } from "../messages.js";
 
 import {
@@ -115,17 +116,20 @@ export default class App extends Component {
         updatedDest
       );
       const updatedState = updateStateProjects(this.state, updatedProject);
+      const cardKeyed = kby(updatedState.projects);
+      appContext.set("cardKeyed", cardKeyed);
       this.setState(updatedState);
     } else {
       const updatedSrc = updateProjectInboxes(srcProject, srcInbx);
       const updatedDest = updateProjectInboxes(destProject, destInbx);
-      this.setState(
-        updateStateProjects(
-          this.state,
-          updateStateProjects(this.state, updatedSrc),
-          updatedDest
-        )
+      const updatedState = updateStateProjects(
+        this.state,
+        updateStateProjects(this.state, updatedSrc),
+        updatedDest
       );
+      const cardKeyed = kby(updatedState.projects);
+      appContext.set("cardKeyed", cardKeyed);
+      this.setState(updatedState);
     }
   }
   sweepAndUpdate() {
@@ -185,7 +189,6 @@ export default class App extends Component {
     });
   }
   globalUpdated(newState) {
-    console.log("GLOBAL UPDATE!");
     this.setState(newState);
   }
   removeCard(updatePayload) {
