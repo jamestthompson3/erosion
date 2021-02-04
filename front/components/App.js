@@ -13,6 +13,8 @@ import {
   kby
 } from "../messages.js";
 
+import { observableStore } from "../utils/reactivity.js";
+
 import {
   findInbox,
   findProject,
@@ -25,7 +27,7 @@ import {
 export default class App extends Component {
   constructor() {
     super(document.body);
-    this.state = {};
+    this.state = observableStore();
     // splash screen
     document.body.innerHTML = `
       <div class="splashscreen">
