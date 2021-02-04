@@ -20,7 +20,7 @@ class Inbox extends Component {
     const { inbox } = props;
     el.innerHTML = `
       <div class="inbox actions">
-        <h2 class="inbox title ellipsis">${inbox.name}</h2>
+        <h2 class="inbox title -ellipsis">${inbox.name}</h2>
             <div id="inbox-action-indicator">
               <button title="collapse view" class="inbox collapse" aria-label="collapse view">${Expand()}</button>
               <button title="add card to inbox" class="inbox add-card" aria-label="add card to inbox">${Add()}</button>
@@ -38,6 +38,24 @@ class Inbox extends Component {
     deleteButton.addEventListener("click", this.delete);
     // TODO handle outside click on whole document
     el.addEventListener("click", this.clickAway, false);
+    el.addEventListener("dragenter", () => {
+      el.style.filter = "contrast(50%)";
+    });
+    el.addEventListener(
+      "dragover",
+      e => {
+        el.style.filter = "contrast(50%)";
+        e.preventDefault();
+      },
+      false
+    );
+    el.addEventListener("dragleave", () => {
+      el.style.filter = "";
+    });
+    el.addEventListener("dragend", () => {
+      el.style.filter = "";
+    });
+    el.addEventListener("drop", this.handleDrop);
     const boxTitle = el.querySelector(".inbox.title");
     if (boxTitle) {
       const titleEdit = document.createElement("input");
@@ -50,7 +68,7 @@ class Inbox extends Component {
         }, 500)
       );
       titleEdit.addEventListener("keyup", e => {
-        if (e.which === 13) {
+        if (e.code === 13) {
           e.preventDefault();
           this.clickAway();
         }
@@ -66,13 +84,26 @@ class Inbox extends Component {
     }
     // create cards
     const { cards } = this.props.inbox;
-    // FIXME figure out hou to do this maybe on the backend?
+    // FIXME figure out how to do this maybe on the backend?
     cards
       .filter(c => (showComplete ? true : c.status !== "Done"))
       .forEach(card => {
         const cardContainer = document.createElement("div");
         cardContainer.classList.add("card", "container");
         cardContainer.dataset.key = card.id;
+        cardContainer.draggable = true;
+        cardContainer.addEventListener("dragstart", e =>
+          this.setDragData(e, card)
+        );
+        cardContainer.addEventListener("mousedown", () => {
+          cardContainer.style.cursor = "grabbing";
+        });
+        cardContainer.addEventListener("mouseup", () => {
+          cardContainer.style.cursor = "grab";
+        });
+        cardContainer.addEventListener("dragend", () => {
+          cardContainer.style.cursor = "grab";
+        });
         el.appendChild(cardContainer);
         new Card(cardContainer, { card });
       });
@@ -85,6 +116,46 @@ class Inbox extends Component {
       this.styleCollapse(children, headerActions, collapseButton);
     }
   }
+
+  setDragData = (e, card) => {
+    const { inbox } = this.props;
+    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
+    const { project } = keyedInbox;
+    e.dataTransfer.setData(
+      "text/plain",
+      JSON.stringify({
+        cardId: card.id,
+        src: {
+          inbox: inbox.id,
+          project
+        }
+      })
+    );
+  };
+
+  handleDrop = e => {
+    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const { inbox } = this.props;
+    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
+    const { project } = keyedInbox;
+    const moveCardData = {
+      card_id: data.cardId,
+      instructions: {
+        inbox: {
+          src: data.src.inbox,
+          dest: inbox.id
+        },
+        project: {
+          src: data.src.project,
+          dest: project
+        }
+      }
+    };
+    this.el.style.filter = "";
+    e.preventDefault();
+    postData(messages.MoveCard, moveCardData);
+  };
+
   delete = () => {
     const { inbox } = this.props;
 
@@ -233,6 +304,7 @@ class Inbox extends Component {
           cardContainer.style.display = "none";
         }
         cardContainer.dataset.key = card.id;
+        cardContainer.draggable = true;
         this.el.appendChild(cardContainer);
         new Card(cardContainer, { card });
       }

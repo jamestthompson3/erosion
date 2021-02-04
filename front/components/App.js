@@ -9,12 +9,14 @@ import {
   contextEmitter,
   postData,
   appContext,
-  newProjectEmitter
+  newProjectEmitter,
+  kby
 } from "../messages.js";
 
 import {
   findInbox,
   findProject,
+  findCard,
   updateInboxCards,
   updateProjectInboxes,
   updateStateProjects
@@ -74,11 +76,50 @@ export default class App extends Component {
       contextEmitter.on(messages.DeleteProject, updatePayload => {
         this.removeProject(updatePayload);
       });
+      contextEmitter.on(messages.MoveCard, updatePayload => {
+        this.moveCard(updatePayload);
+      });
       this.setState(state);
     });
   }
   update() {
     this.sweepAndUpdate();
+  }
+  moveCard({ card_id, instructions: { inbox, project } }) {
+    const srcProject = findProject(project.src, this.state);
+    const destProject = findProject(project.dest, this.state);
+    const srcInbx = findInbox(inbox.src, srcProject);
+    const destInbx = findInbox(inbox.dest, destProject);
+    const foundCard = findCard(card_id, srcInbx);
+    const updatedInbox = {
+      ...srcInbx,
+      cards: srcInbx.cards.filter(c => c.id !== card_id)
+    };
+    const updatedDest = {
+      ...destInbx,
+      cards: destInbx.cards.concat(foundCard)
+    };
+    if (project.src === project.dest) {
+      const updatedProject = updateProjectInboxes(
+        updateProjectInboxes(srcProject, updatedInbox),
+        updatedDest
+      );
+      const updatedState = updateStateProjects(this.state, updatedProject);
+      const cardKeyed = kby(updatedState.projects);
+      appContext.set("cardKeyed", cardKeyed);
+      this.setState(updatedState);
+    } else {
+      const updatedSrc = updateProjectInboxes(srcProject, srcInbx);
+      const updatedDest = updateProjectInboxes(destProject, destInbx);
+      const updatedState = updateStateProjects(
+        this.state,
+        updateStateProjects(this.state, updatedSrc),
+        updatedDest
+      );
+      const cardKeyed = kby(updatedState.projects);
+      appContext.set("cardKeyed", cardKeyed);
+      this.setState(updatedState);
+    }
   }
   sweepAndUpdate() {
     const workspaceContainer = document.body.querySelector(

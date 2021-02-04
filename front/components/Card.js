@@ -22,8 +22,8 @@ class Card extends Component {
             <label for=${card.id}></label>
           </div>
           <div class="card description" data-status=${card.status}>
-            <h3 class="card title ellipsis">${card.title}</h3>
-            <p class="card text ellipsis">${card.text || ""}</p>
+            <h3 class="card title -ellipsis -text-cursor">${card.title}</h3>
+            <p class="card text -ellipsis -text-cursor">${card.text || ""}</p>
           </div>
         </div>
       <div class="card metadata">
@@ -100,7 +100,7 @@ class Card extends Component {
         }, 500)
       );
       titleEdit.addEventListener("keyup", e => {
-        if (e.which === 13) {
+        if (e.code === 13) {
           e.preventDefault();
           this.clickAway();
         }
@@ -141,7 +141,7 @@ class Card extends Component {
     const textEdit = this.el.querySelector(".as-p");
     if (textEdit) {
       const cardText = document.createElement("p");
-      cardText.classList.add("card", "text");
+      cardText.classList.add("card", "text", "-ellipsis", "-text-cursor");
       cardText.innerText = textEdit.value;
       textEdit.replaceWith(cardText);
       cardText.addEventListener("dblclick", () => {
@@ -155,7 +155,7 @@ class Card extends Component {
     const titleEdit = this.el.querySelector(".as-h3");
     if (titleEdit) {
       const cardTitle = document.createElement("h3");
-      cardTitle.classList.add("card", "title");
+      cardTitle.classList.add("card", "title", "-text-cursor", "-ellipsis");
       cardTitle.innerText = titleEdit.value;
       titleEdit.replaceWith(cardTitle);
       cardTitle.addEventListener("dblclick", () => {

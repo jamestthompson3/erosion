@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::env::var;
 
 use crate::{
@@ -223,11 +224,13 @@ pub fn delete_card(state: &State, project: String, inbox: String, card_id: Strin
   updated_state
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Move {
   src: String,
   dest: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct CardMove {
   inbox: Move,
   project: Move,
@@ -247,12 +250,22 @@ pub fn move_card(state: &State, card_id: String, instructions: CardMove) -> Stat
     .collect();
   // TODO get position of the card in array and insert it there
   dest_inbox.cards.push(found_card);
-  let updated_src = update_project_inboxes(&src_project, &src_inbox);
-  let updated_dest = update_project_inboxes(&dest_project, &dest_inbox);
-  let updated_state =
-    update_state_projects(&update_state_projects(state, &updated_src), &updated_dest);
-  save_state_to_disk(&updated_state);
-  updated_state
+  if src_project.id == dest_project.id {
+    let updated = update_project_inboxes(
+      &update_project_inboxes(&src_project, &src_inbox),
+      &dest_inbox,
+    );
+    let updated_state = update_state_projects(state, &updated);
+    save_state_to_disk(&updated_state);
+    updated_state
+  } else {
+    let updated_src = update_project_inboxes(&src_project, &src_inbox);
+    let updated_dest = update_project_inboxes(&dest_project, &dest_inbox);
+    let updated_state =
+      update_state_projects(&update_state_projects(state, &updated_src), &updated_dest);
+    save_state_to_disk(&updated_state);
+    updated_state
+  }
 }
 
 // Inboxes
@@ -508,12 +521,7 @@ mod tests {
       Some(created_card)
     );
     let final_src_project = find_project(&final_state, test_proj2.id()).unwrap();
-    println!("{}", serde_json::to_string_pretty(&created_card).unwrap());
     let final_src_inbox = find_inbox(&final_src_project, created_inbox.id()).unwrap();
-    println!(
-      "{}",
-      serde_json::to_string_pretty(&final_src_inbox).unwrap()
-    );
     let final_src_card = find_card(&final_src_inbox, created_card.id.to_owned());
     assert_eq!(final_src_card, None);
     assert_eq!(final_src_inbox.cards.len(), 0);

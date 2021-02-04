@@ -15,11 +15,8 @@ class Component {
     this.update();
   }
   withProps = next => {
-    // very basic, can be improved
-    if (JSON.stringify(this.props) !== JSON.stringify(next)) {
-      Object.assign(this.props, next);
-      this.update();
-    }
+    Object.assign(this.props, next);
+    this.update();
   };
   /**
    * FIXME: Currently borked since props don't pass down correctly :/

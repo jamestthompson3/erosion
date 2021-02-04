@@ -11,7 +11,7 @@ export function emitter() {
     },
     emit(event, ...args) {
       if (listeners.has(event)) {
-        Array.from(listeners.get(event)).map(cb => {
+        Array.from(listeners.get(event)).map((cb) => {
           cb(...args);
         });
       }
@@ -25,7 +25,7 @@ export function emitter() {
       for (const key of listeners.keys()) {
         listeners.delete(key);
       }
-    }
+    },
   };
 }
 
@@ -36,13 +36,14 @@ export const messages = {
   DeleteCard: "DeleteCard",
   DeleteInbox: "DeleteInbox",
   DeleteProject: "DeleteProject",
+  MoveCard: "MoveCard",
   UpdateSettings: "UpdateSettings",
   StateUpdated: "StateUpdated",
   UpdateCard: "UpdateCard",
   UpdateInbox: "UpdateInbox",
   UpdateProject: "UpdateProject",
   WorkspaceInit: "WorkspaceInit",
-  WorkspaceReady: "WorkspaceReady"
+  WorkspaceReady: "WorkspaceReady",
 };
 
 export function kby(projects) {
@@ -56,7 +57,7 @@ export function kby(projects) {
 }
 
 function inboxReducer(projectId) {
-  return function(inboxes) {
+  return function (inboxes) {
     const map = {};
     for (const inbox of inboxes) {
       for (const card of inbox.cards) {
@@ -97,7 +98,7 @@ export function globalEmitter() {
       emit(e, ...args) {
         event.emit(e, JSON.stringify(...args));
         contextEmitter.emit(e, ...args);
-      }
+      },
     };
   }
   const listeners = new Map();
@@ -116,22 +117,22 @@ export function globalEmitter() {
       const promise = fetch("/todos", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: constructBody(e, args)
+        body: constructBody(e, args),
       });
       contextEmitter.emit(eventLabel, ...args);
       if (listeners.has(eventLabel)) {
         promise
-          .then(r => r.json())
-          .then(result => {
-            Array.from(listeners.get(eventLabel)).map(cb => {
+          .then((r) => r.json())
+          .then((result) => {
+            Array.from(listeners.get(eventLabel)).map((cb) => {
               cb(result);
             });
           })
           .catch(console.error);
       }
-    }
+    },
   };
 }
 

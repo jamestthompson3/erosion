@@ -27,17 +27,17 @@ async fn main() {
   match opts.backend {
     Some(backend) => match backend {
       cli::Backend::Web => {
-        println!("┌────────────────────────────────────────────┐");
-        println!("│Starting web backend @ http://0.0.0.0:37633 │");
-        println!("└────────────────────────────────────────────┘");
+        println!("┌──────────────────────────────────────────────┐");
+        println!("│Starting web backend @ http://127.0.0.1:37633 │");
+        println!("└──────────────────────────────────────────────┘");
         let api = web::routes();
         let server = tokio::spawn(async move {
-          warp::serve(api).run(([0, 0, 0, 0], 37633)).await;
+          warp::serve(api).run(([127, 0, 0, 1], 37633)).await;
         });
         if opts.gui {
           let mut webview = web_view::builder()
             .title("⛰ Erosion")
-            .content(Content::Url("http://0.0.0.0:37633"))
+            .content(Content::Url("http://127.0.0.1:37633"))
             .size(800, 1200)
             .resizable(true)
             .debug(true)

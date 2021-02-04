@@ -21,7 +21,7 @@ class Project extends Component {
     };
     el.innerHTML = `
       <div class="project actions">
-        <h1 class="project title ellipsis">${props.name}</h1>
+        <h1 class="project title -ellipsis">${props.name}</h1>
         <div style="display:flex;">
           <button title="add inbox to project" class="project add-inbox" aria-label="add inbox to project">
           ${NewInbox()}
@@ -60,7 +60,7 @@ class Project extends Component {
         }, 500)
       );
       titleEdit.addEventListener("keyup", e => {
-        if (e.which === 13) {
+        if (e.code === 13) {
           e.preventDefault();
           this.clickAway();
         }
