@@ -22,17 +22,6 @@ import {
   updateStateProjects
 } from "../utils/lenses.js";
 
-const handlers = {
-  get: function(target, prop) {
-    console.log("G<---", target, prop);
-    return Reflect.get(...arguments);
-  },
-  set: function(target, prop) {
-    console.log(`   ===>S`, target, prop);
-    return Reflect.set(...arguments);
-  }
-};
-
 export default class App extends Component {
   constructor() {
     super(document.body);
