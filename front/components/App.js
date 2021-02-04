@@ -10,10 +10,8 @@ import {
   postData,
   appContext,
   newProjectEmitter,
-  kby
+  kby,
 } from "../messages.js";
-
-import { observableStore } from "../utils/reactivity.js";
 
 import {
   findInbox,
@@ -21,25 +19,25 @@ import {
   findCard,
   updateInboxCards,
   updateProjectInboxes,
-  updateStateProjects
+  updateStateProjects,
 } from "../utils/lenses.js";
 
 export default class App extends Component {
   constructor() {
     super(document.body);
-    this.state = observableStore();
+    this.state = {};
     // splash screen
     document.body.innerHTML = `
       <div class="splashscreen">
         <img src="/media/erosion.png" />
       </div>
     `;
-    listenFor(messages.StateUpdated, payload => this.globalUpdated(payload));
+    listenFor(messages.StateUpdated, (payload) => this.globalUpdated(payload));
     listenFor(
       messages.UpdateSettings,
       () => (window.location = window.location)
     );
-    contextEmitter.on(messages.WorkspaceReady, () => {
+    appContext.on("state", "update", () => {
       document.body.innerHTML = `
       <aside class="workspace sidebar"></aside>
      <div class="workspace container">
@@ -58,27 +56,27 @@ export default class App extends Component {
       new WorkspaceSidebar(sidebar, {});
       new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");
-      state.projects.forEach(project => {
+      state.projects.forEach((project) => {
         const projectContainer = document.createElement("div");
         projectContainer.classList.add("project", "container");
         projectContainer.dataset.id = project.id;
         workspaceContainer.appendChild(projectContainer);
         new Project(projectContainer, project);
       });
-      contextEmitter.on(messages.UpdateCard, updatePayload => {
+      contextEmitter.on(messages.UpdateCard, (updatePayload) => {
         this.updateCard(updatePayload);
       });
-      contextEmitter.on(messages.DeleteCard, updatePayload => {
+      contextEmitter.on(messages.DeleteCard, (updatePayload) => {
         this.removeCard(updatePayload);
       });
-      contextEmitter.on(messages.DeleteInbox, updatePayload => {
+      contextEmitter.on(messages.DeleteInbox, (updatePayload) => {
         this.removeInbox(updatePayload);
       });
 
-      contextEmitter.on(messages.DeleteProject, updatePayload => {
+      contextEmitter.on(messages.DeleteProject, (updatePayload) => {
         this.removeProject(updatePayload);
       });
-      contextEmitter.on(messages.MoveCard, updatePayload => {
+      contextEmitter.on(messages.MoveCard, (updatePayload) => {
         this.moveCard(updatePayload);
       });
       this.setState(state);
@@ -95,11 +93,11 @@ export default class App extends Component {
     const foundCard = findCard(card_id, srcInbx);
     const updatedInbox = {
       ...srcInbx,
-      cards: srcInbx.cards.filter(c => c.id !== card_id)
+      cards: srcInbx.cards.filter((c) => c.id !== card_id),
     };
     const updatedDest = {
       ...destInbx,
-      cards: destInbx.cards.concat(foundCard)
+      cards: destInbx.cards.concat(foundCard),
     };
     if (project.src === project.dest) {
       const updatedProject = updateProjectInboxes(
@@ -132,10 +130,10 @@ export default class App extends Component {
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
-    markedToRemove.forEach(child => {
+    markedToRemove.forEach((child) => {
       childrenById.set(child.dataset.key, child);
     });
-    projects.forEach(project => {
+    projects.forEach((project) => {
       const childToUpdate = childrenById.get(project.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
@@ -148,7 +146,7 @@ export default class App extends Component {
         new Project(projectContainer, project);
       }
     });
-    markedToRemove.forEach(oldNode => {
+    markedToRemove.forEach((oldNode) => {
       workspaceContainer.removeChild(oldNode);
     });
   }
@@ -168,7 +166,7 @@ export default class App extends Component {
     const foundProject = findProject(project, this.state);
     const updatedState = updateStateProjects(this.state, {
       ...foundProject,
-      inboxes: foundProject.inboxes.filter(box => box.id !== inbox)
+      inboxes: foundProject.inboxes.filter((box) => box.id !== inbox),
     });
     this.setState(updatedState);
   }
@@ -176,7 +174,7 @@ export default class App extends Component {
     const { project_id } = updatePayload;
     this.setState({
       ...this.state,
-      projects: this.state.projects.filter(p => p.id !== project_id)
+      projects: this.state.projects.filter((p) => p.id !== project_id),
     });
   }
   globalUpdated(newState) {
@@ -190,7 +188,7 @@ export default class App extends Component {
       this.state,
       updateProjectInboxes(foundProject, {
         ...foundInbox,
-        cards: foundInbox.cards.filter(c => c.id !== card)
+        cards: foundInbox.cards.filter((c) => c.id !== card),
       })
     );
     this.setState(updatedState);
@@ -201,7 +199,7 @@ class NewProjectForm extends Component {
   constructor(el, props) {
     super(el, props);
     this.state = {
-      current: "VIEW"
+      current: "VIEW",
     };
     newProjectEmitter.on("TOGGLE", () => {
       if (this.state.current === "VIEW") {
@@ -215,7 +213,7 @@ class NewProjectForm extends Component {
     const projectName = this.el.querySelector(".project.new-project-name");
     if (projectName.value !== "") {
       postData(messages.CreateProject, {
-        name: projectName.value.trim()
+        name: projectName.value.trim(),
       });
       this.setState({ current: "VIEW" });
     }

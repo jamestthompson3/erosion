@@ -1,3 +1,5 @@
+import { observableStore } from "./utils/reactivity.js";
+
 export function emitter() {
   const listeners = new Map();
   return {
@@ -81,7 +83,7 @@ export function inboxKby(projects) {
 }
 
 // FIXME don't really like this too much, it relies on execution order of the app
-export const appContext = new Map();
+export const appContext = observableStore();
 export const appSettings = new Map();
 export const contextEmitter = emitter();
 

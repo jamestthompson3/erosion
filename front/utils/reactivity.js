@@ -1,26 +1,53 @@
 import { isEqual } from "./lang.js";
 
-export function observableStore() {
-  const store = new Map();
+/**
+ * @typedef { import("./types").StoreEvents } StoreEvents
+ */
+
+export function observableStore(initialValues = {}) {
+  const store = new Map(Object.entries(initialValues));
+  const updateListeners = new Map();
+  const accessListeners = new Map();
   const handler = {
-    get: function(target, prop) {
-      console.log("G<---", target, prop);
+    get: function (prop) {
+      if (accessListeners.has(prop)) accessListeners.get(prop)();
       return Reflect.get(...arguments);
     },
-    set: function(_, prop, value) {
-      console.log(`   ===>S`, prop, value);
-      return Reflect.set(...arguments);
-    }
+    set: function (_, prop, value) {
+      Reflect.set(...arguments);
+      if (updateListeners.has(prop)) updateListeners.get(prop)(value);
+    },
   };
   const proxied = new Proxy(store, handler);
-  return proxied;
+  return {
+    set(key, value) {
+      proxied[key] = value;
+    },
+    /**
+     * @param key {string}
+     * @param event {StoreEvents}
+     * @param cb {fn(): void}
+     */
+    on(key, event, cb) {
+      if (event === "update") {
+        updateListeners.set(key, cb);
+      }
+      if (event === "access") {
+        accessListeners.set(key, cb);
+      }
+    },
+    // TODO make this return sub stores
+    get(key) {
+      return proxied[key];
+    },
+  };
 }
 
 const a = {
   id: "1234",
   inboxes: [
-    { id: "345a", name: "test", cards: [{ id: "43a", status: "InProgress" }] }
-  ]
+    { id: "345a", name: "test", cards: [{ id: "43a", status: "InProgress" }] },
+  ],
 };
 
 const b = {
@@ -29,9 +56,9 @@ const b = {
     {
       id: "345a",
       name: "test",
-      cards: [{ id: "43a", status: "ToDo" }]
-    }
-  ]
+      cards: [{ id: "43a", status: "ToDo" }],
+    },
+  ],
 };
 
 console.log(isEqual(a, b));
