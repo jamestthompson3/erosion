@@ -1,23 +1,22 @@
-import Inbox from "./inbox/index.js";
-import Component from "./Component.js";
-import Cancel from "./icons/Cancel.js";
-import Check from "./icons/Check.js";
-import Trash from "./icons/Trash.js";
-import NewInbox from "./icons/NewInbox.js";
+import Inbox from "./inbox/index";
+import Component from "./Component";
+import Trash from "./icons/Trash";
+import NewInbox from "./icons/NewInbox";
+import NewInboxForm from "./NewInboxForm";
 
 import { debounceEvent } from "../utils/rendering.js";
 import { postData, messages } from "../messages.js";
 
 const states = {
   ADD_INBOX: "add_inbox",
-  VIEW: "view"
+  VIEW: "view",
 };
 
 class Project extends Component {
   constructor(el, props) {
     super(el, props);
     this.state = {
-      current: states.VIEW
+      current: states.VIEW,
     };
     el.innerHTML = `
       <div class="project actions">
@@ -33,7 +32,7 @@ class Project extends Component {
       </div>
     `;
     const inboxes = props.inboxes;
-    inboxes.forEach(inbox => {
+    inboxes.forEach((inbox) => {
       const inboxContainer = document.createElement("div");
       inboxContainer.classList.add("inbox", "container");
       inboxContainer.dataset.key = inbox.id;
@@ -55,11 +54,11 @@ class Project extends Component {
       titleEdit.value = props.name;
       titleEdit.addEventListener(
         "change",
-        debounceEvent(e => {
+        debounceEvent((e) => {
           this.updateField({ name: e.target.value });
         }, 500)
       );
-      titleEdit.addEventListener("keyup", e => {
+      titleEdit.addEventListener("keyup", (e) => {
         if (e.code === 13) {
           e.preventDefault();
           this.clickAway();
@@ -69,7 +68,7 @@ class Project extends Component {
       projectTitle.addEventListener("dblclick", () => {
         projectTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", e => {
+        titleEdit.addEventListener("click", (e) => {
           e.stopPropagation();
         });
       });
@@ -80,7 +79,7 @@ class Project extends Component {
     let confirmed = confirm(`Delete Project ${name}?`);
     confirmed &&
       postData(messages.DeleteProject, {
-        project_id: id
+        project_id: id,
       });
   };
   clickAway = () => {
@@ -93,7 +92,7 @@ class Project extends Component {
       projectTitle.addEventListener("dblclick", () => {
         projectTitle.replaceWith(titleEdit);
         titleEdit.focus();
-        titleEdit.addEventListener("click", e => {
+        titleEdit.addEventListener("click", (e) => {
           e.stopPropagation();
         });
       });
@@ -103,7 +102,7 @@ class Project extends Component {
   updateField(updatedData) {
     const updated = { ...this.props, ...updatedData };
     postData(messages.UpdateProject, {
-      project: updated
+      project: updated,
     });
     this.withProps(updated);
   }
@@ -123,7 +122,7 @@ class Project extends Component {
         project: id,
         closeForm: () => {
           this.setState({ current: states.VIEW });
-        }
+        },
       });
     }
     if (this.state.current === states.VIEW && newInboxForm) {
@@ -137,10 +136,10 @@ class Project extends Component {
     // create a map here so we can quickly look up if the child exists by using the cardId
     const childrenById = new Map();
     const markedToRemove = new Set(children);
-    markedToRemove.forEach(child => {
+    markedToRemove.forEach((child) => {
       childrenById.set(child.dataset.key, child);
     });
-    inboxes.forEach(inbox => {
+    inboxes.forEach((inbox) => {
       const childToUpdate = childrenById.get(inbox.id);
       if (childToUpdate) {
         markedToRemove.delete(childToUpdate);
@@ -153,38 +152,10 @@ class Project extends Component {
         new Inbox(inboxContainer, { inbox });
       }
     });
-    markedToRemove.forEach(oldNode => {
+    markedToRemove.forEach((oldNode) => {
       this.el.removeChild(oldNode);
     });
   }
-}
-
-class NewInboxForm extends Component {
-  constructor(el, props) {
-    super(el, props);
-    el.innerHTML = `
-      <input placeholder="inbox name" class="project new-inbox-name" type="text"></inbox>
-      <button class="inbox-form accept" title="save inbox">${Check()}</button>
-      <button class="inbox-form cancel" title="cancel creation">${Cancel()}</button>
-    `;
-    const input = el.querySelector("input");
-    input.focus();
-    const save = el.querySelector(".inbox-form.accept");
-    const cancel = el.querySelector(".inbox-form.cancel");
-    save.addEventListener("click", this.save);
-    cancel.addEventListener("click", () => this.props.closeForm());
-  }
-  save = () => {
-    const inboxName = this.el.querySelector("input");
-    if (inboxName.value !== "") {
-      const { project, closeForm } = this.props;
-      postData(messages.CreateInbox, {
-        project,
-        name: inboxName.value.trim()
-      });
-      closeForm();
-    }
-  };
 }
 
 export default Project;
