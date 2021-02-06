@@ -132,6 +132,9 @@ export function moveCard({ card_id, instructions: { inbox, project } }) {
     ...destInbx,
     cards: destInbx.cards.concat(foundCard),
   };
+  if (srcInbx.id === destInbx.id) {
+    return;
+  }
   if (project.src === project.dest) {
     const updatedProject = updateProjectInboxes(
       updateProjectInboxes(srcProject, updatedInbox),

@@ -241,6 +241,10 @@ pub fn move_card(state: &State, card_id: String, instructions: CardMove) -> Stat
   let dest_project = find_project(state, instructions.project.dest).unwrap();
   let mut src_inbox = find_inbox(&src_project, instructions.inbox.src).unwrap();
   let mut dest_inbox = find_inbox(&dest_project, instructions.inbox.dest).unwrap();
+  if src_inbox.id() == dest_inbox.id() {
+    // no need to do anything
+    return state.clone();
+  }
   let found_card = find_card(&src_inbox, card_id.clone()).unwrap();
   src_inbox.cards = src_inbox
     .cards
