@@ -3,7 +3,8 @@
     "module": "system",
     "noImplicitAny": false,
     "lib": ["es2020", "dom"],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "target": "es2020"
   },
   "projectOptions": {
     "checkJs": true,

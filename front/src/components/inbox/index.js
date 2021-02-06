@@ -1,14 +1,10 @@
-import Card from "../Card.js";
-import Component from "../Component.js";
-import Cancel from "../icons/Cancel.js";
-import Collapse from "../icons/Collapse.js";
-import Expand from "../icons/Expand.js";
-import Add from "../icons/Add.js";
-import Trash from "../icons/Trash.js";
-import { debounceEvent } from "../../utils/rendering.js";
-import { postData, messages, appContext, appSettings } from "../../messages.js";
+import Card from "../Card";
+import Component from "../Component";
+import { Cancel, Collapse, Expand, Add, Trash } from "../icons";
+import { debounceEvent } from "../../utils/rendering";
+import { postData, messages, appContext, appSettings } from "../../messages";
 
-import NewCardForm from "./NewCardForm.js";
+import NewCardForm from "./NewCardForm";
 
 class Inbox extends Component {
   constructor(el, props) {

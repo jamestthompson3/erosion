@@ -1,9 +1,9 @@
-import DayPicker from "../DayPicker.js";
-import Component from "../Component.js";
-import { postData, messages, appContext } from "../../messages.js";
-import { addDays, addHours, addMinutes } from "../../utils/time.js";
+import DayPicker from "../DayPicker";
+import Component, { CustomElement } from "../Component";
+import { postData, messages, appContext } from "../../messages";
+import { addDays, addHours, addMinutes } from "../../utils/time";
 
-import InboxTagTime from "./InboxTagTime.js";
+import InboxTagTime from "./InboxTagTime";
 
 class NewCardForm extends Component {
   constructor(el, props) {
@@ -14,7 +14,7 @@ class NewCardForm extends Component {
       text: undefined,
       time_allotted: 0,
       tags: [],
-      customDate: false
+      customDate: false,
     };
     const { time_allotted, tags } = this.state;
     this.el.innerHTML = `
@@ -44,14 +44,14 @@ class NewCardForm extends Component {
     new InboxTagTime(tagsTime, {
       time: time_allotted,
       tags,
-      updateTime: time => {
+      updateTime: (time: number) => {
         this.setState({ time_allotted: time });
       },
-      updateTags: tag => {
+      updateTags: (tag: string) => {
         this.setState({ tags: [tag] });
-      }
+      },
     });
-    const title = this.el.querySelector("#title");
+    const title: HTMLInputElement = this.el.querySelector("#title");
     title.addEventListener("change", this.handleTitleChange);
     const text = this.el.querySelector("#body");
     text.addEventListener("change", this.handleTextChange);
@@ -59,11 +59,11 @@ class NewCardForm extends Component {
     submitButton.addEventListener("click", this.submit);
     title.focus();
   }
-  handleTitleChange = e => {
-    this.setState({ title: e.target.value });
+  handleTitleChange = (e: Event) => {
+    this.setState({ title: (e.target as HTMLInputElement).value });
   };
-  handleTextChange = e => {
-    this.setState({ text: e.target.value });
+  handleTextChange = (e: Event) => {
+    this.setState({ text: (e.target as HTMLInputElement).value });
   };
   submit = () => {
     const { inbox, closeForm } = this.props;
@@ -71,13 +71,13 @@ class NewCardForm extends Component {
     postData(messages.CreateCard, {
       card: { ...this.state, status: "Todo" },
       project,
-      inbox
+      inbox,
     });
     closeForm();
   };
-  scheduled = e => {
+  scheduled = (e: Event) => {
     const today = new Date();
-    switch (e.target.value) {
+    switch ((e.target as HTMLInputElement).value) {
       case "20":
         this.setState({ scheduled: addMinutes(today, 20) });
         break;
@@ -97,18 +97,20 @@ class NewCardForm extends Component {
         break;
     }
   };
-  update() {
+  update = () => {
     const { scheduled, time_allotted, tags, customDate } = this.state;
     const dayPicker = this.el.querySelector(".day-container");
     if (customDate) {
       new DayPicker(dayPicker, {
         day: scheduled || new Date(),
-        updateDay: day => this.setState({ scheduled: day })
+        updateDay: (day: Date) => this.setState({ scheduled: day }),
       });
     }
-    const tagsTime = this.el.querySelector(".card-form.tags-time");
-    tagsTime.update({ time: time_allotted, tags });
-  }
+    const tagsTime: CustomElement = this.el.querySelector(
+      ".card-form.tags-time"
+    );
+    tagsTime.withProps({ time: time_allotted, tags });
+  };
 }
 
 export default NewCardForm;

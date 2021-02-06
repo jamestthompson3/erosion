@@ -1,11 +1,11 @@
-class InboxTagTime {
+import Component from "../Component";
+
+class InboxTagTime extends Component {
   constructor(el, props) {
-    this.el = el;
-    this.props = props;
-    el.update = this.update;
+    super(el, props);
     this.render();
   }
-  render() {
+  render = () => {
     const { time, tags } = this.props;
     this.el.innerHTML = `
       <label for="new-card-time-allotted">time allotted (min)</label>
@@ -28,26 +28,29 @@ class InboxTagTime {
       <option value="recharge">Recharge</option>
       </select>
     `;
-    const timeInput = this.el.querySelector("#new-card-time-allotted");
+    const timeInput: HTMLInputElement = this.el.querySelector(
+      "#new-card-time-allotted"
+    );
     timeInput.value = time;
     timeInput.addEventListener("change", this.handleTimeChange);
     const tagSelect = this.el.querySelector("select");
     tagSelect.value = tags[0];
     tagSelect.addEventListener("change", this.handleTagChange);
-  }
-  handleTimeChange = e => {
+  };
+  handleTimeChange = (e: Event) => {
     const { updateTime } = this.props;
-    const isValidNumber = !isNaN(parseInt(e.target.value));
+    const isValidNumber = !isNaN(
+      parseInt((e.target as HTMLInputElement).value)
+    );
     if (isValidNumber) {
-      updateTime(parseInt(e.target.value));
+      updateTime(parseInt((e.target as HTMLInputElement).value));
     }
   };
-  handleTagChange = e => {
+  handleTagChange = (e: Event) => {
     const { updateTags } = this.props;
-    updateTags(e.target.value);
+    updateTags((e.target as HTMLInputElement).value);
   };
-  update = next => {
-    Object.assign(this.props, next);
+  update = () => {
     this.render();
   };
 }

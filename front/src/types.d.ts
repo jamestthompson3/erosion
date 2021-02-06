@@ -19,6 +19,7 @@ interface Inbox {
 
 interface Card {
   id: string;
+  time_allotted: number;
   title: string;
   created: string;
   modified: string;
