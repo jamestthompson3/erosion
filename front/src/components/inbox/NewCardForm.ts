@@ -1,4 +1,4 @@
-import DayPicker from "../DayPicker";
+import DayPicker from "../common-ui/DayPicker";
 import Component, { CustomElement } from "../Component";
 import { postData, messages, appContext } from "../../messages";
 import { addDays, addHours, addMinutes } from "../../utils/time";

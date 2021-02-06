@@ -127,6 +127,19 @@ button {
   }
 
   /*
+   * Modal Styles
+   */
+.modal.body {
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  background: var(--bg-solid);
+  transform: translateY(50%);
+  padding: var(--padding);
+  width: 80%;
+}
+  /*
    * Day picker styles
    */
   .day-container {

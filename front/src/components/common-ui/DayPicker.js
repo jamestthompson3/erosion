@@ -1,5 +1,5 @@
-import { addDays, addMonths, formatTimeString } from "../utils/time.js";
-import Component from "./Component.js";
+import { addDays, addMonths, formatTimeString } from "../../utils/time.js";
+import Component from "../Component.js";
 
 class DayPicker extends Component {
   constructor(el, props) {
@@ -85,13 +85,13 @@ class DayPicker extends Component {
     const { updateDay } = this.props;
     updateDay(addDays(day, 1));
   };
-  updateDay = e => {
+  updateDay = (e) => {
     const { day } = this.props;
     const value = e.target.value;
     const { updateDay } = this.props;
     updateDay(new Date(day.setDate(value)));
   };
-  setTime = e => {
+  setTime = (e) => {
     const { day } = this.props;
     const time = e.target.value.split(":");
     const { updateDay } = this.props;

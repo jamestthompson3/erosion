@@ -6,8 +6,9 @@ import {
 } from "../utils/rendering.js";
 import { VertMenu, Trash, Edit } from "./icons";
 import Component from "./Component";
-import MenuSelect from "./MenuSelect";
+import MenuSelect from "./common-ui/MenuSelect";
 import { Card, CardStatus } from "../types.d";
+import Modal from "./common-ui/Modal.js";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>
@@ -65,6 +66,14 @@ class CardComponent extends Component {
         bootstrap: (menu: HTMLDivElement) => {
           const deleteButton = menu.querySelector(".card.actions.delete");
           deleteButton.addEventListener("click", this.deleteCard);
+          const editButton = menu.querySelector(".card.actions.edit");
+          new Modal(editButton, {
+            trigger: null,
+            children: {
+              render: () => "<h1>Hi! :) </h1>",
+              bootstrap: (_) => {},
+            },
+          });
         },
       },
     });
