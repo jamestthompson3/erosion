@@ -88,21 +88,6 @@ export const appSettings = new Map();
 export const contextEmitter = emitter();
 
 export function globalEmitter() {
-  const tauri = window.__TAURI__;
-  if (tauri) {
-    const { event } = tauri;
-    return {
-      on(e, cb) {
-        event.listen(e, ({ payload }) => {
-          cb(payload);
-        });
-      },
-      emit(e, ...args) {
-        event.emit(e, JSON.stringify(...args));
-        contextEmitter.emit(e, ...args);
-      },
-    };
-  }
   const listeners = new Map();
   return {
     on(e, cb) {

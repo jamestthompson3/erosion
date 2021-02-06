@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "module": "system",
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "lib": ["es2020", "dom"]
   },
   "projectOptions": {
     "checkJs": true,
