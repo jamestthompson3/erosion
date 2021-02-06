@@ -1,3 +1,4 @@
+export { default as Add } from "./icons/Add";
 export { default as Cancel } from "./icons/Cancel";
 export { default as Check } from "./icons/Check";
 export { default as Collapse } from "./icons/Collapse";
