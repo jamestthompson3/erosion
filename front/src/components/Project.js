@@ -1,9 +1,8 @@
-import Inbox from "./inbox/index.js";
-import Component from "./Component.js";
-import Cancel from "./icons/Cancel.js";
-import Check from "./icons/Check.js";
-import Trash from "./icons/Trash.js";
-import NewInbox from "./icons/NewInbox.js";
+import Inbox from "./inbox/index";
+import Component from "./Component";
+import Trash from "./icons/Trash";
+import NewInbox from "./icons/NewInbox";
+import NewInboxForm from "./NewInboxForm";
 
 import { debounceEvent } from "../utils/rendering.js";
 import { postData, messages } from "../messages.js";
@@ -157,34 +156,6 @@ class Project extends Component {
       this.el.removeChild(oldNode);
     });
   }
-}
-
-class NewInboxForm extends Component {
-  constructor(el, props) {
-    super(el, props);
-    el.innerHTML = `
-      <input placeholder="inbox name" class="project new-inbox-name" type="text"></inbox>
-      <button class="inbox-form accept" title="save inbox">${Check()}</button>
-      <button class="inbox-form cancel" title="cancel creation">${Cancel()}</button>
-    `;
-    const input = el.querySelector("input");
-    input.focus();
-    const save = el.querySelector(".inbox-form.accept");
-    const cancel = el.querySelector(".inbox-form.cancel");
-    save.addEventListener("click", this.save);
-    cancel.addEventListener("click", () => this.props.closeForm());
-  }
-  save = () => {
-    const inboxName = this.el.querySelector("input");
-    if (inboxName.value !== "") {
-      const { project, closeForm } = this.props;
-      postData(messages.CreateInbox, {
-        project,
-        name: inboxName.value.trim(),
-      });
-      closeForm();
-    }
-  };
 }
 
 export default Project;

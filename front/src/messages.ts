@@ -1,9 +1,12 @@
+import { Inbox, Project } from "./types";
 import { observableStore } from "./utils/reactivity.js";
 
+type Callback = (args: any[]) => void;
+
 export function emitter() {
-  const listeners = new Map();
+  const listeners: Map<string, Set<Callback>> = new Map();
   return {
-    on(event, cb) {
+    on(event: string, cb: Callback) {
       const callbacks = listeners.get(event);
       if (!callbacks) {
         listeners.set(event, new Set([cb]));
@@ -11,14 +14,14 @@ export function emitter() {
         callbacks.add(cb);
       }
     },
-    emit(event, ...args) {
+    emit(event: string, ...args: [any]) {
       if (listeners.has(event)) {
         Array.from(listeners.get(event)).map((cb) => {
           cb(...args);
         });
       }
     },
-    remove(event, cb) {
+    remove(event: string, cb: Callback) {
       if (listeners.has(event)) {
         listeners.get(event).delete(cb);
       }
@@ -31,6 +34,7 @@ export function emitter() {
   };
 }
 
+// convert to enum when all files are TS
 export const messages = {
   CreateCard: "CreateCard",
   CreateInbox: "CreateInbox",
@@ -48,9 +52,8 @@ export const messages = {
   WorkspaceReady: "WorkspaceReady",
 };
 
-export function kby(projects) {
+export function kby(projects: Project[]) {
   let keyedByCard = {};
-  // for some reason, .reduce doesn't work on the Linux webkit...
   for (const project of projects) {
     const inboxMap = inboxReducer(project.id)(project.inboxes);
     Object.assign(keyedByCard, inboxMap);
@@ -58,8 +61,8 @@ export function kby(projects) {
   return keyedByCard;
 }
 
-function inboxReducer(projectId) {
-  return function (inboxes) {
+function inboxReducer(projectId: string) {
+  return function (inboxes: Inbox[]) {
     const map = {};
     for (const inbox of inboxes) {
       for (const card of inbox.cards) {
@@ -72,7 +75,7 @@ function inboxReducer(projectId) {
   };
 }
 
-export function inboxKby(projects) {
+export function inboxKby(projects: Project[]) {
   const keyedBy = {};
   for (const project of projects) {
     for (const inbox of project.inboxes) {
@@ -88,9 +91,9 @@ export const appSettings = new Map();
 export const contextEmitter = emitter();
 
 export function globalEmitter() {
-  const listeners = new Map();
+  const listeners: Map<string, Set<Callback>> = new Map();
   return {
-    on(e, cb) {
+    on(e: string, cb: Callback) {
       const callbacks = listeners.get(e);
       if (!callbacks) {
         listeners.set(e, new Set([cb]));
@@ -98,7 +101,7 @@ export function globalEmitter() {
         callbacks.add(cb);
       }
     },
-    emit(e, ...args) {
+    emit(e: string, ...args: [any]) {
       // We can do this because we're getting the whole state back on create calls
       const eventLabel = e.includes("Create") ? messages.StateUpdated : e;
       const promise = fetch("/todos", {
@@ -123,7 +126,7 @@ export function globalEmitter() {
   };
 }
 
-function constructBody(e, args) {
+function constructBody(e: string, args: [any]) {
   if (args.length === 1 && typeof args[0] === "string") {
     return `{ "event": ${JSON.stringify(...args)} }`;
   }
