@@ -63,7 +63,7 @@ export default class SettingsForm extends Component {
     this.el.classList.add("hidden");
     this.removeModalBlur();
   };
-  handleChangeCompleted = e => {
+  handleChangeCompleted = (e) => {
     e.preventDefault();
     const f = new FormData(this.el.querySelector("form"));
     const formAsObj = Object.fromEntries(f);

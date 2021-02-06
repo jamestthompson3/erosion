@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "noImplicitAny": false
+  },
+  "projectOptions": {
+    "checkJs": true,
+    "allowJs": true
+  },
+  "include": "src/**/*",
+  "exclude": ["node_modules"]
+}

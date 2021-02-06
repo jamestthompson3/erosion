@@ -1,0 +1,18 @@
+{
+  "name": "erosion",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:jamestthompson3/erosion.git",
+  "author": "Taylor Thompson <taylor@teukka.tech>",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "NODE_WATCH=true node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.8.39",
+    "eslint": "^7.18.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3"
+  }
+}
