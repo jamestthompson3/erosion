@@ -17,7 +17,6 @@ export default class Modal extends Component {
       });
     } else {
       el.addEventListener("click", (e) => {
-        e.stopPropagation();
         this.setState({ shown: !this.state.shown });
       });
     }
@@ -26,31 +25,33 @@ export default class Modal extends Component {
     const { shown } = this.state;
     const { children } = this.props;
     const modal: HTMLDivElement = document.body.querySelector(".modal.body");
-    const clickOutsideListener = (e) => {
+    const handleEscape = (e) => {
       const appended = document.body.querySelector(".modal.body"); // select after we place modal
       if (!appended) return;
-      if (appended !== e.target && shown) {
-        this.setState({ shown: !shown });
-      }
+      if (appended && e.code === "Escape") this.setState({ shown: false });
     };
     if (shown && !modal) {
       this.applyModalBlur();
       const modal = document.createElement("div");
       modal.classList.add("modal", "body");
       modal.style.top = `${innerHeight / 3}px`;
-      console.log(children.bootstrap);
       modal.innerHTML = `
        ${children.render()}
       `;
       children.bootstrap(modal);
       document.body.appendChild(modal);
-      document.addEventListener("click", clickOutsideListener);
+      modal.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
+      document.addEventListener("keyup", handleEscape);
     }
     if (!shown && modal) {
       this.removeModalBlur();
       const modal = document.body.querySelector(".modal.body");
       document.body.removeChild(modal);
-      document.removeEventListener("click", clickOutsideListener);
+      document.removeEventListener("keyup", handleEscape);
     }
   };
 

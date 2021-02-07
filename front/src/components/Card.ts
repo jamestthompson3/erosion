@@ -3,12 +3,13 @@ import {
   existsAndRender,
   debounceEvent,
   createCardColor,
-} from "../utils/rendering.js";
+} from "../utils/rendering";
 import { VertMenu, Trash, Edit } from "./icons";
 import Component from "./Component";
 import MenuSelect from "./common-ui/MenuSelect";
 import { Card, CardStatus } from "../types.d";
-import Modal from "./common-ui/Modal.js";
+import Modal from "./common-ui/Modal";
+import CardEditForm from "./CardEditForm";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>
@@ -48,11 +49,43 @@ function renderElementHtml(card: Card) {
     `;
 }
 
+function renderEditHtml(card: Card) {
+  return `
+    <div class="card edit-form">
+      <fieldset>
+      <legend>Edit</legend>
+      <div class="card edit-form form-container">
+      <span>
+      <label>Title</label>
+      <input class="card edit-title" type="text"/>
+      <label>Text</label>
+      <textarea class="card edit-text"></textarea>
+      </span>
+      <span id="tags-time"></span>
+      <div id="card-scheduled">
+        <label for="scheduled">Start task</label>
+        <select name="task-scheduled" id="task-scheduled">
+            <option value=""></option>
+            <option value="20">In 20 Minutes</option>
+            <option value="1">In an Hour</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="next week">Next Week</option>
+            <option value="custom">Custom</option>
+      </select>
+      </div>
+      </div>
+      <button class="card edit-form save-button">Done</button>
+      </fieldset>
+    </div>
+  `;
+}
+
 class CardComponent extends Component {
   constructor(el, props) {
     super(el, props);
     this.state = { ...props };
     const { card } = this.state;
+    const [color, contrast] = createCardColor();
     el.innerHTML = renderElementHtml(card);
     const actionContainer = el.querySelector(".card.actions");
     new MenuSelect(actionContainer, {
@@ -70,8 +103,15 @@ class CardComponent extends Component {
           new Modal(editButton, {
             trigger: null,
             children: {
-              render: () => "<h1>Hi! :) </h1>",
-              bootstrap: (_) => {},
+              render: () => renderEditHtml(card),
+              bootstrap: (modal) => {
+                new CardEditForm(modal, {
+                  card,
+                  color,
+                  contrast,
+                  postUpdate: this.updateField,
+                });
+              },
             },
           });
         },
@@ -79,7 +119,8 @@ class CardComponent extends Component {
     });
     const cardStatus = el.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";
-    this.el.style.setProperty("--color", createCardColor());
+    this.el.style.setProperty("--color", color);
+    this.el.style.setProperty("--contrast", contrast);
     cardStatus.addEventListener("change", this.updateStatus);
     this.setUpEditableEvents();
   }
@@ -199,7 +240,7 @@ class CardComponent extends Component {
         break;
     }
   };
-  updateField(updatedData: Partial<Card>) {
+  updateField = (updatedData: Partial<Card>) => {
     const { card } = this.state;
     const keyedCard = appContext.get("cardKeyed")[card.id];
     const { inbox, project } = keyedCard;
@@ -210,7 +251,7 @@ class CardComponent extends Component {
       card: updated,
     });
     this.setState({ card: updated });
-  }
+  };
   update = () => {
     const { card } = this.state;
     // adjust dynamic data

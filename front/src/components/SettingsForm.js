@@ -43,8 +43,16 @@ export default class SettingsForm extends Component {
   }
 
   update = () => {
+    const closeOnEsc = (e) => {
+      if (e.code === "Escape") {
+        this.removeModalBlur();
+      }
+    };
     if (!this.el.classList.contains("hidden")) {
       this.applyModalBlur();
+      document.addEventListener("keyup", closeOnEsc);
+    } else {
+      document.removeEventListener("keyup", closeOnEsc);
     }
   };
   applyModalBlur() {

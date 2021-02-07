@@ -36,15 +36,14 @@ export default class MenuSelect extends Component {
       const menu = document.createElement("div");
       menu.classList.add("contextual", "menu");
       const [yPos, xPos] = getRelativePosition(position);
-      menu.innerHTML = `
-       ${children.render()}
-      `;
+      menu.innerHTML = `${children.render()}`;
       children.bootstrap(menu);
       this.el.appendChild(menu);
       menu.style.top = getTopPosition(yPos, xPos, anchorRect);
       const menuRect = menu.getBoundingClientRect();
       menu.style.left = getLeftPosition(xPos, anchorRect, menuRect);
       document.addEventListener("click", clickOutsideListener);
+      this.el.addEventListener("click", clickOutsideListener);
     }
     if (!shown && menu) {
       const menu = this.el.querySelector(".contextual.menu");

@@ -12,3 +12,7 @@ Logos from logomakr.com
 IDEAS AND INSPIRATION
 =======
 Vanilla Todo project by Morris Broderson (https://github.com/morris/vanilla-todo)
+
+CODE
+======
+Lighten and darken CSS colors https://css-tricks.com/snippets/javascript/lighten-darken-color/

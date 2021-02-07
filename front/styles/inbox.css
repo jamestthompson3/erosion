@@ -70,6 +70,9 @@
 .inbox.card-form.tags-time.time-input {
   width: 2rem;
 }
+.inbox.card-form.metadata select[name="task-scheduled"], select[name="task-tags"] {
+  height: 2rem;
+}
 .inbox.card-form.tags-time.time-input:invalid {
   border: 2px solid red;
 }
