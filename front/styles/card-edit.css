@@ -62,7 +62,7 @@
   text-shadow: 1px 1px 2px var(--dark0), 1.5px 1.5px var(--dark0);
 }
 
-.card.edit-form select[name="task-tags"] {
+.card.edit-form select[name="task-tags"], select[name="task-scheduled"] {
   height: 2.25rem;
 }
 

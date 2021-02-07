@@ -9,13 +9,15 @@ export default class CardEditForm extends Component {
     this.state = {
       customDate: false,
     };
-    const { color, contrast, postUpdate, card } = props;
+    const { color, contrast, postUpdate, card, onClose } = props;
     el.style.setProperty("--color", color);
     el.style.setProperty("--contrast", contrast);
     const titleEdit: HTMLInputElement = el.querySelector(".card.edit-title");
     const textEdit: HTMLTextAreaElement = el.querySelector(".card.edit-text");
     const tagsTime: HTMLSpanElement = el.querySelector("#tags-time");
     const timeScheduled = el.querySelector("#task-scheduled");
+    const doneButton = el.querySelector(".card.edit-form.save-button");
+    doneButton.addEventListener("click", onClose);
     timeScheduled.addEventListener("change", this.scheduled);
     titleEdit.value = card.title;
     textEdit.value = card.text;

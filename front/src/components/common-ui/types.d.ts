@@ -8,7 +8,7 @@ export interface ModalMenuProps {
   trigger: ModalMenuTrigger;
   children: {
     render(): string;
-    bootstrap(menu: HTMLElement): void;
+    bootstrap(menu: HTMLElement, onClose: () => void): void;
   };
   position?: MenuSelectPosition;
 }

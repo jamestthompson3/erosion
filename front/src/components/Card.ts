@@ -38,7 +38,7 @@ function renderElementHtml(card: Card) {
         </div>
       <div class="card metadata">
       ${getScheduled(card.scheduled)}
-      <p>⌛ ${card.time_allotted} min</p>
+      <p class="card time">⌛ ${card.time_allotted} min</p>
             ${existsAndRender(card.tags, () =>
               // TODO maybe do some sort of emoji mapping to mental state
               card.tags.map((t) => `<p class="card tag">🧠 ${t}</p>`).join("\n")
@@ -104,12 +104,13 @@ class CardComponent extends Component {
             trigger: null,
             children: {
               render: () => renderEditHtml(card),
-              bootstrap: (modal) => {
+              bootstrap: (modal, onClose) => {
                 new CardEditForm(modal, {
                   card,
                   color,
                   contrast,
                   postUpdate: this.updateField,
+                  onClose,
                 });
               },
             },
@@ -259,6 +260,8 @@ class CardComponent extends Component {
     const cardStatus = this.el.querySelector("input");
     const cardTitle: HTMLHeadingElement = this.el.querySelector(".card.title");
     const cardText: HTMLParagraphElement = this.el.querySelector(".card.text");
+    const cardTime: HTMLParagraphElement = this.el.querySelector(".card.time");
+
     const cardDescription: HTMLDivElement = this.el.querySelector(
       ".card.description"
     );
@@ -266,6 +269,7 @@ class CardComponent extends Component {
       ".card.status"
     );
     cardStatusContainer.title = card.status;
+    cardTime.innerText = `⌛ ${card.time_allotted} min`;
     cardStatus.checked = card.status === "Done";
     cardStatus.indeterminate = card.status === "InProgress";
     cardDescription.dataset.status = card.status;

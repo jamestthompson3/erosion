@@ -38,7 +38,7 @@ export default class Modal extends Component {
       modal.innerHTML = `
        ${children.render()}
       `;
-      children.bootstrap(modal);
+      children.bootstrap(modal, () => this.setState({ shown: false }));
       document.body.appendChild(modal);
       modal.scrollIntoView({
         behavior: "smooth",
