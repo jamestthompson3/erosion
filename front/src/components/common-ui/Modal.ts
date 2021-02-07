@@ -62,6 +62,7 @@ export default class Modal extends Component {
     );
     document.body.style.backgroundColor = "rgba(0,0,0,0.3)";
     workspaceContainer.style.filter = "blur(2px)";
+    workspaceContainer.style.pointerEvents = "none";
   }
   removeModalBlur() {
     document.body.style.backgroundColor = this.oldDocStyle;
@@ -69,5 +70,6 @@ export default class Modal extends Component {
       ".workspace.container"
     );
     workspaceContainer.style.filter = "";
+    workspaceContainer.style.pointerEvents = "all";
   }
 }

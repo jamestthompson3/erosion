@@ -136,7 +136,7 @@ button {
   left: 0;
   margin: 0 auto;
   background: var(--bg-solid);
-  transform: translateY(50%);
+  transform: translateY(-25%);
   padding: var(--padding);
   width: 80%;
 }

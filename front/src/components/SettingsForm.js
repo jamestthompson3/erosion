@@ -60,12 +60,14 @@ export default class SettingsForm extends Component {
     const workspaceContainer = document.querySelector(".workspace.container");
     document.body.style.backgroundColor = "rgba(0,0,0,0.3)";
     workspaceContainer.style.filter = "blur(2px)";
+    workspaceContainer.style.pointerEvents = "none";
   }
   removeModalBlur() {
     document.body.style.backgroundColor = this.oldDocStyle;
     const workspaceContainer = document.querySelector(".workspace.container");
     workspaceContainer.style.filter = "";
     this.el.classList.add("hidden");
+    workspaceContainer.style.pointerEvents = "all";
   }
   cancel = () => {
     this.el.classList.add("hidden");

@@ -1,11 +1,11 @@
 .settings-panel {
   --color: var(--accent);
   position: absolute;
-  top: 1rem;
+  top: 0rem;
   right: 0;
   left: 0;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0rem auto;
+  transform: translateY(55%);
 }
 .settings-panel.hidden {
   display: none;

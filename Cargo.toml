@@ -18,7 +18,8 @@ serde = { version = "1.0.118", features = [ "derive" ] }
 clap = "2.33.3"
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
-web-view = { git = "https://github.com/jamestthompson3/web-view", branch = "block-loop"}
+web-view = { git = "https://github.com/jamestthompson3/web-view", branch = "block-loop", features = ["edge"]}
+
 
 
 [[bin]]
