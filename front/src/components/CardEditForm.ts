@@ -20,10 +20,10 @@ export default class CardEditForm extends Component {
     titleEdit.value = card.title;
     textEdit.value = card.text;
     titleEdit.addEventListener("change", (e) => {
-      postUpdate({ title: e.target.value });
+      postUpdate({ title: (e.target as HTMLInputElement).value });
     });
     textEdit.addEventListener("change", (e) => {
-      postUpdate({ text: e.target.value });
+      postUpdate({ text: (e.target as HTMLTextAreaElement).value });
     });
     new InboxTagTime(tagsTime, {
       time: card.time_allotted,
@@ -39,6 +39,7 @@ export default class CardEditForm extends Component {
 
   scheduled = (e) => {
     const today = new Date();
+    const { postUpdate } = this.props;
     switch ((e.target as HTMLInputElement).value) {
       case "20":
         postUpdate({ scheduled: addMinutes(today, 20) });
@@ -60,13 +61,13 @@ export default class CardEditForm extends Component {
     }
   };
   update = () => {
-    const { card } = this.props;
+    const { card, postUpdate } = this.props;
     const cardScheduled: HTMLSpanElement = this.el.querySelector(
       "#card-scheduled"
     );
     new DayPicker(cardScheduled, {
       day: card.scheduled ? new Date(card.scheduled) : new Date(),
-      updateDay: (day) => {
+      updateDay: (day: Date) => {
         postUpdate({ scheduled: day });
       },
     });
