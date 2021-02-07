@@ -1,4 +1,4 @@
-import Component from "./Component.js";
+import Component from "../Component.js";
 
 /**
  * @param el {HTMLElement}
@@ -8,13 +8,13 @@ export default class MenuSelect extends Component {
   constructor(el, props) {
     super(el, props);
     this.state = {
-      shown: false
+      shown: false,
     };
     el.innerHTML = `
       ${props.trigger()}
     `;
     const triggerElement = el.children[0];
-    triggerElement.addEventListener("click", e => {
+    triggerElement.addEventListener("click", (e) => {
       e.stopPropagation();
       this.setState({ shown: !this.state.shown });
     });
@@ -24,7 +24,7 @@ export default class MenuSelect extends Component {
     const { children, position } = this.props;
     const trigger = this.el.children[0];
     const menu = this.el.querySelector(".contextual.menu");
-    const clickOutsideListener = e => {
+    const clickOutsideListener = (e) => {
       const appended = this.el.querySelector(".contextual.menu"); // select after we place menu
       if (!appended) return;
       if (appended !== e.target && shown) {
@@ -36,15 +36,14 @@ export default class MenuSelect extends Component {
       const menu = document.createElement("div");
       menu.classList.add("contextual", "menu");
       const [yPos, xPos] = getRelativePosition(position);
-      menu.innerHTML = `
-       ${children.render()}
-      `;
+      menu.innerHTML = `${children.render()}`;
       children.bootstrap(menu);
       this.el.appendChild(menu);
       menu.style.top = getTopPosition(yPos, xPos, anchorRect);
       const menuRect = menu.getBoundingClientRect();
       menu.style.left = getLeftPosition(xPos, anchorRect, menuRect);
       document.addEventListener("click", clickOutsideListener);
+      this.el.addEventListener("click", clickOutsideListener);
     }
     if (!shown && menu) {
       const menu = this.el.querySelector(".contextual.menu");

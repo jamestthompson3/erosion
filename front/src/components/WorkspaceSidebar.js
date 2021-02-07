@@ -1,7 +1,7 @@
 import Component from "./Component.js";
 import NewProject from "./icons/NewProject.js";
 import Logo from "./icons/Logo.js";
-import MenuSelect from "./MenuSelect.js";
+import MenuSelect from "./common-ui/MenuSelect.js";
 import Settings from "./icons/Settings.js";
 import SettingsForm from "./SettingsForm.js";
 import { newProjectEmitter } from "../messages.js";
@@ -23,16 +23,16 @@ export default class WorkspaceSidebar extends Component {
           <div class="workspace sidebar action-spacer"></div>
           <button aria-label="edit settings" title="edit settings" class="workspace action edit-settings">${Settings()}</button>
         `,
-        bootstrap: menu => {
+        bootstrap: (menu) => {
           const newProjectButton = menu.querySelector(".workspace.add-project");
           newProjectButton.addEventListener("click", () => {
             newProjectEmitter.emit("TOGGLE");
           });
           const settingsButton = menu.querySelector(".workspace.edit-settings");
           settingsButton.addEventListener("click", this.displaySettings);
-        }
+        },
       },
-      position: "fixed-right"
+      position: "fixed-right",
     });
   }
   displaySettings = () => {

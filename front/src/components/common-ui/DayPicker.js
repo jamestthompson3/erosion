@@ -1,5 +1,5 @@
-import { addDays, addMonths, formatTimeString } from "../utils/time.js";
-import Component from "./Component.js";
+import { addDays, addMonths, formatTimeString } from "../../utils/time.js";
+import Component from "../Component.js";
 
 class DayPicker extends Component {
   constructor(el, props) {
@@ -66,35 +66,29 @@ class DayPicker extends Component {
     this.render();
   };
   decrementMonth = () => {
-    const { day } = this.props;
-    const { updateDay } = this.props;
+    const { day, updateDay } = this.props;
     updateDay(addMonths(day, -1));
   };
   incrementMonth = () => {
-    const { day } = this.props;
-    const { updateDay } = this.props;
+    const { day, updateDay } = this.props;
     updateDay(addMonths(day, 1));
   };
   decrementDay = () => {
-    const { day } = this.props;
-    const { updateDay } = this.props;
+    const { day, updateDay } = this.props;
     updateDay(addDays(day, -1));
   };
   incrementDay = () => {
-    const { day } = this.props;
-    const { updateDay } = this.props;
+    const { day, updateDay } = this.props;
     updateDay(addDays(day, 1));
   };
-  updateDay = e => {
-    const { day } = this.props;
+  updateDay = (e) => {
+    const { day, updateDay } = this.props;
     const value = e.target.value;
-    const { updateDay } = this.props;
     updateDay(new Date(day.setDate(value)));
   };
-  setTime = e => {
-    const { day } = this.props;
+  setTime = (e) => {
+    const { day, updateDay } = this.props;
     const time = e.target.value.split(":");
-    const { updateDay } = this.props;
     updateDay(new Date(day.setHours(...time)));
   };
 }

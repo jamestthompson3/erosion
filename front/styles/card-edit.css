@@ -1,0 +1,108 @@
+.card.edit-form fieldset {
+  border: 1px solid var(--color);
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-evenly;
+  padding: 0.5rem;
+}
+.card.edit-form.form-container {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card.edit-form legend {
+  border: 1px solid var(--color);
+  background-color: var(--color);
+  color: var(--bg-solid);
+  text-shadow: 1px 1px 2px var(--contrast),
+  1.5px 1.5px 2.5px var(--contrast),
+  2.5px 2.5px 3.5px var(--contrast),
+  3.5px 3.5px 4.5px var(--contrast);
+  font-weight: bold;
+  padding: 3px 6px;
+}
+
+.card.edit-title {
+  display: block;
+  padding: 8px;
+  border: 1px solid var(--dark0);
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+  background: transparent;
+  width: 100%;
+}
+
+.card.edit-text {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  border: 1px solid var(--dark0);
+  padding: 8px;
+  background: transparent;
+  width: 100%;
+  resize: none;
+  font-family: inherit;
+}
+
+.card.edit-form.save-button {
+  background: var(--color);
+  width: 80px;
+  height: 3.25rem;
+  box-shadow: 3px 3px 0 1px var(--contrast);
+  color: var(--bg-solid);
+  font-weight: bold;
+  text-shadow: 1px 1px 2px var(--dark0), 1.5px 1.5px var(--dark0);
+}
+
+.card.edit-form.cancel-button {
+  background: var(--cancel);
+  width: 80px;
+  height: 3.25rem;
+  box-shadow: 3px 3px 0 1px var(--cancel-contrast);
+  color: var(--bg-solid);
+  font-weight: bold;
+  text-shadow: 1px 1px 2px var(--dark0), 1.5px 1.5px var(--dark0);
+}
+
+.card.edit-form select[name="task-tags"], select[name="task-scheduled"] {
+  height: 2.25rem;
+}
+
+.card.edit-form #new-card-time-allotted {
+  height: 1rem;
+  width: 1rem;
+}
+
+.card.edit-form.actions {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  margin: 1rem auto;
+  justify-content: space-around;
+}
+.card.edit-form.time-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.card.edit-form.form-container #tags-time {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column
+}
+
+.card.edit-form.form-container #card-scheduled {
+  margin-top: 1rem;
+}

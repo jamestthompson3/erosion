@@ -4,7 +4,13 @@
     "noImplicitAny": false,
     "lib": ["es2020", "dom"],
     "downlevelIteration": true,
-    "target": "es2020"
+    "target": "es2020",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "rootDirs": ["src"],
+    "paths": {
+      "*": ["*"]
+    }
   },
   "projectOptions": {
     "checkJs": true,
