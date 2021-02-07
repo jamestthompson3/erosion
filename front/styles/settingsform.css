@@ -1,5 +1,5 @@
 .settings-panel {
-  --color: var(--accent-alt);
+  --color: var(--accent);
   position: absolute;
   top: 1rem;
   right: 0;
@@ -76,6 +76,7 @@
 
 .settings-save {
   background: var(--color);
+  box-shadow: 3px 3px 0 1px var(--accent-darken);
   color: var(--bg-solid);
   font-weight: bold;
   margin: 1rem 0rem;
@@ -85,7 +86,9 @@
 
 .settings-cancel {
   background: var(--cancel);
+  box-shadow: 3px 3px 0 1px var(--cancel-contrast);
   color: var(--bg-solid);
+  text-shadow: 1px 1px 2px var(--dark0), 1.5px 1.5px var(--dark0);
   font-weight: bold;
   margin: 1rem 0rem;
   padding: 8px;

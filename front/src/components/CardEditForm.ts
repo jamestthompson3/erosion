@@ -17,7 +17,9 @@ export default class CardEditForm extends Component {
     const tagsTime: HTMLSpanElement = el.querySelector("#tags-time");
     const timeScheduled = el.querySelector("#task-scheduled");
     const doneButton = el.querySelector(".card.edit-form.save-button");
+    const cancelButton = el.querySelector(".card.edit-form.cancel-button");
     doneButton.addEventListener("click", onClose);
+    cancelButton.addEventListener("click", onClose);
     timeScheduled.addEventListener("change", this.scheduled);
     titleEdit.value = card.title;
     textEdit.value = card.text;

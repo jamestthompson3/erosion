@@ -61,20 +61,25 @@ function renderEditHtml(card: Card) {
       <label>Text</label>
       <textarea class="card edit-text"></textarea>
       </span>
-      <span id="tags-time"></span>
-      <div id="card-scheduled">
-        <label for="scheduled">Start task</label>
-        <select name="task-scheduled" id="task-scheduled">
+      <div class="card edit-form time-container">
+        <div id="tags-time"></div>
+        <div id="card-scheduled">
+          <label for="scheduled">Start task</label>
+          <select name="task-scheduled" id="task-scheduled">
             <option value=""></option>
             <option value="20">In 20 Minutes</option>
             <option value="1">In an Hour</option>
             <option value="tomorrow">Tomorrow</option>
             <option value="next week">Next Week</option>
             <option value="custom">Custom</option>
-      </select>
+          </select>
+        </div>
       </div>
       </div>
-      <button class="card edit-form save-button">Done</button>
+      <div class="card edit-form actions">
+        <button class="card edit-form save-button">Done</button>
+        <button class="card edit-form cancel-button">Cancel</button>
+      </div>
       </fieldset>
     </div>
   `;

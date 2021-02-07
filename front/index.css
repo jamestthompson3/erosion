@@ -6,7 +6,7 @@
   --dark1: hsl(0, 0%, 39%);
   --dark0: hsl(0, 0%, 0%);
   --accent: hsl(199, 100%, 50%);
-  --accent-alt: #7400b8ff;
+  --accent-alt: #7400b8;
   --accent-hover: hsl(199, 100%, 47%);
   --accent-darken: hsl(199, 100%, 40%);
   --bg-gradient: linear-gradient(hsl(0, 0%, 100%), hsl(0, 0%, 96%));
@@ -15,6 +15,7 @@
   --radius: 0px;
   --affirmative: #10AC84;
   --cancel: #F05228;
+  --cancel-contrast: #c82a00;
 }
 
 @font-face {
