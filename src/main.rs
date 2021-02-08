@@ -15,6 +15,7 @@ mod filesystem;
 mod inboxes;
 mod lenses;
 mod projects;
+mod services;
 mod web;
 
 use structopt::StructOpt;
