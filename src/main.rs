@@ -18,6 +18,8 @@ mod projects;
 mod services;
 mod web;
 
+use std::time::Duration;
+
 use structopt::StructOpt;
 use web_view::*;
 
@@ -25,6 +27,8 @@ use web_view::*;
 async fn main() {
   bootstrap::bootstrap();
   let opts = cli::Command::from_args();
+  let mut service_pool = services::ServicePool::new();
+  service_pool.register(Box::new(services::get_due_today), Duration::new(60,0));
   match opts.backend {
     Some(backend) => match backend {
       cli::Backend::Web => {
