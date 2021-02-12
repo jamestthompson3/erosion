@@ -63,8 +63,9 @@
   margin: 1rem 0rem;
 }
 
-.settings-form span {
+.settings-form.field-wrapper {
   margin: 1rem 0rem;
+  display: block;
 }
 
 .settings-actions {

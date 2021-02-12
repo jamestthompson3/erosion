@@ -12,15 +12,20 @@ export default class SettingsForm extends Component {
           <legend>Display</legend>
           <label for="user">Username:</label>
           <input name="user" type="text" value=${appSettings.get("user")} />
-          <span>
+          <span class="settings-form field-wrapper">
             <input name="show_complete" value="true" type="radio" id="show-complete" />
             <label for="show-complete">Display completed tasks</label>
           </span>
-          <span>
+          <span class="settings-form field-wrapper">
             <input name="show_complete" value="false" type="radio" id="hide-complete" />
             <label for="hide-complete">Hide completed tasks</label>
           </span>
+          <span class="settings-form field-wrapper">
+          <input type="checkbox" name="run_as_daemon" id="run-headless" />
+            <label for="run-headless">run without GUI (still accessible through browser)</label>
+          </span>
           </fieldset>
+
           <span class="settings-actions">
             <button class="settings-save" type="submit">Save</button>
             <button class="settings-cancel" type="button">Cancel</button>
@@ -30,6 +35,8 @@ export default class SettingsForm extends Component {
     `;
     const showCompleted = el.querySelector("#show-complete");
     const hideCompleted = el.querySelector("#hide-complete");
+    const runHeadless = el.querySelector("#run-headless");
+    runHeadless.checked = appSettings.get("run_as_daemon");
     showCompleted.checked = appSettings.get("show_complete");
     hideCompleted.checked = !appSettings.get("show_complete");
     const cancelButton = el.querySelector(".settings-cancel");
@@ -78,11 +85,14 @@ export default class SettingsForm extends Component {
     const f = new FormData(this.el.querySelector("form"));
     const formAsObj = Object.fromEntries(f);
     formAsObj["show_complete"] = JSON.parse(formAsObj["show_complete"]); // becuase radio buttons return strings
+    formAsObj["run_as_daemon"] =
+      formAsObj["run_as_daemon"] === "on" ? true : false;
     const newSettings = Object.assign(
       {},
       Object.fromEntries(appSettings),
       formAsObj
     );
+    console.log(newSettings);
     postData(messages.UpdateSettings, newSettings);
     this.removeModalBlur();
   };

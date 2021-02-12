@@ -2,6 +2,13 @@ use crate::{filesystem::write_data_file, projects::Project};
 use serde::{Deserialize, Serialize};
 use std::ops::Index;
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+    pub enum Backend {
+        Web,
+        Unix,
+    }
+
 macro_rules! extends_base {
     (struct $name:ident { $( $field:ident: $ty:ty ),* $(,)* }) => {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -62,6 +69,8 @@ pub struct Settings {
   pub user: String,
   pub id: String,
   pub show_complete: bool,
+  pub run_as_daemon: bool,
+  pub backend: Backend
 }
 
 #[derive(Serialize, Deserialize, Debug)]

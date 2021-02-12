@@ -9,16 +9,28 @@ default-run = "erosion"
 edition = "2018"
 
 [dependencies]
-structopt = "0.3.21"
 directories = "3.0.1"
 serde_json = "1.0.61"
 chrono = "0.4.19"
 uuid = { version = "0.8.1", features = [ "v4", "serde" ] }
 serde = { version = "1.0.118", features = [ "derive" ] }
-clap = "2.33.3"
 tokio = { version = "1", features = ["full"] }
 warp = "0.3"
 web-view = { git = "https://github.com/jamestthompson3/web-view", branch = "block-loop", features = ["edge"]}
+
+[package.metadata.bundle]
+name = "Erosion"
+identifier = "com.t_t.erosion"
+version = "0.0.1"
+resources = ["front/build/*", "front/fonts/*", "front/styles/*", "front/index.html", "front/index.css", "front/media/*"]
+copyright = "Copyright (c) Taylor Thompson 2020-2021. All rights reserved."
+category = "Productivity"
+short_description = "Chip away at your most ambitious goals"
+long_description = """
+Longer description
+"""
+deb_depends = []
+osx_frameworks = []
 
 
 
