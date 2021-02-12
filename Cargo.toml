@@ -20,6 +20,20 @@ tokio = { version = "1", features = ["full"] }
 warp = "0.3"
 web-view = { git = "https://github.com/jamestthompson3/web-view", branch = "block-loop", features = ["edge"]}
 
+[package.metadata.bundle]
+name = "Erosion"
+identifier = "com.t_t.erosion"
+version = "0.0.1"
+resources = ["front/build/*", "front/fonts/*", "front/styles/*", "front/index.html", "front/index.css", "front/media/*"]
+copyright = "Copyright (c) Taylor Thompson 2020-2021. All rights reserved."
+category = "Productivity"
+short_description = "Chip away at your most ambitious goals"
+long_description = """
+Longer description
+"""
+deb_depends = []
+osx_frameworks = []
+
 
 
 [[bin]]
