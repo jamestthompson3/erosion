@@ -1,17 +1,21 @@
 use crate::{data_structures::{Card, CardStatus}, filesystem::{read_data_file, read_state_file, write_data_file}};
 use chrono::prelude::*;
 use chrono::{DateTime, Local};
-use std::time::Instant;
+use std::{sync::{Arc, Mutex, mpsc::Sender}, thread::{sleep, spawn}, time::{Duration, Instant}};
+
+use super::{PeriodicTask, Runner, ThreadEvent};
 
 enum DayChangeEvent {
   SameDay,
   NewDay,
 }
 
-pub fn sweep_on_date_change(date: DateTime<Local>) {
+pub fn sweep_on_date_change(date: DateTime<Local>) -> Option<Vec<Card>> {
   let today = Local::now();
   if today.year() != date.year() || today.month() != date.month() || today.day() != date.day() {
-    get_due_today();
+    Some(get_due_today())
+  } else {
+        None
   }
 }
 
@@ -51,5 +55,31 @@ pub fn write_if_changed(cards: Vec<Card>) {
     let existing_cards: Vec<Card> = serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
     if cards != existing_cards {
         write_data_file("due_today", &serde_json::to_string(&cards).unwrap()).unwrap();
+    }
+}
+
+pub struct DueToday {
+    spawn_time: Arc<Mutex<DateTime<Local>>>,
+}
+
+impl PeriodicTask for DueToday {
+    fn register(&'static mut self, sender: Sender<ThreadEvent>, run_every: Duration) -> Runner {
+        let thread = spawn(move || loop {
+            sleep(run_every);
+            let mut spawn_time = self.spawn_time.lock().unwrap();
+            let cards = sweep_on_date_change(*spawn_time);
+            match cards {
+                Some(cards) => {
+                    *spawn_time = Local::now();
+                    sender.send(ThreadEvent::DueToday(cards)).unwrap();
+                },
+                None => {}
+            };
+
+        });
+        Runner {
+            id: String::from("DueToday"),
+            thread: Some(thread)
+        }
     }
 }
