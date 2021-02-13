@@ -1,23 +1,14 @@
 use directories::ProjectDirs;
 use std::env::var;
 use std::fs;
-use structopt::StructOpt;
 
 use crate::data_structures::State;
-
-#[derive(StructOpt, Debug)]
-#[structopt(name = "erosion", about = "task management engine")]
-struct StartCommand {
-  #[structopt(name = "environment", short, default_value = "prod")]
-  env: String,
-}
 
 /// Data dir is found in the following locations:
 /// Linux:   /home/alice/.local/share/erosion
 /// Windows: C:\Users\Alice\AppData\Roaming\erosion app\erosion\data
 /// macOS:   /Users/Alice/Library/Application Support/erosion app
 pub fn get_data_dir() -> std::path::PathBuf {
-  // let cli_args = StartCommand::from_args();
   match var("EROSION_DIR") {
     Ok(dir) => return std::path::PathBuf::from(dir),
     Err(_) => {}
@@ -59,11 +50,6 @@ pub fn delete_data_file(name: &str) -> Result<(), std::io::Error> {
   fs::remove_file(path)
 }
 
-// pub fn open_data_file(path: &str) -> Result<File> {
-//     let path_string = get_app_root_path();
-//     let file_path = format!("{}/{}", path_string, path);
-//     File::open(file_path)
-// }
 #[cfg(test)]
 mod tests {
   use super::*;

@@ -40,21 +40,15 @@ fn json_body() -> impl Filter<Extract = (Message,), Error = warp::Rejection> + C
 
 mod handlers {
   use super::Message;
-  use crate::{
-    cli,
-    data_structures::State,
-    events::{EventManager, Events},
-  };
+  use crate::{data_structures::State, events::{EventManager, Events}};
   use serde_json::json;
-  use std::convert::Infallible;
-  use structopt::StructOpt;
+  use std::{convert::Infallible, env::var};
 
   pub async fn read_message(
     msg: Message,
     mut manager: EventManager,
   ) -> Result<impl warp::Reply, Infallible> {
-    let opts = cli::Command::from_args();
-    if opts.debug {
+    if var("EROSION_DBG") == Ok(String::from("true")) {
       println!("{:?}", msg);
     }
     // TODO maybe send the actual State object instead of the string.

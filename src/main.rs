@@ -6,8 +6,6 @@
 
 mod bootstrap;
 mod cards;
-mod cli;
-mod cmd;
 mod data_structures;
 mod envrionment;
 mod events;
@@ -18,53 +16,49 @@ mod projects;
 mod services;
 mod web;
 
-use structopt::StructOpt;
+use data_structures::{Backend, Settings};
+use filesystem::read_data_file;
 use web_view::*;
 
 #[tokio::main]
 async fn main() {
   bootstrap::bootstrap();
-  let opts = cli::Command::from_args();
-  // let mut service_pool = services::ServicePool::new();
-  // service_pool.register(Box::new(services::get_due_today), Duration::new(60,0));
-  match opts.backend {
-    Some(backend) => match backend {
-      cli::Backend::Web => {
-        println!("┌──────────────────────────────────────────────┐");
-        println!("│Starting web backend @ http://127.0.0.1:37633 │");
-        println!("└──────────────────────────────────────────────┘");
-        let api = web::routes();
-        let server = tokio::spawn(async move {
-          warp::serve(api).run(([127, 0, 0, 1], 37633)).await;
+  let settings: Settings = serde_json::from_str(&read_data_file("settings").unwrap()).unwrap();
+  match settings.backend {
+    Backend::Web => {
+      println!("┌──────────────────────────────────────────────┐");
+      println!("│Starting web backend @ http://127.0.0.1:37633 │");
+      println!("└──────────────────────────────────────────────┘");
+      let api = web::routes();
+      let server = tokio::spawn(async move {
+        warp::serve(api).run(([127, 0, 0, 1], 37633)).await;
+      });
+      if !settings.run_as_daemon {
+        let mut webview = web_view::builder()
+          .title("⛰ Erosion")
+          .content(Content::Url("http://127.0.0.1:37633"))
+          .size(800, 1200)
+          .resizable(true)
+          .debug(true)
+          .user_data(())
+          .invoke_handler(|_webview, _arg| Ok(()))
+          .build()
+          .unwrap();
+        webview.set_color((53, 27, 105));
+        let res = webview.run();
+        std::process::exit(match res {
+          Ok(()) => 0,
+          Err(err) => {
+            eprintln!("\x1b[38;5;81m{:?}\x1b[0m", err);
+            1
+          }
         });
-        if opts.gui {
-          let mut webview = web_view::builder()
-            .title("⛰ Erosion")
-            .content(Content::Url("http://127.0.0.1:37633"))
-            .size(800, 1200)
-            .resizable(true)
-            .debug(true)
-            .user_data(())
-            .invoke_handler(|_webview, _arg| Ok(()))
-            .build()
-            .unwrap();
-          webview.set_color((53, 27, 105));
-          let res = webview.run();
-          std::process::exit(match res {
-            Ok(()) => 0,
-            Err(err) => {
-              eprintln!("\x1b[38;5;81m{:?}\x1b[0m", err);
-              1
-            }
-          });
-        } else {
-          server.await.unwrap();
-        }
+      } else {
+        server.await.unwrap();
       }
-      cli::Backend::Unix => {
-        println!("Unix backend");
-      }
-    },
-    None => {}
+    }
+    Backend::Unix => {
+      println!("Unix backend");
+    }
   }
 }

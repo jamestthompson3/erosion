@@ -60,7 +60,9 @@ fn create_initial_settings() -> Result<(), std::io::Error> {
     r#"{{
       "id": "settings",
       "user": "{}",
-      "show_complete": false
+      "show_complete": false,
+      "run_as_daemon": false,
+      "backend": "Web"
     }}"#,
     get_user()
   );
