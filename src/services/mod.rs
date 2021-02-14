@@ -10,37 +10,52 @@ use std::{
 
 pub use self::due_today::*;
 
-pub trait PeriodicTask: 'static {
-  fn register(&'static mut self, sender: Sender<ThreadEvent>, run_every: Duration) -> Runner;
+pub trait PeriodicTask {
+  fn register(
+    &self,
+    sender: Sender<ThreadEvent>,
+    job: Job,
+    run_every: Duration,
+    id: String,
+  ) -> Runner<()>;
 }
 
 /// These are for running side effects and communicating back to the coordinator
 struct Service {
-  job: Job,
   thread: Option<JoinHandle<()>>,
 }
 
-pub struct Runner {
+pub struct Runner<T>
+where
+  T: Send + 'static,
+{
   id: String,
-  thread: Option<JoinHandle<()>>,
+  thread: Option<JoinHandle<T>>,
 }
 
+// TODO repurpose this for more metadata stuff like querying status, etc
+// Keep all execution / registration logic inside the runner
 impl Service {
-  fn new(job: Job) -> Service {
-    Service { job, thread: None }
+  pub fn new() -> Self {
+    Service { thread: None }
   }
 }
 
 impl PeriodicTask for Service {
-  fn register(&'static mut self, sender: Sender<ThreadEvent>, run_every: Duration) -> Runner {
+  fn register(
+    &self,
+    sender: Sender<ThreadEvent>,
+    job: Job,
+    run_every: Duration,
+    id: String,
+  ) -> Runner<()> {
     let thread = spawn(move || loop {
       sleep(run_every);
-      let job = &self.job;
       let event = job();
-      sender.send(event);
+      sender.send(event).unwrap();
     });
     Runner {
-      id: String::from("side-effect"),
+      id,
       thread: Some(thread),
     }
   }
@@ -51,21 +66,19 @@ type Serviceable = dyn PeriodicTask + 'static;
 
 pub enum ThreadEvent {
   DueToday(Vec<Card>),
+  NoChange,
 }
 
 pub struct ServicePool {
-  services: Vec<Runner>,
+  services: Vec<Runner<()>>,
   receiver: Receiver<ThreadEvent>,
   sender: Sender<ThreadEvent>,
 }
 
 impl ServicePool {
-  pub fn new<Serviceable: PeriodicTask>(services: Vec<(Serviceable, Duration)>) -> ServicePool {
+  pub fn new() -> ServicePool {
     let (sender, receiver) = channel();
-    let mut runners = Vec::with_capacity(services.len());
-    for (mut service, duration) in services {
-      runners.push(service.register(sender.clone(), duration));
-    }
+    let runners = Vec::new();
 
     ServicePool {
       services: runners,
@@ -73,16 +86,21 @@ impl ServicePool {
       receiver,
     }
   }
+  pub fn register(&mut self, job: Job, run_every: Duration, id: String) {
+    let service = Service::new();
+    self
+      .services
+      .push(service.register(self.sender.clone(), Box::new(job), run_every, id));
+  }
 }
 
 impl Drop for ServicePool {
   fn drop(&mut self) {
-    for runner in &mut self.services {
-      match &runner.thread {
-        Some(handle) => {
-          handle.join();
-        }
-        None => {}
+    for service in &mut self.services {
+      println!("Shutting down service {}", service.id);
+
+      if let Some(thread) = service.thread.take() {
+        thread.join().unwrap();
       }
     }
   }

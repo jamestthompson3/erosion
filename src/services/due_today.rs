@@ -1,21 +1,35 @@
-use crate::{data_structures::{Card, CardStatus}, filesystem::{read_data_file, read_state_file, write_data_file}};
+use crate::{
+  data_structures::{Card, CardStatus},
+  filesystem::{read_data_file, read_state_file, write_data_file},
+};
 use chrono::prelude::*;
 use chrono::{DateTime, Local};
-use std::{sync::{Arc, Mutex, mpsc::Sender}, thread::{sleep, spawn}, time::{Duration, Instant}};
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use std::time::Instant;
 
-use super::{PeriodicTask, Runner, ThreadEvent};
+use super::ThreadEvent;
 
 enum DayChangeEvent {
   SameDay,
   NewDay,
 }
 
-pub fn sweep_on_date_change(date: DateTime<Local>) -> Option<Vec<Card>> {
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct DueTodayState {
+  updated: String,
+  cards: Vec<Card>,
+}
+
+fn sweep_on_date_change() -> Option<Vec<Card>> {
+  let due_today_state: DueTodayState =
+    serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
+  let date = due_today_state.updated.parse::<DateTime<Local>>().unwrap();
   let today = Local::now();
   if today.year() != date.year() || today.month() != date.month() || today.day() != date.day() {
     Some(get_due_today())
   } else {
-        None
+    None
   }
 }
 
@@ -47,39 +61,22 @@ pub fn get_due_today() -> Vec<Card> {
     "searching through cards took: {}ms",
     now.elapsed().as_millis()
   );
-  println!("{:?}", cards);
+  write_if_changed(&cards);
   cards
 }
 
-pub fn write_if_changed(cards: Vec<Card>) {
-    let existing_cards: Vec<Card> = serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
-    if cards != existing_cards {
-        write_data_file("due_today", &serde_json::to_string(&cards).unwrap()).unwrap();
-    }
+fn write_if_changed(cards: &Vec<Card>) {
+  let today = Local::now();
+  let data = json!({
+      "cards": cards,
+      "updated": today.to_rfc3339()
+  });
+  write_data_file("due_today", &data.to_string()).unwrap();
 }
 
-pub struct DueToday {
-    spawn_time: Arc<Mutex<DateTime<Local>>>,
-}
-
-impl PeriodicTask for DueToday {
-    fn register(&'static mut self, sender: Sender<ThreadEvent>, run_every: Duration) -> Runner {
-        let thread = spawn(move || loop {
-            sleep(run_every);
-            let mut spawn_time = self.spawn_time.lock().unwrap();
-            let cards = sweep_on_date_change(*spawn_time);
-            match cards {
-                Some(cards) => {
-                    *spawn_time = Local::now();
-                    sender.send(ThreadEvent::DueToday(cards)).unwrap();
-                },
-                None => {}
-            };
-
-        });
-        Runner {
-            id: String::from("DueToday"),
-            thread: Some(thread)
-        }
-    }
+pub fn emit_on_change() -> ThreadEvent {
+  match sweep_on_date_change() {
+    Some(cards) => ThreadEvent::DueToday(cards),
+    None => ThreadEvent::NoChange,
+  }
 }
