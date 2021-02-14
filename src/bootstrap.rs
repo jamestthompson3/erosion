@@ -6,6 +6,7 @@ use crate::{
   inboxes::Inbox,
   projects::Project,
 };
+use chrono::Local;
 use serde_json::json;
 use std::fs::DirBuilder;
 
@@ -27,6 +28,7 @@ pub fn create_initial_files() -> Result<(), std::io::Error> {
     .unwrap();
   create_initial_state()?;
   create_initial_settings()?;
+  create_initial_due_today()?;
   Ok(())
 }
 
@@ -67,6 +69,19 @@ fn create_initial_settings() -> Result<(), std::io::Error> {
     get_user()
   );
   write_data_file("settings", &initial_config.to_string())
+}
+
+
+fn create_initial_due_today() -> Result<(), std::io::Error> {
+    let today = Local::now();
+    let json = format!(
+        r#"{{
+            "updated": "{}",
+            "cards": []
+        }}"#,
+        today.to_rfc3339()
+        );
+    write_data_file("due_today", &json)
 }
 
 fn create_initial_project() -> Project {

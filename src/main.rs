@@ -13,7 +13,10 @@ mod filesystem;
 mod inboxes;
 mod lenses;
 mod projects;
+mod services;
 mod web;
+
+use std::time::Duration;
 
 use data_structures::{Backend, Settings};
 use filesystem::read_data_file;
@@ -23,6 +26,9 @@ use web_view::*;
 async fn main() {
   bootstrap::bootstrap();
   let settings: Settings = serde_json::from_str(&read_data_file("settings").unwrap()).unwrap();
+  services::due_today::get_due_today();
+  let mut service_manager = services::ServicePool::new();
+  service_manager.register(Box::new(services::due_today::emit_on_change), Duration::new(60,0), String::from("due today"));
   match settings.backend {
     Backend::Web => {
       println!("┌──────────────────────────────────────────────┐");
