@@ -1,7 +1,9 @@
 .workspace.sidebar {
   width: 60px;
   position: sticky;
-  top: 0;
+  top: 1rem;
+  left: 1rem;
+  filter: drop-shadow(0 0.2rem 0.25rem rgba(0, 0, 0, 0.2));
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -35,9 +37,8 @@
   border: 1px solid var(--dark0);
 }
 
-
 /* Small Screens */
-@media(max-width: 700px) {
+@media (max-width: 700px) {
   .workspace.sidebar {
     height: 50px;
     z-index: 100;
@@ -46,7 +47,7 @@
   }
 }
 
-@media(max-width: 500px) {
+@media (max-width: 500px) {
   .workspace.sidebar {
     position: static;
   }

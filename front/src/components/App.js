@@ -4,6 +4,7 @@ import Component from "./Component";
 import NewProjectForm from "./NewProjectForm";
 import Project from "./Project";
 import WorkspaceSidebar from "./WorkspaceSidebar";
+import DueToday from "./DueToday.ts";
 
 export default class App extends Component {
   constructor() {
@@ -23,6 +24,7 @@ export default class App extends Component {
     contextEmitter.on("WorkspaceReady", () => {
       document.body.innerHTML = `
       <aside class="workspace sidebar"></aside>
+      <div class="workspace due-today"></div>
       <div class="workspace container">
       <div class="workspace projects">
         <div class="project project-form"></div>
@@ -36,6 +38,8 @@ export default class App extends Component {
       const workspaceContainer = document.body.querySelector(
         ".workspace.projects"
       );
+      const dueToday = document.body.querySelector(".workspace.due-today");
+      new DueToday(dueToday, {});
       new WorkspaceSidebar(sidebar, {});
       new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");
