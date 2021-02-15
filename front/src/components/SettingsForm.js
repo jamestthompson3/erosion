@@ -1,5 +1,6 @@
+import { appSettings, messages, postData } from "../messages.js";
+
 import Component from "./Component.js";
-import { appSettings, postData, messages } from "../messages.js";
 
 export default class SettingsForm extends Component {
   constructor(el, p) {

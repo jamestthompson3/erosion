@@ -1,9 +1,9 @@
-import Project from "./Project";
-import Component from "./Component";
-import WorkspaceSidebar from "./WorkspaceSidebar";
-import { listenFor, messages, contextEmitter, appContext } from "../messages";
+import { appContext, contextEmitter, listenFor, messages } from "../messages";
 
+import Component from "./Component";
 import NewProjectForm from "./NewProjectForm";
+import Project from "./Project";
+import WorkspaceSidebar from "./WorkspaceSidebar";
 
 export default class App extends Component {
   constructor() {

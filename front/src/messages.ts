@@ -1,4 +1,5 @@
 import { Inbox, Project } from "./types";
+
 import { observableStore } from "./utils/reactivity.js";
 
 type Callback = (args: any[]) => void;

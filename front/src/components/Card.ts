@@ -1,15 +1,16 @@
-import { postData, messages, appContext } from "../messages.js";
+import { Card, CardStatus } from "../types.d";
+import { Edit, Trash, VertMenu } from "./icons";
+import { appContext, messages, postData } from "../messages.js";
 import {
-  existsAndRender,
-  debounceEvent,
   createCardColor,
+  debounceEvent,
+  existsAndRender,
 } from "../utils/rendering";
-import { VertMenu, Trash, Edit } from "./icons";
+
+import CardEditForm from "./CardEditForm";
 import Component from "./Component";
 import MenuSelect from "./common-ui/MenuSelect";
-import { Card, CardStatus } from "../types.d";
 import Modal from "./common-ui/Modal";
-import CardEditForm from "./CardEditForm";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>

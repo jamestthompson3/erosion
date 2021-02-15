@@ -1,10 +1,10 @@
+import { Add, Cancel, Collapse, Expand, Trash } from "../icons";
+import { appContext, appSettings, messages, postData } from "../../messages";
+
 import Card from "../Card";
 import Component from "../Component";
-import { Cancel, Collapse, Expand, Add, Trash } from "../icons";
-import { debounceEvent } from "../../utils/rendering";
-import { postData, messages, appContext, appSettings } from "../../messages";
-
 import NewCardForm from "./NewCardForm";
+import { debounceEvent } from "../../utils/rendering";
 
 class Inbox extends Component {
   constructor(el, props) {

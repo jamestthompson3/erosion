@@ -1,8 +1,8 @@
-import DayPicker from "../common-ui/DayPicker";
 import Component, { CustomElement } from "../Component";
-import { postData, messages, appContext } from "../../messages";
 import { addDays, addHours, addMinutes } from "../../utils/time";
+import { appContext, messages, postData } from "../../messages";
 
+import DayPicker from "../common-ui/DayPicker";
 import InboxTagTime from "./InboxTagTime";
 
 class NewCardForm extends Component {

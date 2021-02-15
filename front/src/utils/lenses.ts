@@ -1,14 +1,14 @@
-import { appContext, kby } from "../messages";
 import {
-  State,
-  Project,
-  Inbox,
   Card,
-  UpdateCardPayload,
+  DeleteCardPayload,
   DeleteInboxPayload,
   DeleteProjectPayload,
-  DeleteCardPayload,
+  Inbox,
+  Project,
+  State,
+  UpdateCardPayload,
 } from "../types";
+import { appContext, kby } from "../messages";
 
 interface PartialLens<DataStructure, SubpartReturnType> {
   get(s: DataStructure): SubpartReturnType;

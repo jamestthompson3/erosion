@@ -1,7 +1,7 @@
 import Component from "./Component.js";
-import NewProject from "./icons/NewProject.js";
 import Logo from "./icons/Logo.js";
 import MenuSelect from "./common-ui/MenuSelect.js";
+import NewProject from "./icons/NewProject.js";
 import Settings from "./icons/Settings.js";
 import SettingsForm from "./SettingsForm.js";
 import { newProjectEmitter } from "../messages.js";

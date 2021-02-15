@@ -1,8 +1,8 @@
-import Component from "./Component";
+import { messages, newProjectEmitter, postData } from "../messages";
+
 import Cancel from "./icons/Cancel";
 import Check from "./icons/Check";
-
-import { messages, postData, newProjectEmitter } from "../messages";
+import Component from "./Component";
 
 class NewProjectForm extends Component {
   constructor(el, props) {

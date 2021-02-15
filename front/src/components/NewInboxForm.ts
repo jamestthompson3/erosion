@@ -1,8 +1,8 @@
+import { messages, postData } from "../messages";
+
 import Cancel from "./icons/Cancel";
 import Check from "./icons/Check";
 import Component from "./Component";
-
-import { postData, messages } from "../messages";
 
 class NewInboxForm extends Component {
   constructor(el, props) {

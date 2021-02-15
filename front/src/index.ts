@@ -1,14 +1,3 @@
-import App from "./components/App";
-import {
-  contextEmitter,
-  kby,
-  postData,
-  inboxKby,
-  messages,
-  appContext,
-  appSettings,
-  listenFor,
-} from "./messages";
 import {
   DeleteCardPayload,
   DeleteInboxPayload,
@@ -18,14 +7,25 @@ import {
   UpdateCardPayload,
   WorkspaceInitPayload,
 } from "./types";
-
 import {
-  updateCard,
-  removeCard,
-  removeProject,
+  appContext,
+  appSettings,
+  contextEmitter,
+  inboxKby,
+  kby,
+  listenFor,
+  messages,
+  postData,
+} from "./messages";
+import {
   moveCard,
+  removeCard,
   removeInbox,
+  removeProject,
+  updateCard,
 } from "./utils/lenses";
+
+import App from "./components/App";
 
 (function () {
   listenFor(messages.WorkspaceInit, (payload: WorkspaceInitPayload) => {

@@ -1,11 +1,11 @@
-import Inbox from "./inbox/index";
+import { messages, postData } from "../messages.js";
+
 import Component from "./Component";
-import Trash from "./icons/Trash";
+import Inbox from "./inbox/index";
 import NewInbox from "./icons/NewInbox";
 import NewInboxForm from "./NewInboxForm";
-
+import Trash from "./icons/Trash";
 import { debounceEvent } from "../utils/rendering.js";
-import { postData, messages } from "../messages.js";
 
 const states = {
   ADD_INBOX: "add_inbox",
