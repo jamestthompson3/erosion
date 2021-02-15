@@ -40,7 +40,7 @@ fn json_body() -> impl Filter<Extract = (Message,), Error = warp::Rejection> + C
 
 mod handlers {
   use super::Message;
-  use crate::{data_structures::State, events::{EventManager, Events}};
+  use crate::{data_structures::State, events::{EventManager, Events}, filesystem::read_data_file, services::{due_today::DueTodayState, get_due_today}};
   use serde_json::json;
   use std::{convert::Infallible, env::var};
 
@@ -56,10 +56,14 @@ mod handlers {
     let empty = String::from("{}");
     match msg.event {
       Events::WorkspaceInit => {
+          // Don't like that I have to deserialize this in order to properly serialize it
+          // and send it to the client
+        let due_today: DueTodayState =  serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
         let state: State = manager.init_workspace();
         let workspace = json!({
             "state": state,
-            "settings": EventManager::send_settings()
+            "settings": EventManager::send_settings(),
+            "dueToday": due_today
         });
         Ok(warp::reply::json(&workspace))
       }
@@ -68,11 +72,15 @@ mod handlers {
         Ok(warp::reply::json(&empty))
       }
       Events::CreateCard(event) => {
+        // FIXME(serviceComms) this could get messy quickl
+        get_due_today();
         let state: State = manager.create_card(event);
         Ok(warp::reply::json(&state))
       }
       Events::UpdateCard(event) => {
         manager.update_card(event);
+        // FIXME(serviceComms) this could get messy quickl
+        get_due_today();
         Ok(warp::reply::json(&empty))
       }
       Events::CreateInbox(event) => {

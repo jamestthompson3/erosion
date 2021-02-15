@@ -21,7 +21,7 @@ pub struct DueTodayState {
   cards: Vec<Card>,
 }
 
-fn sweep_on_date_change() -> Option<Vec<Card>> {
+pub fn sweep_on_date_change() -> Option<Vec<Card>> {
   let due_today_state: DueTodayState =
     serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
   let date = due_today_state.updated.parse::<DateTime<Local>>().unwrap();
@@ -61,17 +61,21 @@ pub fn get_due_today() -> Vec<Card> {
     "searching through cards took: {}ms",
     now.elapsed().as_millis()
   );
+  println!("{:?}", cards);
   write_if_changed(&cards);
   cards
 }
 
 fn write_if_changed(cards: &Vec<Card>) {
   let today = Local::now();
-  let data = json!({
-      "cards": cards,
-      "updated": today.to_rfc3339()
-  });
-  write_data_file("due_today", &data.to_string()).unwrap();
+  let current_state: DueTodayState  = serde_json::from_str(&read_data_file("due_today").unwrap()).unwrap();
+  if *cards != current_state.cards {
+      let data = json!({
+          "cards": cards,
+          "updated": today.to_rfc3339()
+      });
+      write_data_file("due_today", &data.to_string()).unwrap();
+  }
 }
 
 pub fn emit_on_change() -> ThreadEvent {
