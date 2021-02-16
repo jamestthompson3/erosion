@@ -24,7 +24,6 @@ export default class App extends Component {
     contextEmitter.on("WorkspaceReady", () => {
       document.body.innerHTML = `
       <aside class="workspace sidebar"></aside>
-      <div class="workspace due-today"></div>
       <div class="workspace container">
       <div class="workspace projects">
         <div class="project project-form"></div>
@@ -34,12 +33,22 @@ export default class App extends Component {
       const createProjectForm = document.body.querySelector(
         ".project.project-form"
       );
+      if (appContext.get("dueToday").cards?.length > 0) {
+        const dueTodayContainer = document.createElement("div");
+        dueTodayContainer.classList.add("workspace", "due-today");
+        const workspaceContainer = document.querySelector(
+          ".workspace.container"
+        );
+        workspaceContainer.parentElement.insertBefore(
+          dueTodayContainer,
+          workspaceContainer
+        );
+        new DueToday(dueTodayContainer, {});
+      }
       const sidebar = document.body.querySelector(".workspace.sidebar");
       const workspaceContainer = document.body.querySelector(
         ".workspace.projects"
       );
-      const dueToday = document.body.querySelector(".workspace.due-today");
-      new DueToday(dueToday, {});
       new WorkspaceSidebar(sidebar, {});
       new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");
