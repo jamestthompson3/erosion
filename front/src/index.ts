@@ -29,12 +29,13 @@ import App from "./components/App";
 
 (function () {
   listenFor(messages.WorkspaceInit, (payload: WorkspaceInitPayload) => {
-    const { state, settings } = payload;
+    const { state, settings, dueToday } = payload;
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);
     appContext.set("state", state);
     appContext.set("cardKeyed", cardKeyed);
     appContext.set("inboxKeyed", inboxKeyed);
+    appContext.set("dueToday", dueToday);
     for (const [key, value] of Object.entries(settings)) {
       appSettings.set(key, value);
     }

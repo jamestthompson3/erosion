@@ -4,6 +4,7 @@ import Component from "./Component";
 import NewProjectForm from "./NewProjectForm";
 import Project from "./Project";
 import WorkspaceSidebar from "./WorkspaceSidebar";
+import DueToday from "./DueToday.ts";
 
 export default class App extends Component {
   constructor() {
@@ -32,6 +33,18 @@ export default class App extends Component {
       const createProjectForm = document.body.querySelector(
         ".project.project-form"
       );
+      if (appContext.get("dueToday").cards?.length > 0) {
+        const dueTodayContainer = document.createElement("div");
+        dueTodayContainer.classList.add("workspace", "due-today");
+        const workspaceContainer = document.querySelector(
+          ".workspace.container"
+        );
+        workspaceContainer.parentElement.insertBefore(
+          dueTodayContainer,
+          workspaceContainer
+        );
+        new DueToday(dueTodayContainer, {});
+      }
       const sidebar = document.body.querySelector(".workspace.sidebar");
       const workspaceContainer = document.body.querySelector(
         ".workspace.projects"
