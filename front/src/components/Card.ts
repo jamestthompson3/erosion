@@ -251,7 +251,31 @@ class CardComponent extends Component {
     const { card } = this.state;
     const keyedCard = appContext.get("cardKeyed")[card.id];
     const { inbox, project } = keyedCard;
-    const updated = { ...card, ...updatedData };
+    const updated = { ...card, ...updatedData, modified: new Date() };
+    if (updatedData.scheduled) {
+      const today = new Date();
+      const prevScheduled = new Date(card.scheduled);
+      const newScheduled = new Date(updatedData.scheduled);
+      if (today.toDateString() === newScheduled.toDateString()) {
+        // update the dueToday list if we've scheduled the card for today
+        const dueToday = appContext.get("dueToday");
+        appContext.set("dueToday", {
+          ...dueToday,
+          cards: dueToday.cards.concat(updated),
+        });
+      }
+      if (
+        today.toDateString() === prevScheduled.toDateString() &&
+        today.toDateString() !== newScheduled.toDateString()
+      ) {
+        //or if we've moved it from today to another day
+        const dueToday = appContext.get("dueToday");
+        appContext.set("dueToday", {
+          ...dueToday,
+          cards: dueToday.cards.filter((card: Card) => card.id === updated.id),
+        });
+      }
+    }
     postData(messages.UpdateCard, {
       inbox,
       project,

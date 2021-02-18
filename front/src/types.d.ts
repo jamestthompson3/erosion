@@ -78,7 +78,15 @@ export type MoveCardPayload = {
   };
 };
 
+export interface DueToday {
+  updated: string;
+  cards: Card[];
+}
+
 export type WorkspaceInitPayload = {
   settings: Settings;
   state: State;
+  dueToday: DueToday;
 };
+
+export type MaybeError = string | undefined | null;

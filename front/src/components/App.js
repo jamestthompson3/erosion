@@ -17,10 +17,7 @@ export default class App extends Component {
     `;
     const projects = appContext.select("state.projects");
     projects.on("update", "*", this.sweepAndUpdate);
-    listenFor(
-      messages.UpdateSettings,
-      () => (window.location = window.location)
-    );
+    listenFor(messages.UpdateSettings, () => window.location.reload());
     contextEmitter.on("WorkspaceReady", () => {
       document.body.innerHTML = `
       <aside class="workspace sidebar"></aside>
@@ -33,22 +30,15 @@ export default class App extends Component {
       const createProjectForm = document.body.querySelector(
         ".project.project-form"
       );
-      if (appContext.get("dueToday").cards?.length > 0) {
-        const dueTodayContainer = document.createElement("div");
-        dueTodayContainer.classList.add("workspace", "due-today");
-        const workspaceContainer = document.querySelector(
-          ".workspace.container"
-        );
-        workspaceContainer.parentElement.insertBefore(
-          dueTodayContainer,
-          workspaceContainer
-        );
-        new DueToday(dueTodayContainer, {});
-      }
-      const sidebar = document.body.querySelector(".workspace.sidebar");
-      const workspaceContainer = document.body.querySelector(
-        ".workspace.projects"
+      const dueTodayContainer = document.createElement("div");
+      dueTodayContainer.classList.add("workspace", "due-today");
+      const workspaceContainer = document.querySelector(".workspace.container");
+      workspaceContainer.parentElement.insertBefore(
+        dueTodayContainer,
+        workspaceContainer
       );
+      new DueToday(dueTodayContainer, {});
+      const sidebar = document.body.querySelector(".workspace.sidebar");
       new WorkspaceSidebar(sidebar, {});
       new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");

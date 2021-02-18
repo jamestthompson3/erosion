@@ -1,8 +1,9 @@
-import { Inbox, Project } from "./types";
+import { Inbox, MaybeError, Project } from "./types";
 
 import { observableStore } from "./utils/reactivity.js";
 
-type Callback = (args: any[]) => void;
+type Callback = (args: any) => void;
+type FailableCallback = (err: MaybeError, value: any) => void;
 
 export function emitter() {
   const listeners: Map<string, Set<Callback>> = new Map();
@@ -92,9 +93,9 @@ export const appSettings = new Map();
 export const contextEmitter = emitter();
 
 export function globalEmitter() {
-  const listeners: Map<string, Set<Callback>> = new Map();
+  const listeners: Map<string, Set<FailableCallback>> = new Map();
   return {
-    on(e: string, cb: Callback) {
+    on(e: string, cb: FailableCallback) {
       const callbacks = listeners.get(e);
       if (!callbacks) {
         listeners.set(e, new Set([cb]));
@@ -118,10 +119,14 @@ export function globalEmitter() {
           .then((r) => r.json())
           .then((result) => {
             Array.from(listeners.get(eventLabel)).map((cb) => {
-              cb(result);
+              cb(undefined, result);
             });
           })
-          .catch(console.error);
+          .catch((e) => {
+            Array.from(listeners.get(eventLabel)).map((cb) => {
+              cb(e, undefined);
+            });
+          });
       }
     },
   };
@@ -138,4 +143,5 @@ const globalEvents = globalEmitter();
 export const newProjectEmitter = emitter();
 
 export const postData = globalEvents.emit;
+// Callbacks passed to this function run _async_ after the HTTP call has been made
 export const listenFor = globalEvents.on;

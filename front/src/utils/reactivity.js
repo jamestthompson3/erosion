@@ -1,7 +1,4 @@
-/**
- * @typedef { import("./types").StoreEvents } StoreEvents
- */
-
+// TODO add debugging so you can label mutations to the store to track down what functions are changing your data
 export function observableStore(initialValues = {}) {
   const store = initialValues;
   const listeners = new Map();
@@ -92,6 +89,9 @@ export function observableStore(initialValues = {}) {
     },
     once(event, key, cb) {
       createListener(event, key, cb, true);
+    },
+    keys() {
+      return Object.keys(store);
     },
   };
 }

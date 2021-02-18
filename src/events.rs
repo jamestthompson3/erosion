@@ -103,7 +103,7 @@ pub struct EventManager {
 }
 
 impl EventManager {
-  pub fn new() -> EventManager {
+  pub fn new() -> Self {
     let state = read_state_file();
     EventManager {
       state: Arc::new(Mutex::new(state)),
