@@ -13,8 +13,8 @@
   --shadow: 4px 7px 0 1px hsla(0, 0%, 0%, 0.95);
   --shadow-button: 0px -1px 20px 0px hsla(0, 0%, 0%, 0.18);
   --radius: 0px;
-  --affirmative: #10AC84;
-  --cancel: #F05228;
+  --affirmative: #10ac84;
+  --cancel: #f05228;
   --cancel-contrast: #c82a00;
 }
 
@@ -47,7 +47,11 @@ body {
   width: 100%;
   font-family: Iosevka;
   scroll-snap-type: y proximity;
-  background: radial-gradient(var(--light0), rgb(237, 235, 235) 47.06%, hsl(0, 0%, 92%));
+  background: radial-gradient(
+    var(--light0),
+    rgb(237, 235, 235) 47.06%,
+    hsl(0, 0%, 92%)
+  );
   /* overscroll-behavior: none; */
 }
 
@@ -61,73 +65,93 @@ button {
   border: none;
 }
 
- /*
+/*
   * Global utility classes
  */
-  .as-h1 {
-    display: block;
-    font-size: 2em;
-    margin-block-start: 0.67em;
-    margin-block-end: 0.67em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    font-weight: bold;
-  }
-  .as-h2 {
-    display: block;
-    font-size: 1.5em;
-    margin-block-start: 0.83em;
-    margin-block-end: 0.83em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    font-weight: bold;
-  }
-  .as-h3 {
-    display: block;
-    font-size: 1.17em;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    font-weight: bold;
-    border: none;
-    width: 100%;
-    background: transparent;
-  }
+.as-h1 {
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
+.as-h2 {
+  display: block;
+  font-size: 1.5em;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
+.as-h3 {
+  display: block;
+  font-size: 1.17em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+  border: none;
+  width: 100%;
+  background: transparent;
+}
 
-  .as-p {
-    display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    border: none;
-    background: transparent;
-    width: 100%;
-    resize: none;
-    font-family: inherit;
-  }
+.as-p {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  resize: none;
+  font-family: inherit;
+}
 
-  .-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-wrap: normal;
-  }
-  .-text-cursor {
-    cursor: text;
-  }
+.-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+.-text-cursor {
+  cursor: text;
+}
 
-  .menu.contextual {
-    position: absolute;
-    z-index: 1000;
-    background: var(--bg-solid);
-    border: 1px solid;
-    border-radius: var(--radius);
-    padding: 8px;
-  }
+.menu.contextual {
+  position: absolute;
+  z-index: 1000;
+  background: var(--bg-solid);
+  border: 1px solid;
+  border-radius: var(--radius);
+  padding: 8px;
+}
 
-  /*
+.spacer {
+  height: 1rem;
+  width: 1rem;
+}
+
+.spacer-2 {
+  height: 2rem;
+  width: 2rem;
+}
+
+.spacer-3 {
+  height: 3rem;
+  width: 3rem;
+}
+
+.spacer-5 {
+  height: 5rem;
+  width: 5rem;
+}
+
+/*
    * Modal Styles
    */
 .modal.body {
@@ -140,55 +164,55 @@ button {
   padding: var(--padding);
   width: 80%;
 }
-  /*
+/*
    * Day picker styles
    */
-  .day-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.day-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .day-container > .month {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 5px;
-  }
+.day-container > .month {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+}
 
-  .month > span {
-    font-weight: bold;
-  }
+.month > span {
+  font-weight: bold;
+}
 
-  .day-container * > .increment-decrement {
-    font-weight: bold;
-    font-size: 1rem;
-    color: var(--dark0);
-    user-select: none;
-    background: transparent;
-    border: none;
-    padding: 3px;
-    cursor: pointer;
-  }
+.day-container * > .increment-decrement {
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--dark0);
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+}
 
-  .day-modifier > .day-input {
-    width: 20%;
-    border: 1px solid var(--light1);
-    border-radius: var(--radius);
-  }
+.day-modifier > .day-input {
+  width: 20%;
+  border: 1px solid var(--light1);
+  border-radius: var(--radius);
+}
 
-  .day > .time-input {
-    border: 1px solid var(--light1);
-    border-radius: var(--radius);
-  }
+.day > .time-input {
+  border: 1px solid var(--light1);
+  border-radius: var(--radius);
+}
 
-  .day > .day-modifier {
-    display: flex;
-    width: 40%;
-    justify-content: space-between;
-  }
+.day > .day-modifier {
+  display: flex;
+  width: 40%;
+  justify-content: space-between;
+}
 
-  .day-container > .day {
-    display: flex;
-    justify-content: space-between;
-  }
+.day-container > .day {
+  display: flex;
+  justify-content: space-between;
+}

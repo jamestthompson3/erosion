@@ -20,7 +20,7 @@ export default class WorkspaceSidebar extends Component {
       children: {
         render: () => `
           <button aria-label="add project" title="add project to workspace" class="workspace action add-project">${NewProject()}</button>
-          <div class="workspace sidebar action-spacer"></div>
+          <div class="workspace-sidebar action-spacer"></div>
           <button aria-label="edit settings" title="edit settings" class="workspace action edit-settings">${Settings()}</button>
         `,
         bootstrap: (menu) => {
@@ -32,7 +32,7 @@ export default class WorkspaceSidebar extends Component {
           settingsButton.addEventListener("click", this.displaySettings);
         },
       },
-      position: "fixed-right",
+      position: "right",
     });
   }
   displaySettings = () => {

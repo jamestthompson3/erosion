@@ -1,11 +1,11 @@
 .project.container {
- display: flex;
- border-radius: var(--radius);
- flex-direction: column;
+  display: flex;
+  border-radius: var(--radius);
+  flex-direction: column;
+  max-width: 600px;
 }
 
 .project.title {
-  text-align: center;
   width: 100%;
   padding: 0.5rem;
   text-shadow: 4px 4px var(--accent), 3.75px 3.75px var(--accent),
@@ -25,7 +25,8 @@
   align-items: center;
 }
 
-.project.add-inbox, .project.delete-project {
+.project.add-inbox,
+.project.delete-project {
   margin: 1rem;
   width: 25px;
   height: 25px;
@@ -45,22 +46,26 @@
   align-items: center;
 }
 
-.inbox-form.accept, .project-form.accept {
+.inbox-form.accept,
+.project-form.accept {
   color: var(--affirmative);
 }
 
-.inbox-form.cancel, .project-form.cancel {
+.inbox-form.cancel,
+.project-form.cancel {
   color: var(--cancel);
 }
 
-.inbox-form button, .project-form button {
+.inbox-form button,
+.project-form button {
   width: 2.5rem;
   height: 2.5rem;
   padding: 0.5rem;
   border-radius: 25px;
 }
 
-.project.new-inbox-name, .project.new-project-name {
+.project.new-inbox-name,
+.project.new-project-name {
   height: 2rem;
   border: 1px solid var(--light1);
   margin: 1rem;
@@ -75,11 +80,10 @@
  * Smaller screens
  */
 
-@media(max-width: 700px) {
-
-.project.project-form {
-  width: 80%;
-  margin: auto;
-  flex-wrap: wrap;
-}
+@media (max-width: 700px) {
+  .project.project-form {
+    width: 80%;
+    margin: auto;
+    flex-wrap: wrap;
+  }
 }
