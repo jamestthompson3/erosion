@@ -2,6 +2,7 @@ import {
   DeleteCardPayload,
   DeleteInboxPayload,
   DeleteProjectPayload,
+  MaybeError,
   MoveCardPayload,
   State,
   UpdateCardPayload,
@@ -28,20 +29,29 @@ import {
 import App from "./components/App";
 
 (function () {
-  listenFor(messages.WorkspaceInit, (payload: WorkspaceInitPayload) => {
-    const { state, settings, dueToday } = payload;
-    const cardKeyed = kby(state.projects);
-    const inboxKeyed = inboxKby(state.projects);
-    appContext.set("state", state);
-    appContext.set("cardKeyed", cardKeyed);
-    appContext.set("inboxKeyed", inboxKeyed);
-    appContext.set("dueToday", dueToday);
-    for (const [key, value] of Object.entries(settings)) {
-      appSettings.set(key, value);
+  listenFor(
+    messages.WorkspaceInit,
+    (error: MaybeError, payload: WorkspaceInitPayload) => {
+      if (error) {
+        throw error;
+      }
+      const { state, settings, dueToday } = payload;
+      const cardKeyed = kby(state.projects);
+      const inboxKeyed = inboxKby(state.projects);
+      appContext.set("state", state);
+      appContext.set("cardKeyed", cardKeyed);
+      appContext.set("inboxKeyed", inboxKeyed);
+      appContext.set("dueToday", dueToday);
+      for (const [key, value] of Object.entries(settings)) {
+        appSettings.set(key, value);
+      }
+      contextEmitter.emit(messages.WorkspaceReady, undefined);
     }
-    contextEmitter.emit(messages.WorkspaceReady);
-  });
-  listenFor(messages.StateUpdated, (newState: State) => {
+  );
+  listenFor(messages.StateUpdated, (error: MaybeError, newState: State) => {
+    if (error) {
+      throw error;
+    }
     const state = newState;
     const cardKeyed = kby(state.projects);
     const inboxKeyed = inboxKby(state.projects);

@@ -6,7 +6,7 @@ use chrono::prelude::*;
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::time::Instant;
+use std::{collections::VecDeque, sync::{Arc, Condvar, Mutex}, thread::{JoinHandle, spawn}, time::Instant};
 
 use super::ThreadEvent;
 
@@ -83,4 +83,70 @@ pub fn emit_on_change() -> ThreadEvent {
     Some(cards) => ThreadEvent::DueToday(cards),
     None => ThreadEvent::NoChange,
   }
+}
+
+
+pub struct WriterQueue {
+    jobs: Mutex<Option<VecDeque<u8>>>,
+    cvar: Condvar,
+}
+
+impl WriterQueue {
+    pub fn new() -> Self {
+        WriterQueue {
+            jobs: Mutex::new(Some(VecDeque::new())),
+            cvar: Condvar::new()
+        }
+    }
+    pub fn queue_writes(&self, writes: u8) {
+        let mut jobs = self.jobs.lock().unwrap();
+        if let Some(queue) = jobs.as_mut() {
+            queue.push_back(writes);
+            self.cvar.notify_all();
+        }
+    }
+    pub fn wait_for_job(&self) -> Option<u8> {
+        let mut jobs = self.jobs.lock().unwrap();
+        loop {
+            match jobs.as_mut()?.pop_front() {
+                Some(job) => return Some(job),
+                None => {
+                    jobs = self.cvar.wait(jobs).unwrap()
+                }
+            }
+        }
+    }
+    pub fn end(&self) {
+        let mut jobs = self.jobs.lock().unwrap();
+        *jobs = None;
+        self.cvar.notify_all();
+    }
+}
+
+pub struct WriterCoordinator {
+    handle: JoinHandle<()>,
+    queue: Arc<WriterQueue>
+}
+
+impl WriterCoordinator {
+    pub fn new() -> Self {
+        let queue = Arc::new(WriterQueue::new());
+        let handle = spawn({
+            let write_queue = queue.clone();
+            move || {
+                while let Some(_write) = write_queue.wait_for_job() {
+                    get_due_today();
+                }
+            }
+
+        });
+        WriterCoordinator {
+            queue,
+            handle
+        }
+    }
+    pub fn add(&self, writer: u8) {
+        self.queue.queue_writes(writer);
+        self.queue.end();
+    }
 }

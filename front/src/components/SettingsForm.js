@@ -93,7 +93,6 @@ export default class SettingsForm extends Component {
       Object.fromEntries(appSettings),
       formAsObj
     );
-    console.log(newSettings);
     postData(messages.UpdateSettings, newSettings);
     this.removeModalBlur();
   };

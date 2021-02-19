@@ -21,16 +21,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 75%;
+  width: 75%;
+  height: 100%;
+  align-items: center;
 }
 
 .workspace.due-today {
-  width: 75%;
+  max-width: 565px;
   display: flex;
   flex-direction: column;
   margin: auto;
   background: var(--bg-solid);
-  box-shadow: 4px 7px 0 1px var(--accent-darken);
+  border: 1px solid var(--accent-darken);
   align-items: center;
   padding: calc(var(--padding) / 2);
   justify-content: space-between;
