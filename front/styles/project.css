@@ -2,7 +2,7 @@
   display: flex;
   border-radius: var(--radius);
   flex-direction: column;
-  max-width: 600px;
+  width: 600px;
 }
 
 .project.title {
@@ -85,5 +85,8 @@
     width: 80%;
     margin: auto;
     flex-wrap: wrap;
+  }
+  .project.container {
+    width: 100%;
   }
 }

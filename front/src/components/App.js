@@ -32,10 +32,14 @@ export default class App extends Component {
       const createProjectForm = document.body.querySelector(
         ".project.project-form"
       );
-      const dueTodayContainer = document.querySelector(".workspace.due-today");
-      const workspaceContainer = document.querySelector(".workspace.container");
+      const dueTodayContainer = document.body.querySelector(
+        ".workspace.due-today"
+      );
       new DueToday(dueTodayContainer, {});
       const sidebar = document.body.querySelector(".workspace.sidebar");
+      const workspaceContainer = document.body.querySelector(
+        ".workspace.projects"
+      );
       new WorkspaceSidebar(sidebar, {});
       new NewProjectForm(createProjectForm, {});
       const state = appContext.get("state");
@@ -77,8 +81,5 @@ export default class App extends Component {
     markedToRemove.forEach((oldNode) => {
       workspaceContainer.removeChild(oldNode);
     });
-  }
-  globalUpdated(newState) {
-    appContext.set("state", newState);
   }
 }
