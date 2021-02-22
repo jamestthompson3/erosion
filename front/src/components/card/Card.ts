@@ -1,16 +1,13 @@
-import { Card, CardStatus } from "../types.d";
-import { Edit, Trash, VertMenu } from "./icons";
-import { appContext, messages, postData } from "../messages.js";
+import { Card, CardStatus } from "../../types.d";
+import { appContext, messages, postData } from "../../messages.js";
 import {
   createCardColor,
   debounceEvent,
   existsAndRender,
-} from "../utils/rendering";
+} from "../../utils/rendering";
 
-import CardEditForm from "./CardEditForm";
-import Component from "./Component";
-import MenuSelect from "./common-ui/MenuSelect";
-import Modal from "./common-ui/Modal";
+import Component from "../Component";
+import Actions from "./Actions";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>
@@ -50,7 +47,7 @@ function renderElementHtml(card: Card) {
     `;
 }
 
-function renderEditHtml(card: Card) {
+function renderEditHtml() {
   return `
     <div class="card edit-form">
       <fieldset>
@@ -94,35 +91,11 @@ class CardComponent extends Component {
     const [color, contrast] = createCardColor();
     el.innerHTML = renderElementHtml(card);
     const actionContainer = el.querySelector(".card.actions");
-    new MenuSelect(actionContainer, {
-      trigger: () =>
-        `<button class="card actions menu-button" aria-label="card actions">${VertMenu()}</button>`,
-      children: {
-        render: () => `
-      <button aria-label="delete card" class="card actions delete">${Trash()}</button>
-      <button aria-label="edit card" class="card actions edit">${Edit()}</button>
-      `,
-        bootstrap: (menu: HTMLDivElement) => {
-          const deleteButton = menu.querySelector(".card.actions.delete");
-          deleteButton.addEventListener("click", this.deleteCard);
-          const editButton = menu.querySelector(".card.actions.edit");
-          new Modal(editButton, {
-            trigger: null,
-            children: {
-              render: () => renderEditHtml(card),
-              bootstrap: (modal, onClose) => {
-                new CardEditForm(modal, {
-                  card,
-                  color,
-                  contrast,
-                  postUpdate: this.updateField,
-                  onClose,
-                });
-              },
-            },
-          });
-        },
-      },
+    new Actions(actionContainer, {
+      card,
+      color,
+      contrast,
+      postUpdate: this.updateField,
     });
     const cardStatus = el.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";
