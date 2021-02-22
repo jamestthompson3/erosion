@@ -8,6 +8,7 @@ import {
 
 import Component from "../Component";
 import Actions from "./Actions";
+import TimeAllotted from "./TimeAllotted";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>
@@ -36,7 +37,7 @@ function renderElementHtml(card: Card) {
         </div>
       <div class="card metadata">
       ${getScheduled(card.scheduled)}
-      <p class="card time">⌛ ${card.time_allotted} min</p>
+      <p class="card time"></p>
             ${existsAndRender(card.tags, () =>
               // TODO maybe do some sort of emoji mapping to mental state
               card.tags.map((t) => `<p class="card tag">🧠 ${t}</p>`).join("\n")
@@ -45,42 +46,6 @@ function renderElementHtml(card: Card) {
         <div class="card actions">
         </div>
     `;
-}
-
-function renderEditHtml() {
-  return `
-    <div class="card edit-form">
-      <fieldset>
-      <legend>Edit</legend>
-      <div class="card edit-form form-container">
-      <span>
-      <label>Title</label>
-      <input class="card edit-title" type="text"/>
-      <label>Text</label>
-      <textarea class="card edit-text"></textarea>
-      </span>
-      <div class="card edit-form time-container">
-        <div id="tags-time"></div>
-        <div id="card-scheduled">
-          <label for="scheduled">Start task</label>
-          <select name="task-scheduled" id="task-scheduled">
-            <option value=""></option>
-            <option value="20">In 20 Minutes</option>
-            <option value="1">In an Hour</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="next week">Next Week</option>
-            <option value="custom">Custom</option>
-          </select>
-        </div>
-      </div>
-      </div>
-      <div class="card edit-form actions">
-        <button class="card edit-form save-button">Done</button>
-        <button class="card edit-form cancel-button">Cancel</button>
-      </div>
-      </fieldset>
-    </div>
-  `;
 }
 
 class CardComponent extends Component {
@@ -96,6 +61,10 @@ class CardComponent extends Component {
       color,
       contrast,
       postUpdate: this.updateField,
+      deleteCard: this.deleteCard,
+    });
+    new TimeAllotted(el.querySelector(".card.time"), {
+      timeAllotted: card.time_allotted,
     });
     const cardStatus = el.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";

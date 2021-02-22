@@ -3,6 +3,7 @@ import MenuSelect from "../common-ui/MenuSelect.js";
 import Modal from "../common-ui/Modal";
 import { Edit, Trash, VertMenu } from "../icons";
 import CardEditForm from "./CardEditForm";
+import { Card } from "src/types";
 
 function renderEditHtml() {
   return `
@@ -40,9 +41,18 @@ function renderEditHtml() {
   `;
 }
 
+interface CardActionProps {
+  card: Card;
+  color: string;
+  contrast: string;
+  postUpdate(data: Partial<Card>): void;
+  deleteCard(): void;
+}
+
 export default class Actions extends Component {
-  constructor(el, props) {
+  constructor(el: any, props: CardActionProps) {
     super(el, props);
+    const { card, color, contrast, postUpdate, deleteCard } = props;
     new MenuSelect(el, {
       trigger: () =>
         `<button class="card actions menu-button" aria-label="card actions">${VertMenu()}</button>`,
@@ -53,7 +63,7 @@ export default class Actions extends Component {
       `,
         bootstrap: (menu: HTMLDivElement) => {
           const deleteButton = menu.querySelector(".card.actions.delete");
-          deleteButton.addEventListener("click", this.deleteCard);
+          deleteButton.addEventListener("click", deleteCard);
           const editButton = menu.querySelector(".card.actions.edit");
           new Modal(editButton, {
             trigger: null,
@@ -64,7 +74,7 @@ export default class Actions extends Component {
                   card,
                   color,
                   contrast,
-                  postUpdate: this.updateField,
+                  postUpdate,
                   onClose,
                 });
               },

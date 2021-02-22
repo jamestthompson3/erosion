@@ -1,8 +1,8 @@
 import { addDays, addHours, addMinutes } from "src/utils/time";
 
-import Component from "./Component";
-import DayPicker from "./common-ui/DayPicker";
-import InboxTagTime from "./inbox/InboxTagTime";
+import Component from "../Component";
+import DayPicker from "../common-ui/DayPicker";
+import InboxTagTime from "../inbox/InboxTagTime";
 
 export default class CardEditForm extends Component {
   constructor(el, props) {
