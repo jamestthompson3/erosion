@@ -70,15 +70,17 @@ function lightenDarkenColor(col: string, amt: number) {
 }
 
 export function animationInterval(
+  start: number,
   ms: number,
   signal: AbortSignal,
   callback: (time: number) => void
 ): void {
-  const start = performance.now();
 
   function frame(time: number) {
+    const elapsed = time - start;
+    const roundedElapsed = Math.round(elapsed / ms) * ms;
     if (signal.aborted) return;
-    callback(time);
+    callback(roundedElapsed);
     scheduleFrame(time);
   }
 

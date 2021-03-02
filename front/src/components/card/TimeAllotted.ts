@@ -1,11 +1,13 @@
 import Component, { CustomElement } from "../Component";
+
 import { animationInterval } from "../../utils/rendering";
 
 interface TimeAllottedProps {
   timeAllotted: number;
 }
 
-const MIN_TO_MS = (min: number) => min * 60 * 1000;
+//TODO change to a state machine that can handle play, pause, stop, etc.
+
 const MIN_TO_S = (min: number) => min * 60;
 export default class TimeAllotted extends Component {
   constructor(el: CustomElement, props: TimeAllottedProps) {
@@ -18,14 +20,14 @@ export default class TimeAllotted extends Component {
     el.innerText = `⌛ ${timeAllotted} min`;
     el.addEventListener("click", this.handleCountdown);
   }
-  handleCountdown = (): void => {
+  handleCountdown = (e: MouseEvent): void => {
     const { timeAllotted } = this.props;
     if (this.state.timerStarted) {
       this.state.controller.abort();
     }
     let currentTime = timeAllotted;
     // Create an animation callback every second:
-    animationInterval(1000, this.state.controller.signal, (time) => {
+    animationInterval(e.timeStamp, 1000, this.state.controller.signal, (time) => {
       const roundedTime = Math.round(time / 1000);
       const remainingSeconds = (MIN_TO_S(timeAllotted) - roundedTime) % 60;
       if (currentTime === 0 && remainingSeconds === 0) {
