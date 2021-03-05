@@ -11,6 +11,7 @@ mod envrionment;
 mod events;
 mod filesystem;
 mod inboxes;
+mod recurring_tasks;
 mod lenses;
 mod projects;
 mod services;
