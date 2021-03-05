@@ -69,3 +69,25 @@ pub trait Habit {
   fn move_goalposts(&mut self, new_target: u16);
   fn set_name(&mut self, name: impl AsRef<str>);
 }
+
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  #[test]
+    fn getters_and_setters() {
+        let mut new_task = RecurringTask::new(String::from("test task"), 43);
+        let test_date = NaiveDate::from_ymd(2015, 6, 3);
+        assert_eq!(new_task.target(), 43);
+        assert_eq!(new_task.name, String::from("test task"));
+        assert_eq!(new_task.remaining(test_date), 43);
+        new_task.record_activity(test_date, 22);
+        assert_eq!(new_task.remaining(test_date), 21);
+        assert_eq!(new_task.reached_goal(test_date), false);
+        assert_eq!(new_task.get_by_date(NaiveDate::from_ymd(2020,4,4)), None);
+        new_task.move_goalposts(5);
+        assert_eq!(new_task.target(), 5);
+        assert_eq!(new_task.reached_goal(test_date), true);
+        assert_eq!(new_task.remaining(test_date),0);
+    }
+}
