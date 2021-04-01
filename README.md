@@ -2,7 +2,7 @@
 
 ## Installing
 
-You need `cargo` and `yarn` or `npm` in your `$PATH`. After cloning this repository, run `yarn` in the `front` directory to install the JS bundler and linter. After installing these, you should run `yarn build` to build the JS bundles.
+You need `cargo` and `yarn` in your `$PATH`. After cloning this repository, run `yarn` in the `front` directory to install the JS bundler and linter. After installing these, you should run `yarn build` to build the JS bundles.
 
 After bundling the JS files, use `cargo build --release` to build the release binary, or if you want to install it in your `$PATH`, `cargo install --path .`.
 
