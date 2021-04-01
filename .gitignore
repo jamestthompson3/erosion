@@ -11,8 +11,14 @@ WixTools
 config.json
 bundle.json
 node_modules/
-.pnp.js
-.yarn/
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 
 front/build/bundle.js
 front/build/bundle.js.map
