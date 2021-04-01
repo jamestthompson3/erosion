@@ -75,7 +75,6 @@ export function animationInterval(
   signal: AbortSignal,
   callback: (time: number) => void
 ): void {
-
   function frame(time: number) {
     const elapsed = time - start;
     const roundedElapsed = Math.round(elapsed / ms) * ms;

@@ -1,0 +1,5 @@
+.time-allotted.cancel-button {
+  width: 0.85rem;
+  height: 0.85rem;
+  color: var(--cancel);
+}

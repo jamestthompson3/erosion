@@ -6,8 +6,8 @@ import {
   existsAndRender,
 } from "../../utils/rendering";
 
-import Component from "../Component";
 import Actions from "./Actions";
+import Component from "../Component";
 import TimeAllotted from "./TimeAllotted";
 
 function renderElementHtml(card: Card) {
