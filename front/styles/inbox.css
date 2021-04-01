@@ -23,7 +23,9 @@
   justify-content: space-between;
   align-items: center;
 }
-.inbox.add-card, .inbox.collapse, .inbox.delete-inbox {
+.inbox.add-card,
+.inbox.collapse,
+.inbox.delete-inbox {
   width: 1.5rem;
   height: 1.5rem;
 }
@@ -70,7 +72,8 @@
 .inbox.card-form.tags-time.time-input {
   width: 2rem;
 }
-.inbox.card-form.metadata select[name="task-scheduled"], select[name="task-tags"] {
+.inbox.card-form.metadata select[name="task-scheduled"],
+select[name="task-tags"] {
   height: 2rem;
 }
 .inbox.card-form.tags-time.time-input:invalid {
@@ -85,7 +88,6 @@
 .card-form.save-button:hover {
   background: var(--accent-hover);
 }
-
 
 .inbox.card-form > .as-p {
   min-height: 30px;
@@ -102,22 +104,22 @@
  * Smaller screens
  * */
 
-  @media(max-width: 500px) {
-    .inbox.title {
-      font-size: 1.25rem;
-      white-space: nowrap;
-    }
-    .inbox.indicator {
-      font-size: 0.85rem;
-    }
-    .inbox.card-form.metadata {
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .card-form.tags-time {
-      display: flex;
-      flex-direction: column;
-      margin-top: 1rem;
-      align-items: center;
-    }
+@media (max-width: 500px) {
+  .inbox.title {
+    font-size: 1.25rem;
+    white-space: nowrap;
   }
+  .inbox.indicator {
+    font-size: 0.85rem;
+  }
+  .inbox.card-form.metadata {
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .card-form.tags-time {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    align-items: center;
+  }
+}
