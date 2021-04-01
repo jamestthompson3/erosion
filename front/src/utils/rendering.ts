@@ -4,7 +4,7 @@ export function existsAndRender(
   item: any,
   renderExpression: Renderable
 ): string {
-  if (Boolean(item)) {
+  if (item) {
     return typeof renderExpression === "string"
       ? renderExpression
       : renderExpression();
@@ -49,7 +49,7 @@ function lightenDarkenColor(col: string, amt: number) {
     usePound = true;
   }
 
-  let num = parseInt(col, 16);
+  const num = parseInt(col, 16);
 
   let r = (num >> 16) + amt;
 
@@ -67,4 +67,29 @@ function lightenDarkenColor(col: string, amt: number) {
   else if (g < 0) g = 0;
 
   return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
+}
+
+export function animationInterval(
+  start: number,
+  ms: number,
+  signal: AbortSignal,
+  callback: (time: number) => void
+): void {
+  function frame(time: number) {
+    const elapsed = time - start;
+    const roundedElapsed = Math.round(elapsed / ms) * ms;
+    if (signal.aborted) return;
+    callback(roundedElapsed);
+    scheduleFrame(time);
+  }
+
+  function scheduleFrame(time: number) {
+    const elapsed = time - start;
+    const roundedElapsed = Math.round(elapsed / ms) * ms;
+    const targetNext = start + roundedElapsed + ms;
+    const delay = targetNext - performance.now();
+    setTimeout(() => requestAnimationFrame(frame), delay);
+  }
+
+  scheduleFrame(start);
 }

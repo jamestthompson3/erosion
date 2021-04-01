@@ -1,16 +1,14 @@
-import { Card, CardStatus } from "../types.d";
-import { Edit, Trash, VertMenu } from "./icons";
-import { appContext, messages, postData } from "../messages.js";
+import { Card, CardStatus } from "../../types.d";
+import { appContext, messages, postData } from "../../messages.js";
 import {
   createCardColor,
   debounceEvent,
   existsAndRender,
-} from "../utils/rendering";
+} from "../../utils/rendering";
 
-import CardEditForm from "./CardEditForm";
-import Component from "./Component";
-import MenuSelect from "./common-ui/MenuSelect";
-import Modal from "./common-ui/Modal";
+import Actions from "./Actions";
+import Component from "../Component";
+import TimeAllotted from "./TimeAllotted";
 
 function renderElementHtml(card: Card) {
   const getChecked = (status: CardStatus) =>
@@ -39,7 +37,7 @@ function renderElementHtml(card: Card) {
         </div>
       <div class="card metadata">
       ${getScheduled(card.scheduled)}
-      <p class="card time">⌛ ${card.time_allotted} min</p>
+      <p class="card time"></p>
             ${existsAndRender(card.tags, () =>
               // TODO maybe do some sort of emoji mapping to mental state
               card.tags.map((t) => `<p class="card tag">🧠 ${t}</p>`).join("\n")
@@ -50,42 +48,6 @@ function renderElementHtml(card: Card) {
     `;
 }
 
-function renderEditHtml(card: Card) {
-  return `
-    <div class="card edit-form">
-      <fieldset>
-      <legend>Edit</legend>
-      <div class="card edit-form form-container">
-      <span>
-      <label>Title</label>
-      <input class="card edit-title" type="text"/>
-      <label>Text</label>
-      <textarea class="card edit-text"></textarea>
-      </span>
-      <div class="card edit-form time-container">
-        <div id="tags-time"></div>
-        <div id="card-scheduled">
-          <label for="scheduled">Start task</label>
-          <select name="task-scheduled" id="task-scheduled">
-            <option value=""></option>
-            <option value="20">In 20 Minutes</option>
-            <option value="1">In an Hour</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="next week">Next Week</option>
-            <option value="custom">Custom</option>
-          </select>
-        </div>
-      </div>
-      </div>
-      <div class="card edit-form actions">
-        <button class="card edit-form save-button">Done</button>
-        <button class="card edit-form cancel-button">Cancel</button>
-      </div>
-      </fieldset>
-    </div>
-  `;
-}
-
 class CardComponent extends Component {
   constructor(el, props) {
     super(el, props);
@@ -94,35 +56,15 @@ class CardComponent extends Component {
     const [color, contrast] = createCardColor();
     el.innerHTML = renderElementHtml(card);
     const actionContainer = el.querySelector(".card.actions");
-    new MenuSelect(actionContainer, {
-      trigger: () =>
-        `<button class="card actions menu-button" aria-label="card actions">${VertMenu()}</button>`,
-      children: {
-        render: () => `
-      <button aria-label="delete card" class="card actions delete">${Trash()}</button>
-      <button aria-label="edit card" class="card actions edit">${Edit()}</button>
-      `,
-        bootstrap: (menu: HTMLDivElement) => {
-          const deleteButton = menu.querySelector(".card.actions.delete");
-          deleteButton.addEventListener("click", this.deleteCard);
-          const editButton = menu.querySelector(".card.actions.edit");
-          new Modal(editButton, {
-            trigger: null,
-            children: {
-              render: () => renderEditHtml(card),
-              bootstrap: (modal, onClose) => {
-                new CardEditForm(modal, {
-                  card,
-                  color,
-                  contrast,
-                  postUpdate: this.updateField,
-                  onClose,
-                });
-              },
-            },
-          });
-        },
-      },
+    new Actions(actionContainer, {
+      card,
+      color,
+      contrast,
+      postUpdate: this.updateField,
+      deleteCard: this.deleteCard,
+    });
+    new TimeAllotted(el.querySelector(".card.time"), {
+      timeAllotted: card.time_allotted,
     });
     const cardStatus = el.querySelector("input");
     cardStatus.indeterminate = card.status === "InProgress";

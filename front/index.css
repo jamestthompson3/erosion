@@ -22,6 +22,10 @@
   font-family: Iosevka;
   src: url("./fonts/Iosevka.ttf");
 }
+@font-face {
+  font-family: Literata;
+  src: url("./fonts/Literata-VariableFont_opsz,wght.ttf");
+}
 * > * {
   margin: 0px;
   padding: 0px;
@@ -45,7 +49,7 @@ body {
   height: 100vh;
   max-width: 100%;
   width: 100%;
-  font-family: Iosevka;
+  font-family: Literata;
   scroll-snap-type: y proximity;
   background: radial-gradient(
     var(--light0),

@@ -1,13 +1,9 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true
+  root: true,
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  rules: {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
   },
-  extends: "eslint:recommended",
-  parser: "babel-eslint",
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: "module"
-  },
-  rules: {}
 };

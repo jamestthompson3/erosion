@@ -16,6 +16,10 @@
   display: inline-block;
   width: 100%;
 }
+.card.time {
+  display: flex;
+  align-items: center;
+}
 .card.description {
   flex-grow: 1;
   overflow: hidden;
@@ -77,7 +81,7 @@
   top: 12px;
   left: 10px;
 }
-.card.status input[type=checkbox] {
+.card.status input[type="checkbox"] {
   width: auto;
   opacity: 1e-8;
   position: absolute;
@@ -86,19 +90,19 @@
   left: 0;
   margin-left: -20px;
 }
-.card.status input[type=checkbox]:checked ~ label:before {
+.card.status input[type="checkbox"]:checked ~ label:before {
   border: 2px solid var(--color);
 }
-.card.status input[type=checkbox]:checked ~ label:after {
+.card.status input[type="checkbox"]:checked ~ label:after {
   transform: rotate(-45deg) scale(1);
 }
-.card.status input[type=checkbox]:indeterminate ~ label:after {
+.card.status input[type="checkbox"]:indeterminate ~ label:after {
   transform: rotate(0) scale(0.75);
   border-left: none;
   width: 15px;
   border-bottom: 4px solid var(--color);
 }
-.card.status input[type=checkbox]:focus + label::before {
+.card.status input[type="checkbox"]:focus + label::before {
   outline: 0;
 }
 
@@ -146,25 +150,25 @@
  *
  * Smaller screens
  * */
-  @media(max-width: 700px) {
-    .card.status-container {
-      width: 80%;
-    }
+@media (max-width: 700px) {
+  .card.status-container {
+    width: 80%;
   }
-  @media(max-width: 500px) {
-    .card.text {
-      display: none;
-    }
-    .card.title {
-      font-size: 1rem;
-    }
-    .card.metadata {
-      display: none;
-    }
-    .card.container {
-      padding: 0px;
-    }
-    .card.as-h3 {
-      width: 100%;
-    }
+}
+@media (max-width: 500px) {
+  .card.text {
+    display: none;
   }
+  .card.title {
+    font-size: 1rem;
+  }
+  .card.metadata {
+    display: none;
+  }
+  .card.container {
+    padding: 0px;
+  }
+  .card.as-h3 {
+    width: 100%;
+  }
+}

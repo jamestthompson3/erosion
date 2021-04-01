@@ -55,7 +55,7 @@ export const messages = {
 };
 
 export function kby(projects: Project[]) {
-  let keyedByCard = {};
+  const keyedByCard = {};
   for (const project of projects) {
     const inboxMap = inboxReducer(project.id)(project.inboxes);
     Object.assign(keyedByCard, inboxMap);

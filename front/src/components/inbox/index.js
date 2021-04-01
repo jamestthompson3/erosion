@@ -1,7 +1,7 @@
 import { Add, Cancel, Collapse, Expand, Trash } from "../icons";
 import { appContext, appSettings, messages, postData } from "../../messages";
 
-import Card from "../Card";
+import Card from "../card/Card";
 import Component from "../Component";
 import NewCardForm from "./NewCardForm";
 import { debounceEvent } from "../../utils/rendering";
