@@ -33,7 +33,6 @@ export default class TimeAllotted extends Component {
     const { timerState, controller, runningTime, timeEllapsed } = this.state;
     switch (timerState) {
       case TimerState.Running: {
-        console.log("\n---------");
         controller.abort();
         this.setState({
           timerState: TimerState.Paused,
@@ -46,7 +45,6 @@ export default class TimeAllotted extends Component {
           cancelButton.innerHTML = Cancel();
           this.el.appendChild(cancelButton); // = cancelButton + this.el.innerHTML;
         }
-        // cancelButton.onclick = console.log("click", timerState);
         this.el.title = "start";
         break;
       }

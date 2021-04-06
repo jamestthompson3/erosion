@@ -3,3 +3,7 @@
   height: 0.85rem;
   color: var(--cancel);
 }
+
+.card.time {
+  cursor: pointer;
+}
