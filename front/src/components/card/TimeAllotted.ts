@@ -29,6 +29,7 @@ export default class TimeAllotted extends Component {
   }
   handleCountdown = (e: MouseEvent): void => {
     const { timeAllotted } = this.props;
+    if (timeAllotted === 0) return;
     const { timerState, controller, runningTime, timeEllapsed } = this.state;
     switch (timerState) {
       case TimerState.Running: {
@@ -56,7 +57,7 @@ export default class TimeAllotted extends Component {
         });
         if (
           cancelButton &&
-          (cancelButton.contains(e.target) || cancelButton === e.target)
+          (cancelButton.contains(e.target as Node) || cancelButton === e.target)
         ) {
           this.setState({
             timerState: TimerState.Stopped,
@@ -69,6 +70,7 @@ export default class TimeAllotted extends Component {
           break;
         }
         this.runAnim(e.timeStamp);
+        break;
       }
       case TimerState.Stopped: {
         // Create an animation callback every second:

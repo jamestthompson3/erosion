@@ -17,7 +17,7 @@ interface Inbox {
   cards: Card[];
 }
 
-interface Card {
+export interface Card {
   id: string;
   time_allotted: number;
   title: string;

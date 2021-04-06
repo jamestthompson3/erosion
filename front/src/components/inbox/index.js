@@ -3,6 +3,7 @@ import { appContext, appSettings, messages, postData } from "../../messages";
 
 import Card from "../card/Card";
 import Component from "../Component";
+import InboxModel from "./InboxModel.ts";
 import NewCardForm from "./NewCardForm";
 import { debounceEvent } from "../../utils/rendering";
 
@@ -12,6 +13,7 @@ class Inbox extends Component {
     const showComplete = appSettings.get("show_complete");
     this.state = {
       showForm: false,
+      inbox: props.inbox,
     };
     const { inbox } = props;
     el.innerHTML = `
@@ -25,13 +27,14 @@ class Inbox extends Component {
           </div>
       </div>
     `;
+    this.model = new InboxModel(this.props.inbox);
     // add event listeners
     const addButton = el.querySelector(".inbox.add-card");
     addButton.addEventListener("click", this.openForm);
     const collapseButton = el.querySelector(".inbox.collapse");
     collapseButton.addEventListener("click", this.toggleCollapse);
     const deleteButton = el.querySelector(".inbox.delete-inbox");
-    deleteButton.addEventListener("click", this.delete);
+    deleteButton.addEventListener("click", this.model.delete);
     // TODO handle outside click on whole document
     el.addEventListener("click", this.clickAway, false);
     el.addEventListener("dragenter", () => {
@@ -152,18 +155,6 @@ class Inbox extends Component {
     postData(messages.MoveCard, moveCardData);
   };
 
-  delete = () => {
-    const { inbox } = this.props;
-
-    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
-    const { project } = keyedInbox;
-    let confirmed = confirm(`Delete Inbox ${inbox.name}?`);
-    confirmed &&
-      postData(messages.DeleteInbox, {
-        project,
-        inbox: inbox.id,
-      });
-  };
   clickAway = () => {
     const titleEdit = this.el.querySelector(".as-h2");
     if (titleEdit) {
@@ -227,18 +218,11 @@ class Inbox extends Component {
   };
 
   updateField(updatedData) {
-    const { inbox } = this.props;
-    const keyedInbox = appContext.get("inboxKeyed")[inbox.id];
-    const { project } = keyedInbox;
-    const updated = { ...inbox, ...updatedData };
-    postData(messages.UpdateInbox, {
-      project,
-      inbox: updated,
-    });
-    this.withProps({ inbox: updated });
+    const updated = this.model.updateField(updatedData);
+    this.setState({ inbox: updated });
   }
   update() {
-    const { inbox } = this.props;
+    const { inbox } = this.state;
     const cards = this.el.querySelectorAll(".card.container");
     // update singleton children
     const title = this.el.querySelector("h2");

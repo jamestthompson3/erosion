@@ -1,5 +1,4 @@
 import { Card, CardStatus } from "../../types.d";
-import { appContext, messages, postData } from "../../messages.js";
 import {
   createCardColor,
   debounceEvent,
@@ -7,6 +6,7 @@ import {
 } from "../../utils/rendering";
 
 import Actions from "./Actions";
+import CardModel from "./CardModel";
 import Component from "../Component";
 import TimeAllotted from "./TimeAllotted";
 
@@ -49,19 +49,21 @@ function renderElementHtml(card: Card) {
 }
 
 class CardComponent extends Component {
+  model: CardModel;
   constructor(el, props) {
     super(el, props);
     this.state = { ...props };
     const { card } = this.state;
     const [color, contrast] = createCardColor();
     el.innerHTML = renderElementHtml(card);
+    this.model = new CardModel(props.card);
     const actionContainer = el.querySelector(".card.actions");
     new Actions(actionContainer, {
       card,
       color,
       contrast,
       postUpdate: this.updateField,
-      deleteCard: this.deleteCard,
+      deleteCard: this.model.deleteCard,
     });
     new TimeAllotted(el.querySelector(".card.time"), {
       timeAllotted: card.time_allotted,
@@ -156,73 +158,12 @@ class CardComponent extends Component {
       document.removeEventListener("click", this.clickAway);
     }
   };
-  deleteCard = () => {
-    const {
-      card: { id },
-    } = this.state;
-    const keyedByCard = appContext.get("cardKeyed")[id];
-    const { inbox, project } = keyedByCard;
-    postData(messages.DeleteCard, {
-      inbox,
-      project,
-      card: id,
-    });
-  };
   updateStatus = () => {
-    const {
-      card: { status },
-    } = this.state;
-    switch (status) {
-      case "Done":
-        this.updateField({ status: CardStatus.Todo, completed: null });
-        break;
-      case "Todo":
-        this.updateField({ status: CardStatus.InProgress });
-        break;
-      case "InProgress":
-        this.updateField({
-          status: CardStatus.Done,
-          completed: new Date().toString(),
-        });
-        break;
-      default:
-        break;
-    }
+    const updated = this.model.updateStatus();
+    this.setState({ card: updated });
   };
   updateField = (updatedData: Partial<Card>) => {
-    const { card } = this.state;
-    const keyedCard = appContext.get("cardKeyed")[card.id];
-    const { inbox, project } = keyedCard;
-    const updated = { ...card, ...updatedData, modified: new Date() };
-    if (updatedData.scheduled) {
-      const today = new Date();
-      const prevScheduled = new Date(card.scheduled);
-      const newScheduled = new Date(updatedData.scheduled);
-      if (today.toDateString() === newScheduled.toDateString()) {
-        // update the dueToday list if we've scheduled the card for today
-        const dueToday = appContext.get("dueToday");
-        appContext.set("dueToday", {
-          ...dueToday,
-          cards: dueToday.cards.concat(updated),
-        });
-      }
-      if (
-        today.toDateString() === prevScheduled.toDateString() &&
-        today.toDateString() !== newScheduled.toDateString()
-      ) {
-        //or if we've moved it from today to another day
-        const dueToday = appContext.get("dueToday");
-        appContext.set("dueToday", {
-          ...dueToday,
-          cards: dueToday.cards.filter((card: Card) => card.id === updated.id),
-        });
-      }
-    }
-    postData(messages.UpdateCard, {
-      inbox,
-      project,
-      card: updated,
-    });
+    const updated = this.model.updateField(updatedData);
     this.setState({ card: updated });
   };
   update = () => {
